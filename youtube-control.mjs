@@ -168,11 +168,29 @@ export const CURATION_CHANNELS = [
       'young white female software engineer data science algorithm english tutorial',
       '20s blonde female computer science algorithm explanation english vlog',
       'young white woman data science lecture coding interview english',
-      'young female software engineer algorithm data structures tutorial english',
-      '20s european female data scientist talk algorithm english',
     ],
     category: 'ai_lecture',
     defaultTags: ['알고리즘', '데이터사이언스', '테크강의', '완벽한쉐도잉'],
+    weight: 1.0,
+  },
+  {
+    id: 'track_fancam',
+    label: '🏃‍♀️ 육상 직캠 (K-Track & Field Fancam)',
+    shortLabel: '육상 직캠',
+    target: '국내외 육상 선수 직캠, 100m, 400m 릴레이, 허들, 멀리뛰기 고화질 직캠',
+    icon: '🏃‍♀️',
+    desc: '국내외 육상 대회 선수 직캠, 4K/60fps 고화질 트랙 & 필드 경기 직캠 모음',
+    queries: [
+      '육상 직캠 4k',
+      '여자 육상 직캠',
+      '육상 선수 직캠',
+      'track and field fancam 4k',
+      '육상 대회 직캠 60fps',
+      '여자 허들 직캠',
+      '여성 육상 경기 직캠',
+    ],
+    category: 'track_fancam',
+    defaultTags: ['육상직캠', '직캠', '트랙앤필드', '4K직캠', '스포츠'],
     weight: 1.0,
   },
 ];
@@ -237,11 +255,11 @@ const TRASH_KEYWORDS = [
 /**
  * Check if video title, channel title, or description contains trash/male/banned keywords
  */
-export function isTrashContent(title = '', desc = '', channelTitle = '', allowEducational = false) {
+export function isTrashContent(title = '', desc = '', channelTitle = '', allowEducational = false, isSports = false) {
   const text = `${title} ${desc} ${channelTitle}`.toLowerCase();
   const cTitle = (channelTitle || '').toLowerCase();
   
-  if (!allowEducational) {
+  if (!allowEducational && !isSports) {
     // 1. Direct substring check on channelTitle for male names/words
     for (const kw of MALE_KEYWORDS) {
       const lowerKw = kw.trim().toLowerCase();
@@ -263,7 +281,8 @@ export function isTrashContent(title = '', desc = '', channelTitle = '', allowEd
   for (const kw of TRASH_KEYWORDS) {
     const lowerKw = kw.trim().toLowerCase();
     if (!lowerKw) continue;
-    if (allowEducational && MALE_KEYWORDS.includes(lowerKw)) continue;
+    if ((allowEducational || isSports) && MALE_KEYWORDS.includes(lowerKw)) continue;
+    if (isSports && (kw === 'workout' || kw === 'exercise' || kw === 'fitness routine' || kw === 'stretching')) continue;
     if (/^[a-z0-9. ]+$/.test(lowerKw) && lowerKw.length <= 15) {
       const escaped = lowerKw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const regex = new RegExp(`(?:^|[^a-z0-9])${escaped}(?:$|[^a-z0-9])`, 'i');
@@ -616,16 +635,16 @@ export function clearUnbookmarkedLinks() {
 /**
  * Search YouTube HTML and parse video results with duration and trash filtering
  */
-async function searchYouTubeQuery(query, filterLong = true, allowEducational = false) {
+async function searchYouTubeQuery(query, filterLong = true, allowEducational = false, isSports = false) {
   try {
-    // sp=EgIIBA%253D%253D filters for 'This Month'. (We rely on JS for duration filter)
-    const recentParam = filterLong ? '&sp=EgIIBA%253D%253D' : '';
+    // sp=EgIIBA%253D%253D filters for 'This Month'.
+    const recentParam = (filterLong && !isSports) ? '&sp=EgIIBA%253D%253D' : '';
     const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}${recentParam}`;
     
     const res = await fetch(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
       },
       signal: AbortSignal.timeout(8000),
     });
@@ -653,28 +672,26 @@ async function searchYouTubeQuery(query, filterLong = true, allowEducational = f
           const descSnippet = v.detailedMetadataSnippets?.[0]?.snippetText?.runs?.map(r => r.text).join('') || '';
 
           // 1. Strict Trash / Blacklist / Male Creator Keyword Filtering
-          if (isTrashContent(title, descSnippet, channelTitle, allowEducational)) {
+          if (isTrashContent(title, descSnippet, channelTitle, allowEducational, isSports)) {
             continue;
           }
 
-          // 2. Strict 5+ min Duration Filtering (skip shorts / brief videos)
-          if (duration && !isAtLeast5Min(duration)) {
+          // 2. Strict Duration Filtering (skip under 30s if not specified)
+          if (!isSports && duration && !isAtLeast5Min(duration)) {
             continue;
           }
 
-          // 3. Upload Date Filtering (within last 1 month)
+          // 3. Upload Date Filtering
           const pt = publishedText.toLowerCase();
           if (pt !== 'recently' && pt) {
-            // Reject years (1 year ago, etc) - allow for educational if high quality
-            if (!allowEducational && /year|년\s*전/.test(pt)) {
+            if (!allowEducational && !isSports && /year|년\s*전/.test(pt)) {
               continue;
             }
-            // If it's months, only allow 1 month for standard vlog (reject 2+ months)
-            if (!allowEducational) {
+            if (!allowEducational && !isSports) {
               const monthMatch = pt.match(/(\d+)\s*(month|개월|달)/);
               if (monthMatch) {
                 const months = parseInt(monthMatch[1], 10);
-                if (months > 1) { // Strictly <= 1 month
+                if (months > 1) {
                   continue;
                 }
               }
@@ -686,9 +703,9 @@ async function searchYouTubeQuery(query, filterLong = true, allowEducational = f
             title,
             channelTitle,
             publishedText,
-            duration: duration || '15:00+',
+            duration: duration || (isSports ? '직캠' : '15:00+'),
             views,
-            description: descSnippet || `${publishedText} • ${views} • Duration: ${duration || '15+ min'}`,
+            description: descSnippet || `${publishedText} • ${views} • Duration: ${duration || '직캠'}`,
             thumbnailUrl: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
             url: `https://www.youtube.com/watch?v=${videoId}`,
           });
@@ -703,8 +720,7 @@ async function searchYouTubeQuery(query, filterLong = true, allowEducational = f
 }
 
 /**
- * Execute Full AI Curation & Web Discovery across the 7 High-Quality Channels
- * (Guarantees: 15+ Min, No Trash Clean/Spam, Shadowing/Listening Friendly, 20+ Items)
+ * Execute Full AI Curation & Web Discovery across the Dedicated Channels
  */
 export async function curateYouTubeLinks({
   channelPresetId = 'all',
@@ -736,20 +752,19 @@ export async function curateYouTubeLinks({
     if (i.videoId) seenIds.add(i.videoId);
   });
 
-  const perChannelLimit = Math.max(3, Math.ceil(limit / finalChannels.length));
-
   for (const chan of finalChannels) {
     let chanCount = 0;
     const isEducational = chan.id === 'opic_al';
+    const isSports = chan.id === 'track_fancam';
     const targetQuota = targetChannels.length === 1 ? limit : Math.round(limit * (chan.weight || 0.5));
     const queries = query && channelPresetId === chan.id
       ? [query, ...chan.queries]
       : chan.queries;
 
     for (const q of queries) {
-      const list = await searchYouTubeQuery(q, true, isEducational); // Search long videos (15+ min)
+      const list = await searchYouTubeQuery(q, !isSports, isEducational, isSports);
       for (const item of list) {
-        if (!seenIds.has(item.videoId) && !isTrashContent(item.title, item.description, item.channelTitle, isEducational)) {
+        if (!seenIds.has(item.videoId) && !isTrashContent(item.title, item.description, item.channelTitle, isEducational, isSports)) {
           seenIds.add(item.videoId);
           allFound.push({
             ...item,
@@ -769,9 +784,10 @@ export async function curateYouTubeLinks({
   if (allFound.length < limit) {
     for (const chan of finalChannels) {
       const isEducational = chan.id === 'opic_al';
-      const fallbackList = await searchYouTubeQuery(chan.queries[0], false, isEducational);
+      const isSports = chan.id === 'track_fancam';
+      const fallbackList = await searchYouTubeQuery(chan.queries[0], false, isEducational, isSports);
       for (const item of fallbackList) {
-        if (!seenIds.has(item.videoId) && !isTrashContent(item.title, item.description, item.channelTitle, isEducational)) {
+        if (!seenIds.has(item.videoId) && !isTrashContent(item.title, item.description, item.channelTitle, isEducational, isSports)) {
           seenIds.add(item.videoId);
           allFound.push({
             ...item,
