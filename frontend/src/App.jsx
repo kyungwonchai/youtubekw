@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import './App.css';
 
 export const CHANNELS = [
-  { id: 'opic_al', label: '🎯 오픽 AL', shortLabel: '오픽 AL', icon: '🎯' },
+  { id: 'all', label: '🌟 전체', shortLabel: '전체', icon: '🌟' },
+  { id: 'opic_al', label: '🎯 오픽 1급(AL)', shortLabel: '오픽 AL', icon: '🎯' },
   { id: '20s_book', label: '📚 북리뷰', shortLabel: '북리뷰', icon: '📚' },
   { id: 'philosophy', label: '🧠 철학', shortLabel: '철학', icon: '🧠' },
   { id: '20s_shadowing', label: '🗣️ 쉐도잉', shortLabel: '쉐도잉', icon: '🗣️' },
@@ -20,7 +21,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [curating, setCurating] = useState(false);
   const [activeSubTab, setActiveSubTab] = useState('feed');
-  const [selectedChannel, setSelectedChannel] = useState('20s_book');
+  const [selectedChannel, setSelectedChannel] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [playingItem, setPlayingItem] = useState(null);
   const [toast, setToast] = useState(null);
@@ -49,9 +50,9 @@ export default function App() {
     fetchLinks();
   }, []);
 
-  const handleCurate = async (topics = ['20s_book']) => {
+  const handleCurate = async (topics = ['opic_al']) => {
     setCurating(true);
-    showToast(`🚀 [${topics.join(', ')}] 수집을 시작합니다...`, 'info');
+    showToast(`🚀 [${topics.join(', ')}] 영상 수집을 시작합니다...`, 'info');
     try {
       const res = await fetch(`${API_BASE}/curate`, {
         method: 'POST',
@@ -102,6 +103,10 @@ export default function App() {
   const filteredItems = useMemo(() => {
     return items.filter(item => {
       if (activeSubTab === 'watch_later' && !item.bookmarked) return false;
+      if (selectedChannel !== 'all') {
+        const matchPreset = item.channelPresetId === selectedChannel || item.category === selectedChannel;
+        if (!matchPreset) return false;
+      }
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
         const matchTitle = item.title?.toLowerCase().includes(q);
@@ -110,7 +115,7 @@ export default function App() {
       }
       return true;
     });
-  }, [items, activeSubTab, searchQuery]);
+  }, [items, activeSubTab, selectedChannel, searchQuery]);
 
   const watchLaterCount = items.filter(i => i.bookmarked).length;
 
@@ -123,7 +128,7 @@ export default function App() {
           <span className="yt-icon">🎬</span>
           <div>
             <h1>YouTubeKW</h1>
-            <p>고품질 15분+ 원어민 쉐도잉 & 테크 큐레이션</p>
+            <p>고품질 15분+ 원어민 쉐도잉 & 오픽 1급 노하우 큐레이션</p>
           </div>
         </div>
 
@@ -138,11 +143,18 @@ export default function App() {
             <option value={50}>50개</option>
           </select>
           <button
+            className="btn-curate red"
+            disabled={curating}
+            onClick={() => handleCurate(['opic_al'])}
+          >
+            {curating ? '수집 중...' : '🎯 오픽1급 노하우'}
+          </button>
+          <button
             className="btn-curate"
             disabled={curating}
             onClick={() => handleCurate(['20s_book'])}
           >
-            {curating ? '수집 중...' : '📚 북리뷰 수집'}
+            {curating ? '수집 중...' : '📚 북리뷰'}
           </button>
           <button
             className="btn-curate purple"
@@ -192,6 +204,18 @@ export default function App() {
             ⭐ 다시보기 ({watchLaterCount})
           </button>
         </div>
+      </div>
+
+      <div className="yt-category-pills">
+        {CHANNELS.map(ch => (
+          <button
+            key={ch.id}
+            className={`pill-btn ${selectedChannel === ch.id ? 'active' : ''}`}
+            onClick={() => setSelectedChannel(ch.id)}
+          >
+            {ch.label}
+          </button>
+        ))}
       </div>
 
       <main className="yt-main">
