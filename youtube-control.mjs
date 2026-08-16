@@ -9,22 +9,23 @@ const YOUTUBE_FILE = '/home/kw/.kwsoft-youtube-links.json';
 export const CURATION_CHANNELS = [
   {
     id: 'opic_al',
-    label: '🎯 오픽 AL (AL 취득 목표)',
+    label: '🎯 오픽 1급 (AL 취득 목표)',
     shortLabel: '오픽 AL',
-    target: '오픽 AL 취득 목표 (원어민 스피킹, AL 고득점 표현/스토리텔링/롤플레이/모의답변)',
+    target: '오픽 AL 취득 목표 (오픽노잼 전략, 롤플레이, 돌발질문, 만능패턴, 원어민 스피킹)',
     icon: '🎯',
-    desc: 'OPIc AL 레벨 달성을 위한 원어민 발화, 고득점 답변 전략, 필러(Fillers), 시제/돌발/롤플레이 쉐도잉 특화 영상',
+    desc: 'OPIc 1급(AL) 달성을 위한 오픽노잼 핵심 전략, 롤플레이/돌발 대처, 고득점 필러 및 만능 답변 패턴, 15분+ 원어민 쉐도잉 영상',
     queries: [
-      'opic al speaking test preparation tips native speaker english',
-      'opic advanced low sample answer storytelling strategy english',
-      'opic al role play unexpected questions mock test answer english',
-      'english conversation filler words natural speaking opic al',
-      'native english speaker clear articulation storytelling vlog 15 min',
-      'opic al expressions vocabulary fluent native speech',
-      'opic test advanced level sample answer english speaking',
+      '오픽 AL 노하우',
+      '오픽 1급 AL 꿀팁',
+      '오픽노잼 AL',
+      '오픽 AL 롤플레이 만능 패턴',
+      '오픽 돌발질문 AL 답변 전략',
+      'opic al speaking test sample answer english',
+      'opic 1급 al 스크립트 모의고사',
+      '오픽 AL 실제 시험 영상',
     ],
     category: 'opic_al',
-    defaultTags: ['오픽AL', 'OPIc', 'AL취득목표', '롤플레이', '원어민표현', '쉐도잉'],
+    defaultTags: ['오픽1급', '오픽AL', 'OPIc', '오픽노잼', '롤플레이', '돌발질문', '만능패턴', '쉐도잉'],
     weight: 1.0,
   },
   {
@@ -236,30 +237,33 @@ const TRASH_KEYWORDS = [
 /**
  * Check if video title, channel title, or description contains trash/male/banned keywords
  */
-export function isTrashContent(title = '', desc = '', channelTitle = '') {
+export function isTrashContent(title = '', desc = '', channelTitle = '', allowEducational = false) {
   const text = `${title} ${desc} ${channelTitle}`.toLowerCase();
   const cTitle = (channelTitle || '').toLowerCase();
   
-  // 1. Direct substring check on channelTitle for male names/words
-  for (const kw of MALE_KEYWORDS) {
-    const lowerKw = kw.trim().toLowerCase();
-    if (!lowerKw) continue;
-    if (cTitle.includes(lowerKw)) return true;
-  }
+  if (!allowEducational) {
+    // 1. Direct substring check on channelTitle for male names/words
+    for (const kw of MALE_KEYWORDS) {
+      const lowerKw = kw.trim().toLowerCase();
+      if (!lowerKw) continue;
+      if (cTitle.includes(lowerKw)) return true;
+    }
 
-  // 2. Check channel title, video title, description against MALE_KEYWORDS with regex word boundaries
-  for (const kw of MALE_KEYWORDS) {
-    const lowerKw = kw.trim().toLowerCase();
-    if (!lowerKw) continue;
-    const escaped = lowerKw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(`(?:^|[^a-z0-9])${escaped}(?:$|[^a-z0-9])`, 'i');
-    if (regex.test(text)) return true;
+    // 2. Check channel title, video title, description against MALE_KEYWORDS with regex word boundaries
+    for (const kw of MALE_KEYWORDS) {
+      const lowerKw = kw.trim().toLowerCase();
+      if (!lowerKw) continue;
+      const escaped = lowerKw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`(?:^|[^a-z0-9])${escaped}(?:$|[^a-z0-9])`, 'i');
+      if (regex.test(text)) return true;
+    }
   }
 
   // 2. Trash keyword check across all metadata
   for (const kw of TRASH_KEYWORDS) {
     const lowerKw = kw.trim().toLowerCase();
     if (!lowerKw) continue;
+    if (allowEducational && MALE_KEYWORDS.includes(lowerKw)) continue;
     if (/^[a-z0-9. ]+$/.test(lowerKw) && lowerKw.length <= 15) {
       const escaped = lowerKw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const regex = new RegExp(`(?:^|[^a-z0-9])${escaped}(?:$|[^a-z0-9])`, 'i');
@@ -612,7 +616,7 @@ export function clearUnbookmarkedLinks() {
 /**
  * Search YouTube HTML and parse video results with duration and trash filtering
  */
-async function searchYouTubeQuery(query, filterLong = true) {
+async function searchYouTubeQuery(query, filterLong = true, allowEducational = false) {
   try {
     // sp=EgIIBA%253D%253D filters for 'This Month'. (We rely on JS for duration filter)
     const recentParam = filterLong ? '&sp=EgIIBA%253D%253D' : '';
@@ -649,7 +653,7 @@ async function searchYouTubeQuery(query, filterLong = true) {
           const descSnippet = v.detailedMetadataSnippets?.[0]?.snippetText?.runs?.map(r => r.text).join('') || '';
 
           // 1. Strict Trash / Blacklist / Male Creator Keyword Filtering
-          if (isTrashContent(title, descSnippet, channelTitle)) {
+          if (isTrashContent(title, descSnippet, channelTitle, allowEducational)) {
             continue;
           }
 
@@ -661,16 +665,18 @@ async function searchYouTubeQuery(query, filterLong = true) {
           // 3. Upload Date Filtering (within last 1 month)
           const pt = publishedText.toLowerCase();
           if (pt !== 'recently' && pt) {
-            // Reject years (1 year ago, etc)
-            if (/year|년\s*전/.test(pt)) {
+            // Reject years (1 year ago, etc) - allow for educational if high quality
+            if (!allowEducational && /year|년\s*전/.test(pt)) {
               continue;
             }
-            // If it's months, only allow 1 month (reject 2+ months)
-            const monthMatch = pt.match(/(\d+)\s*(month|개월|달)/);
-            if (monthMatch) {
-              const months = parseInt(monthMatch[1], 10);
-              if (months > 1) { // Strictly <= 1 month
-                continue;
+            // If it's months, only allow 1 month for standard vlog (reject 2+ months)
+            if (!allowEducational) {
+              const monthMatch = pt.match(/(\d+)\s*(month|개월|달)/);
+              if (monthMatch) {
+                const months = parseInt(monthMatch[1], 10);
+                if (months > 1) { // Strictly <= 1 month
+                  continue;
+                }
               }
             }
           }
@@ -734,15 +740,16 @@ export async function curateYouTubeLinks({
 
   for (const chan of finalChannels) {
     let chanCount = 0;
+    const isEducational = chan.id === 'opic_al';
     const targetQuota = targetChannels.length === 1 ? limit : Math.round(limit * (chan.weight || 0.5));
     const queries = query && channelPresetId === chan.id
       ? [query, ...chan.queries]
       : chan.queries;
 
     for (const q of queries) {
-      const list = await searchYouTubeQuery(q, true); // Search long videos (15+ min)
+      const list = await searchYouTubeQuery(q, true, isEducational); // Search long videos (15+ min)
       for (const item of list) {
-        if (!seenIds.has(item.videoId) && !isTrashContent(item.title, item.description, item.channelTitle)) {
+        if (!seenIds.has(item.videoId) && !isTrashContent(item.title, item.description, item.channelTitle, isEducational)) {
           seenIds.add(item.videoId);
           allFound.push({
             ...item,
@@ -761,9 +768,10 @@ export async function curateYouTubeLinks({
   // Fallback if needed
   if (allFound.length < limit) {
     for (const chan of finalChannels) {
-      const fallbackList = await searchYouTubeQuery(chan.queries[0], false);
+      const isEducational = chan.id === 'opic_al';
+      const fallbackList = await searchYouTubeQuery(chan.queries[0], false, isEducational);
       for (const item of fallbackList) {
-        if (!seenIds.has(item.videoId) && !isTrashContent(item.title, item.description, item.channelTitle)) {
+        if (!seenIds.has(item.videoId) && !isTrashContent(item.title, item.description, item.channelTitle, isEducational)) {
           seenIds.add(item.videoId);
           allFound.push({
             ...item,
