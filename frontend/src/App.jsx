@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import './App.css';
 
 export const CHANNELS = [
+  { id: 'opic_al', label: '🎯 오픽 AL', shortLabel: '오픽 AL', icon: '🎯' },
   { id: '20s_book', label: '📚 북리뷰', shortLabel: '북리뷰', icon: '📚' },
   { id: 'philosophy', label: '🧠 철학', shortLabel: '철학', icon: '🧠' },
   { id: '20s_shadowing', label: '🗣️ 쉐도잉', shortLabel: '쉐도잉', icon: '🗣️' },

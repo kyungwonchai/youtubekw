@@ -8,6 +8,26 @@ const YOUTUBE_FILE = '/home/kw/.kwsoft-youtube-links.json';
  */
 export const CURATION_CHANNELS = [
   {
+    id: 'opic_al',
+    label: '🎯 오픽 AL (AL 취득 목표)',
+    shortLabel: '오픽 AL',
+    target: '오픽 AL 취득 목표 (원어민 스피킹, AL 고득점 표현/스토리텔링/롤플레이/모의답변)',
+    icon: '🎯',
+    desc: 'OPIc AL 레벨 달성을 위한 원어민 발화, 고득점 답변 전략, 필러(Fillers), 시제/돌발/롤플레이 쉐도잉 특화 영상',
+    queries: [
+      'opic al speaking test preparation tips native speaker english',
+      'opic advanced low sample answer storytelling strategy english',
+      'opic al role play unexpected questions mock test answer english',
+      'english conversation filler words natural speaking opic al',
+      'native english speaker clear articulation storytelling vlog 15 min',
+      'opic al expressions vocabulary fluent native speech',
+      'opic test advanced level sample answer english speaking',
+    ],
+    category: 'opic_al',
+    defaultTags: ['오픽AL', 'OPIc', 'AL취득목표', '롤플레이', '원어민표현', '쉐도잉'],
+    weight: 1.0,
+  },
+  {
     id: '20s_book',
     label: '📚 20~30대 여성 북리뷰 (메인 80%)',
     shortLabel: '20-30대 북리뷰 (80%)',
