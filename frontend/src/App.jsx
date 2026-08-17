@@ -3,7 +3,6 @@ import './App.css';
 
 export const CHANNELS = [
   { id: 'all', label: '🌟 전체', shortLabel: '전체', icon: '🌟' },
-  { id: 'track_fancam', label: '🏃‍♀️ 육상 직캠', shortLabel: '육상 직캠', icon: '🏃‍♀️' },
   { id: 'opic_al', label: '🎯 오픽 1급(AL)', shortLabel: '오픽 AL', icon: '🎯' },
   { id: '20s_book', label: '📚 북리뷰', shortLabel: '북리뷰', icon: '📚' },
   { id: 'philosophy', label: '🧠 철학', shortLabel: '철학', icon: '🧠' },
@@ -51,7 +50,7 @@ export default function App() {
     fetchLinks();
   }, []);
 
-  const handleCurate = async (topics = ['track_fancam']) => {
+  const handleCurate = async (topics = ['opic_al']) => {
     setCurating(true);
     showToast(`🚀 [${topics.join(', ')}] 영상 수집을 시작합니다...`, 'info');
     try {
@@ -129,7 +128,7 @@ export default function App() {
           <span className="yt-icon">🎬</span>
           <div>
             <h1>YouTubeKW</h1>
-            <p>고품질 영상 큐레이션 & 육상 직캠 & 원어민 쉐도잉</p>
+            <p>고품질 영상 큐레이션 & 원어민 쉐도잉 & 테크/인사이트</p>
           </div>
         </div>
 
@@ -143,13 +142,6 @@ export default function App() {
             <option value={40}>40개</option>
             <option value={50}>50개</option>
           </select>
-          <button
-            className="btn-curate pink"
-            disabled={curating}
-            onClick={() => handleCurate(['track_fancam'])}
-          >
-            {curating ? '수집 중...' : '🏃‍♀️ 육상 직캠'}
-          </button>
           <button
             className="btn-curate red"
             disabled={curating}

@@ -173,26 +173,6 @@ export const CURATION_CHANNELS = [
     defaultTags: ['알고리즘', '데이터사이언스', '테크강의', '완벽한쉐도잉'],
     weight: 1.0,
   },
-  {
-    id: 'track_fancam',
-    label: '🏃‍♀️ 육상 직캠 (K-Track & Field Fancam)',
-    shortLabel: '육상 직캠',
-    target: '국내외 육상 선수 직캠, 100m, 400m 릴레이, 허들, 멀리뛰기 고화질 직캠',
-    icon: '🏃‍♀️',
-    desc: '국내외 육상 대회 선수 직캠, 4K/60fps 고화질 트랙 & 필드 경기 직캠 모음',
-    queries: [
-      '육상 직캠 4k',
-      '여자 육상 직캠',
-      '육상 선수 직캠',
-      'track and field fancam 4k',
-      '육상 대회 직캠 60fps',
-      '여자 허들 직캠',
-      '여성 육상 경기 직캠',
-    ],
-    category: 'track_fancam',
-    defaultTags: ['육상직캠', '직캠', '트랙앤필드', '4K직캠', '스포츠'],
-    weight: 1.0,
-  },
 ];
 
 /**
