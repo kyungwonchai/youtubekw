@@ -9,6 +9,7 @@ export default function App() {
   const [curating, setCurating] = useState(false);
   const [progress, setProgress] = useState({ percent: 0, message: '' });
   const [activeTab, setActiveTab] = useState('feed'); // 'feed' or 'bookmarked'
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [toast, setToast] = useState(null);
 
@@ -35,13 +36,13 @@ export default function App() {
     fetchLinks();
   }, []);
 
-  // Realtime 200 Shadowing Videos Curation with SSE Progress Bar
+  // Realtime 100 TED & High-Diction Shadowing Videos Curation with SSE Progress Bar
   const handleStartCuration = () => {
     if (curating) return;
     setCurating(true);
-    setProgress({ percent: 5, message: '🚀 최근 7일 이내 원어민(20-30대 백인 여성) 200개 쉐도잉 영상 수집 시작...' });
+    setProgress({ percent: 5, message: '🚀 최근 3년 이내 TED & 명품 딕션 여성 교육 쉐도잉 100선 수집 시작...' });
 
-    const eventSource = new EventSource(`${API_BASE}/curate-stream?limit=200`);
+    const eventSource = new EventSource(`${API_BASE}/curate-stream?limit=100`);
 
     eventSource.addEventListener('progress', (e) => {
       try {
@@ -53,8 +54,8 @@ export default function App() {
     eventSource.addEventListener('done', async (e) => {
       try {
         const data = JSON.parse(e.data);
-        setProgress({ percent: 100, message: `🎉 수집 완료! 총 ${data.addedCount}개 최신 영상 확보.` });
-        showToast(`✅ ${data.addedCount}개의 7일 이내 쉐도잉 영상이 완벽히 수집되었습니다!`, 'success');
+        setProgress({ percent: 100, message: `🎉 수집 완료! 총 ${data.addedCount}개의 고품질 쉐도잉 영상 확보.` });
+        showToast(`✅ ${data.addedCount}개의 TED 및 명품 딕션 쉐도잉 영상이 수집되었습니다!`, 'success');
         eventSource.close();
         await fetchLinks();
       } catch (err) {}
@@ -66,7 +67,7 @@ export default function App() {
     eventSource.addEventListener('error', (e) => {
       eventSource.close();
       setCurating(false);
-      showToast('수집 중 연결 오류가 발생했습니다. 다시 시도해주세요.', 'error');
+      showToast('수집 중 오류가 발생했습니다. 다시 시도해주세요.', 'error');
     });
   };
 
@@ -95,9 +96,18 @@ export default function App() {
     }
   };
 
+  const categories = [
+    { id: 'all', label: '전체보기' },
+    { id: 'ted_speech', label: '🎤 TED & 명연설' },
+    { id: 'education_sci', label: '🧠 교양·지식·과학' },
+    { id: 'career_mind', label: '💼 커리어·소통' },
+    { id: 'diction_essay', label: '📚 에세이·북토크' },
+  ];
+
   const filteredItems = useMemo(() => {
     return items.filter(item => {
       if (activeTab === 'bookmarked' && !item.bookmarked) return false;
+      if (selectedCategory !== 'all' && item.category !== selectedCategory) return false;
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
         const matchTitle = item.title?.toLowerCase().includes(q);
@@ -106,7 +116,7 @@ export default function App() {
       }
       return true;
     });
-  }, [items, activeTab, searchQuery]);
+  }, [items, activeTab, selectedCategory, searchQuery]);
 
   const bookmarkedCount = items.filter(i => i.bookmarked).length;
 
@@ -117,10 +127,10 @@ export default function App() {
       {/* Main Single-Focus Action Header */}
       <header className="yt-hero-header">
         <div className="yt-hero-title">
-          <span className="hero-emoji">🎯</span>
+          <span className="hero-emoji">🎙️</span>
           <div>
-            <h1>20-30대 원어민 여성 쉐도잉 초집중</h1>
-            <p>최근 7일 이내 업로드 | 구독자 2000명+ | 전분야 200개 스피킹 영상 동적 최신화</p>
+            <h1>TED & 명품 딕션 교육 쉐도잉 (100선)</h1>
+            <p>최근 3년 이내 TED·명사 강연·교양 | 여성 원어민 또렷한 발음(고급 딕션) 중심</p>
           </div>
         </div>
 
@@ -133,12 +143,12 @@ export default function App() {
             {curating ? (
               <>
                 <span className="spinner"></span>
-                <span>200개 수집 중 ({progress.percent}%)</span>
+                <span>100개 수집 중 ({progress.percent}%)</span>
               </>
             ) : (
               <>
                 <span className="btn-icon">⚡</span>
-                <span>200개 실시간 수집하기</span>
+                <span>100개 최신 수집하기</span>
               </>
             )}
           </button>
@@ -161,6 +171,19 @@ export default function App() {
         </div>
       )}
 
+      {/* Category Pills */}
+      <div className="yt-cat-bar">
+        {categories.map(cat => (
+          <button
+            key={cat.id}
+            className={`cat-pill ${selectedCategory === cat.id ? 'active' : ''}`}
+            onClick={() => setSelectedCategory(cat.id)}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
+
       {/* Clean Navigation & Search Bar */}
       <div className="yt-nav-bar">
         <div className="yt-tabs">
@@ -168,7 +191,7 @@ export default function App() {
             className={`tab-btn ${activeTab === 'feed' ? 'active' : ''}`}
             onClick={() => setActiveTab('feed')}
           >
-            🔥 최신 쉐도잉 피드 ({items.length})
+            🔥 추천 쉐도잉 피드 ({items.length})
           </button>
           <button
             className={`tab-btn ${activeTab === 'bookmarked' ? 'active' : ''}`}
@@ -181,7 +204,7 @@ export default function App() {
         <div className="yt-search-box">
           <input
             type="text"
-            placeholder="제목, 채널명 즉시 검색..."
+            placeholder="TED, 강연 주제, 스피커 검색..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
           />
@@ -202,7 +225,7 @@ export default function App() {
           <div className="empty-state">
             <div className="empty-icon">🎧</div>
             <h2>준비된 영상이 없습니다.</h2>
-            <p>상단의 <strong>[⚡ 200개 실시간 수집하기]</strong> 버튼을 눌러 최근 7일 이내 원어민 쉐도잉 영상을 즉시 채워보세요!</p>
+            <p>상단의 <strong>[⚡ 100개 최신 수집하기]</strong> 버튼을 눌러 최근 3년 이내 TED 및 명품 딕션 쉐도잉 영상을 즉시 채워보세요!</p>
           </div>
         ) : (
           <div className="yt-grid">
@@ -230,6 +253,7 @@ export default function App() {
                   </h3>
                   <div className="channel-meta">
                     <span className="channel-title">🎙️ {item.channelTitle}</span>
+                    {item.publishedText && <span className="pub-text">📅 {item.publishedText}</span>}
                   </div>
                   <div className="card-actions">
                     <a

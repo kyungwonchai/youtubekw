@@ -4,107 +4,103 @@ import path from 'path';
 const YOUTUBE_FILE = '/home/kw/.kwsoft-youtube-links.json';
 
 /**
- * High-Quality 20~30s Native English Speaking Female Categories & Target Search Queries
+ * High-Quality TED, Educational & Native English Speaking Female Categories
  */
 export const CURATION_CHANNELS = [
   {
     id: 'all',
-    label: '✨ 200개 초집중 수집 (전분야 쉐도잉)',
-    shortLabel: '200개 초집중',
-    target: '20~30대 백인/원어민 여성의 전분야(일상/북리뷰/커리어/라이프/토크/지식) 풍부한 스피킹 쉐도잉 영상',
+    label: '✨ 100개 초집중 수집 (TED·교육·고급 딕션 쉐도잉)',
+    shortLabel: '100개 TED·교육',
+    target: '최근 3년 이내 TED, 강연, 교육, 명확한 딕션의 여성 원어민 스피킹 쉐도잉 100선',
     icon: '✨',
-    desc: '최근 7일 이내, 구독자 2000명 이상 원어민 여성의 대화/설명 중심 200개 쉐도잉 영상',
+    desc: '최근 3년 이내 업로드된 TED 강연, 명문대 강의, 교양·교육 및 또렷한 발음(고급 딕션)의 여성 스피커 영상',
     category: 'all',
-    defaultTags: ['초집중쉐도잉', '20-30대여성', '대화형스피킹', '최신7일'],
+    defaultTags: ['TED강연', '고급딕션', '교육쉐도잉', '최근3년'],
   },
   {
-    id: 'daily_talk',
-    label: '🌸 일상 & 수다 (Vlog & Chat)',
-    shortLabel: '일상 & 수다',
-    target: '20~30대 원어민 여성 일상/토크 브이로그',
-    icon: '🌸',
-    desc: '자연스러운 억양과 구어체 표현이 가득한 20~30대 여성 브이로그 및 수다',
-    category: 'daily_talk',
-    defaultTags: ['일상수다', '원어민스피킹', '브이로그', '쉐도잉'],
+    id: 'ted_speech',
+    label: '🎤 TED & 명사 강연 (TED & Speeches)',
+    shortLabel: 'TED & 명연설',
+    target: 'TED, TEDx, 기념사, 대중 연설 스피커',
+    icon: '🎤',
+    desc: '전달력과 발음이 뛰어난 여성 명사들의 감동적이고 지적인 TED/TEDx 강연',
+    category: 'ted_speech',
+    defaultTags: ['TED', 'TEDx', '명연설', '스피치쉐도잉'],
   },
   {
-    id: 'book_thought',
-    label: '📚 북리뷰 & 생각정리 (Book & Essay)',
-    shortLabel: '북리뷰 & 사유',
-    target: '20~30대 북튜버 및 에세이스트 여성 스피커',
-    icon: '📚',
-    desc: '풍부한 어휘와 체계적인 문장 구조의 도서 리뷰, 생각 나눔',
-    category: 'book_thought',
-    defaultTags: ['북리뷰', '고급어휘', '에세이', '쉐도잉'],
-  },
-  {
-    id: 'career_prod',
-    label: '💼 커리어 & 자기계발 (Career & Productivity)',
-    shortLabel: '커리어 & 생산성',
-    target: '20~30대 직장인/전문직 여성 크리에이터',
-    icon: '💼',
-    desc: '업무 루틴, 커리어 조언, 생산성 및 인터뷰 테크닉',
-    category: 'career_prod',
-    defaultTags: ['커리어', '비즈니스영어', '생산성', '쉐도잉'],
-  },
-  {
-    id: 'intellect_sci',
-    label: '🧠 교양·테크·지식 (Tech & Knowledge)',
+    id: 'education_sci',
+    label: '🧠 교양·과학·지식 (Education & Science)',
     shortLabel: '교양 & 지식',
-    target: '여성 엔지니어, 연구원, 인문학/심리학 해설가',
+    target: 'BBC Ideas, Big Think, 교수진, 연구원, 교양 해설가',
     icon: '🧠',
-    desc: '소프트웨어, AI, 심리학, 철학 해설을 전달하는 명확한 스피킹',
-    category: 'intellect_sci',
-    defaultTags: ['지식전달', '테크영어', '심리철학', '쉐도잉'],
+    desc: '심리학, 뇌과학, 인문학, 테크 등 명확한 딕션과 정돈된 문장의 지식 콘텐츠',
+    category: 'education_sci',
+    defaultTags: ['지식교양', 'BBC_Ideas', 'BigThink', '학술영어'],
+  },
+  {
+    id: 'career_mind',
+    label: '💼 커리어 & 마인드셋 (Career & Mindset)',
+    shortLabel: '커리어 & 마인드',
+    target: '커리어 코치, 리더십, 소통 전문가, 자기계발 스피커',
+    icon: '💼',
+    desc: '비즈니스 영어, 인터뷰 및 소통 스킬, 생산성 향상을 위한 프로페셔널 스피킹',
+    category: 'career_mind',
+    defaultTags: ['비즈니스영어', '리더십', '커리어', '동기부여'],
+  },
+  {
+    id: 'diction_essay',
+    label: '📚 에세이 & 낭독 & 북토크 (Diction & Essay)',
+    shortLabel: '에세이 & 북토크',
+    target: '에세이스트, 북튜버, 발음/딕션 코치, 인터뷰어',
+    icon: '📚',
+    desc: '표준 발음과 풍부한 어휘력이 돋보이는 생각 정리, 에세이 및 심층 도서 리뷰',
+    category: 'diction_essay',
+    defaultTags: ['명품발음', '북리뷰', '에세이', '원어민딕션'],
   }
 ];
 
-// Rich variety of queries to pull 200+ distinct high-quality videos
+// Rich queries focused on TED talks, education, public speeches, clear English diction
 const SEARCH_QUERIES = [
-  // 1. Booktube & Reading Vlogs
-  'female reading vlog english',
-  'female book review discussion english',
-  'booktube reading wrap up female',
-  'female monthly favorites books chat english',
-  'booktuber sit down chat reading vlog female',
-  
-  // 2. Chatty Vlogs & Day in the Life
-  'chatty sit down vlog female english',
-  'day in my life vlog female speaking english',
-  'female weekly reset vlog talk english',
-  'realistic week in my life female english',
-  'get ready with me chat vlog female',
-  'female living alone vlog english chat',
-  
-  // 3. Conversation & Lifestyle & Mindset
-  'female lifestyle talk commentary english',
-  'female mindset talk self improvement english',
-  'girl talk podcast discussion english',
-  'deep talk sit down vlog female english',
-  'advice for 20s female talk vlog english',
-  
-  // 4. Career, Study & Productivity
-  'female career advice talk vlog english',
-  'female study with me talk routine english',
-  'female lawyer engineer consultant vlog english',
-  'female productivity routine talk english',
-  'female master phd student vlog english',
-  
-  // 5. Intellect, Essay, Philosophy & Tech
+  // 1. TED & TEDx Talks by Inspiring Women
+  'TED talk female english diction speech',
+  'TEDx talks female clear English diction',
+  'TED talk female education communication speech',
+  'TED talk inspiring female psychology mindset',
+  'TED talk female science technology presentation',
+  'TED talk female leadership productivity career',
+  'TEDx talk woman confidence public speaking',
+  'TED talk woman brain science learning languages',
+
+  // 2. High-Diction Speeches, Lectures & Educational Channels
+  'best female speech clear english pronunciation',
+  'female public speaking presentation skills English',
+  'informative speech female presentation english diction',
+  'commencement speech female english clear pronunciation',
+  'great speeches by women clear diction english',
+  'educational lecture female english professor clear diction',
+  'science communication female english talk',
+  'BBC Ideas female explanation video english',
+  'Big Think female speaker english lecture',
+  'Oxford Union female address clear speech',
+  'Harvard talk female clear english pronunciation',
+  'masterclass female english presentation skills',
+
+  // 3. Thoughtful Essay, Mindset & Intellect
   'female philosophy essay discussion english',
   'female psychology explanation talk english',
-  'female software engineer tech talk english',
-  'female book essay commentary english',
-  'female culture essay commentary english'
+  'female career advice presentation english diction',
+  'female intellect discussion deep talk english',
+  'female booktube wrap up analysis clear english',
+  'clear diction British RP female speech talk',
+  'clear American accent female presentation talk'
 ];
 
 /**
- * Strict Blacklist (Male filter, Korean/Asian names, Cleaning, Silent, AI Voice)
+ * Filter keywords
  */
 const MALE_KEYWORDS = [
   '남자', '남성', 'man', 'men', 'male', 'guy', 'guys', 'husband', 'boyfriend', 'boy', 'boys', 'bro', 'bros',
   'father', 'dad', 'brother', 'son', 'gentleman', 'gentlemen', 'he', 'his', 'him', 'mr.', 'mr ', 'sir', 'himself',
-  'rm', 'namjoon', 'bts', 'jungkook', 'jimin', 'v', 'taehyung', 'suga', 'yoongi', 'jin', 'j-hope', 'hoseok',
   'jack', 'john', 'david', 'michael', 'james', 'robert', 'william', 'thomas', 'daniel', 'matthew',
   'anthony', 'mark', 'donald', 'steven', 'paul', 'andrew', 'joshua', 'kenneth', 'kevin', 'brian',
   'george', 'edward', 'ronald', 'timothy', 'jason', 'jeffrey', 'ryan', 'jacob', 'gary', 'nicholas',
@@ -116,33 +112,30 @@ const MALE_KEYWORDS = [
   'willie', 'gabriel', 'logan', 'alan', 'juan', 'wayne', 'roy', 'ralph', 'randy', 'eugene',
   'vincent', 'russell', 'louis', 'philip', 'bobby', 'johnny', 'bradley', 'martin', 'neil', 'luke',
   'elliott', 'elliot', 'liam', 'oliver', 'lucas', 'mason', 'sebastian', 'owen',
-  'theodore', 'wyatt', 'jayden', 'matteo', 'julian', 'leo', 'ezra', 'harrison', 'merlin', 'pewds',
+  'theodore', 'wyatt', 'jayden', 'matteo', 'julian', 'leo', 'ezra', 'harrison',
   'pewdiepie', 'clint', 'steve', 'mike', 'dave', 'tom', 'chris', 'dan', 'matt', 'alex', 'sam', 'ian',
-  'gubeli', 'jay', 'shetty', 'mcevoy', 'ali', 'abdaal', 'charles', 'edwards'
+  'shetty', 'abdaal', 'charles'
 ];
 
 const TRASH_KEYWORDS = [
-  ...MALE_KEYWORDS,
-  // 청소 / 집안일
+  // 집안일 / 청소 / 잡담 단순노동
   '집청소', '청소업체', '쓰레기집', '특수청소', '청소', '극혐', 'hoarder', 'cleaning extreme',
   'dirty room', 'cleaning dirty', 'cleaning motivation', 'deep clean dirty', 'filthy',
   '설거지', '설겆이', 'dishwashing', 'dishes', 'wash dishes', 'housework', 'chores', 'room tour clean',
   'tidy up', 'declutter', 'house cleaning', 'cleaning routine', 'clean with me',
   'speed clean', 'clean my room', 'kitchen clean', 'bathroom clean', 'laundry', '빨래',
 
-  // AI 보이스 / 가상 캐릭터
+  // AI 보이스 / 버추얼
   'ai voice', 'ai generated', 'ai avatar', 'virtual', 'vtuber', 'animation', 'anime', 'cartoon', 'synth', 'text to speech', 'tts', 'bot',
   'manga', 'manhwa', 'comic', 'webtoon', 'faceless', 'no face',
 
-  // 한국인 / 아시아계 / 흑인 배제 (사용자 요청: 백인 20-30대 원어민 여성 초집중)
-  'korean', 'vlog in korea', 'korea vlog', 'seoul vlog', '한국', '브이로그', '일상', '공부', '직장인', '취준생',
-  'k-pop', 'kpop', 'kdrama', 'black', 'african', 'african american', 'blm', 'ebony', 'dark skin', 'melanin', 'black woman', 'black girl',
-  'chinese', 'mandarin', 'taiwanese', 'china', 'taiwan', 'hong kong',
+  // 한국어/동양어권 (영어 학습용이므로 제외)
+  'korean', 'vlog in korea', 'korea vlog', 'seoul vlog', '한국', '브이로그', '일상', '취준생',
+  'k-pop', 'kpop', 'kdrama', 'chinese', 'mandarin', 'taiwanese', 'china', 'taiwan', 'hong kong',
   '中文', '汉语', '普通话', '台灣', '中国', '香港', '중국어', '대만', 'japanese', 'japan vlog', 'tokyo vlog',
 
-  // 침묵/말 안하는 영상 / 운동 영상 배제 (말을 많이 해야 함!)
+  // 무음 / 비언어 콘텐츠
   '요가', 'yoga', 'pilates', '필라테스', 'stretching', '스트레칭', 'workout', 'exercise', 'fitness routine', 'home workout',
-  '50s', '60s', 'middle aged', 'mom', 'mother', '아줌마', '중년',
   'mukbang', '먹방', 'asmr no talking', 'no talking', 'silent vlog', 'silent reading', 'study with me', 'no voice',
   'shorts', '#shorts', 'clickbait', 'nsfw', '18+', 'gossip', 'drama', 'exposed', 'ambient sound', 'white noise',
   'crime scene', 'infestation', 'cockroach', 'maggot', 'bugs', 'brawl', 'fight'
@@ -155,35 +148,17 @@ export function isTrashContent(title = '', desc = '', channelTitle = '') {
   const text = `${title} ${desc} ${channelTitle}`.toLowerCase();
   const cTitle = (channelTitle || '').toLowerCase();
 
-  // 1. Check Korean Characters in Channel or Title (Exclude Korean vloggers)
-  if (/[가-힣]/.test(cTitle)) {
-    return true;
-  }
-  // If title is more than 30% korean letters, filter out
+  // 1. Check Korean Characters in Channel or Title
+  if (/[가-힣]/.test(cTitle)) return true;
   const koreanCount = (title.match(/[가-힣]/g) || []).length;
   if (koreanCount > 3) return true;
 
-  // 2. Check Chinese characters
-  if (/[\u4e00-\u9fa5]/.test(text)) {
+  // 2. Check Chinese & Japanese
+  if (/[\u4e00-\u9fa5]/.test(text) || /[\u3040-\u309F\u30A0-\u30FF]/.test(text)) {
     return true;
   }
 
-  // 3. Check Japanese kana
-  if (/[\u3040-\u309F\u30A0-\u30FF]/.test(text)) {
-    return true;
-  }
-
-  // 4. Male keyword boundary match
-  for (const kw of MALE_KEYWORDS) {
-    const lowerKw = kw.trim().toLowerCase();
-    if (!lowerKw) continue;
-    if (cTitle.includes(lowerKw)) return true;
-    const escaped = lowerKw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(`(?:^|[^a-z0-9])${escaped}(?:$|[^a-z0-9])`, 'i');
-    if (regex.test(text)) return true;
-  }
-
-  // 5. Trash keyword match
+  // 3. Trash keywords
   for (const kw of TRASH_KEYWORDS) {
     const lowerKw = kw.trim().toLowerCase();
     if (!lowerKw) continue;
@@ -216,83 +191,29 @@ export function parseDurationInSeconds(durationStr) {
 }
 
 /**
- * Require at least 5 minutes (300 seconds) for rich shadowing/talking experience
+ * Require at least 3 minutes (180 seconds) for shadowing / speech
  */
 export function isGoodShadowingLength(durationStr) {
   if (!durationStr) return true;
   const secs = parseDurationInSeconds(durationStr);
-  return secs >= 300; // >= 5 min
+  return secs >= 180; // >= 3 min
 }
 
 /**
- * Parse subscriber string ("2.5K", "1.2M", "2500") to integer
+ * Check upload date within 3 years
  */
-export function parseSubscriberCount(str) {
-  if (!str || typeof str !== 'string') return 0;
-  const cleaned = str.replace(/subscribers/i, '').replace(/구독자/g, '').replace(/명/g, '').trim();
-  const m = cleaned.match(/([\d.]+)\s*([KMkmbB]?)/);
-  if (!m) return 0;
-  let num = parseFloat(m[1]);
-  const unit = m[2].toUpperCase();
-  if (unit === 'K') num *= 1000;
-  else if (unit === 'M') num *= 1000000;
-  else if (unit === 'B') num *= 1000000000;
-  return Math.round(num);
-}
-
-/**
- * Check if channel subscriber meets 2,000+ criteria
- */
-const channelSubCache = new Map();
-
-export async function getChannelSubscriberCount(handleOrId) {
-  if (!handleOrId) return 5000; // default pass if unknown
-  if (channelSubCache.has(handleOrId)) return channelSubCache.get(handleOrId);
-
-  try {
-    const url = handleOrId.startsWith('@') 
-      ? `https://www.youtube.com/${handleOrId}`
-      : `https://www.youtube.com/channel/${handleOrId}`;
-
-    const res = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept-Language': 'en-US,en;q=0.9',
-      },
-      signal: AbortSignal.timeout(4000),
-    });
-    const html = await res.text();
-    const m = html.match(/(\d+(\.\d+)?[KMkmbB]?)\s+subscribers/) || html.match(/구독자\s*(\d+(\.\d+)?[KMkmbB]?\s*명)/);
-    if (m) {
-      const count = parseSubscriberCount(m[1] || m[0]);
-      channelSubCache.set(handleOrId, count);
-      return count;
-    }
-  } catch (e) {
-    // ignore timeout
-  }
-  channelSubCache.set(handleOrId, 2500); // fallback reasonable count
-  return 2500;
-}
-
-/**
- * Check upload date within 7 days
- */
-export function isWithin7Days(publishedText = '') {
+export function isWithin3Years(publishedText = '') {
   if (!publishedText) return true;
   const p = publishedText.toLowerCase().trim();
-  if (p === 'recently' || p.includes('hour') || p.includes('minute') || p.includes('second') || p.includes('방금') || p.includes('시간') || p.includes('분')) {
-    return true;
+  if (p === 'recently' || p.includes('hour') || p.includes('minute') || p.includes('second') || p.includes('day') || p.includes('week') || p.includes('month') || p.includes('방금') || p.includes('시간') || p.includes('분') || p.includes('일') || p.includes('주') || p.includes('개월') || p.includes('달')) {
+    if (!p.includes('year') && !p.includes('년')) {
+      return true;
+    }
   }
-  const dayMatch = p.match(/(\d+)\s*(day|일)/);
-  if (dayMatch) {
-    const days = parseInt(dayMatch[1], 10);
-    return days <= 7;
-  }
-  if (p.includes('week') || p.includes('month') || p.includes('year') || p.includes('주') || p.includes('개월') || p.includes('년')) {
-    const weekMatch = p.match(/(\d+)\s*(week|주)/);
-    if (weekMatch && parseInt(weekMatch[1], 10) === 1) return true; // 1 week is ~7 days
-    return false;
+  const yearMatch = p.match(/(\d+)\s*(?:year|년)/);
+  if (yearMatch) {
+    const years = parseInt(yearMatch[1], 10);
+    return years <= 3;
   }
   return true;
 }
@@ -425,12 +346,11 @@ export function clearUnbookmarkedLinks() {
 }
 
 /**
- * Search YouTube HTML for 7-day uploads (sp=EgIIAw%253D%253D)
+ * Search YouTube HTML for high-quality speech & educational videos
  */
-async function searchYouTube7Days(query) {
+async function searchYouTubeQuery(query) {
   try {
-    // sp=EgIIAw%253D%253D filters directly for "This Week" (last 7 days) on YouTube!
-    const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}&sp=EgIIAw%253D%253D`;
+    const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
     
     const res = await fetch(url, {
       headers: {
@@ -463,18 +383,18 @@ async function searchYouTube7Days(query) {
           const views = v.viewCountText?.simpleText || '';
           const descSnippet = v.detailedMetadataSnippets?.[0]?.snippetText?.runs?.map(r => r.text).join('') || '';
 
-          // 1. Strict Trash / Male / Non-Caucasian / Asian / Korean / Short filter
+          // 1. Strict Trash / Foreign language filter
           if (isTrashContent(title, descSnippet, channelTitle)) {
             continue;
           }
 
-          // 2. Duration filter (must be >= 5 min for shadowing)
+          // 2. Duration filter (must be >= 3 min for speech/shadowing)
           if (duration && !isGoodShadowingLength(duration)) {
             continue;
           }
 
-          // 3. Strict 7-day upload filter
-          if (!isWithin7Days(publishedText)) {
+          // 3. Strict 3-year upload filter
+          if (!isWithin3Years(publishedText)) {
             continue;
           }
 
@@ -501,17 +421,34 @@ async function searchYouTube7Days(query) {
 }
 
 /**
- * Curate dynamically up to 200 Shadowing Videos with SSE Progress Reporting
+ * Determine category by query or title keywords
+ */
+function determineCategory(title = '', query = '') {
+  const text = `${title} ${query}`.toLowerCase();
+  if (text.includes('ted') || text.includes('speech') || text.includes('commencement') || text.includes('presentation')) {
+    return 'ted_speech';
+  }
+  if (text.includes('science') || text.includes('bbc') || text.includes('big think') || text.includes('lecture') || text.includes('harvard') || text.includes('oxford')) {
+    return 'education_sci';
+  }
+  if (text.includes('career') || text.includes('leader') || text.includes('productivity') || text.includes('confidence') || text.includes('mindset')) {
+    return 'career_mind';
+  }
+  return 'diction_essay';
+}
+
+/**
+ * Curate dynamically up to 100 TED & High-Diction Shadowing Videos with SSE Progress Reporting
  */
 export async function curateYouTubeLinksDynamic({
-  limit = 200,
+  limit = 100,
   onProgress = null,
   replaceExisting = true,
 } = {}) {
   const store = loadYouTubeData();
-  const targetTotal = Number(limit) || 200;
+  const targetTotal = Number(limit) || 100;
 
-  if (onProgress) onProgress({ percent: 5, message: `🚀 최근 7일 이내 원어민 여성 쉐도잉 영상 수집 시작... (목표: ${targetTotal}개)` });
+  if (onProgress) onProgress({ percent: 5, message: `🚀 최근 3년 이내 TED & 명품 딕션 여성 교육 쉐도잉 영상 수집 시작... (목표: ${targetTotal}개)` });
 
   const seenIds = new Set();
   // Preserve bookmarked video IDs
@@ -529,28 +466,29 @@ export async function curateYouTubeLinksDynamic({
     if (onProgress) {
       onProgress({
         percent: progressPercent,
-        message: `🔍 7일 이내 최신 영상 탐색 중 (${i + 1}/${totalQueries}): "${q}" (현재 수집: ${collectedVideos.length}/${targetTotal}개)`
+        message: `🔍 TED/교육자료 탐색 중 (${i + 1}/${totalQueries}): "${q}" (현재 수집: ${collectedVideos.length}/${targetTotal}개)`
       });
     }
 
-    const results = await searchYouTube7Days(q);
+    const results = await searchYouTubeQuery(q);
 
     for (const item of results) {
       if (!seenIds.has(item.videoId)) {
         seenIds.add(item.videoId);
+        item.detectedCategory = determineCategory(item.title, q);
         collectedVideos.push(item);
       }
       if (collectedVideos.length >= targetTotal) break;
     }
 
     if (collectedVideos.length >= targetTotal) break;
-    await new Promise(r => setTimeout(r, 150));
+    await new Promise(r => setTimeout(r, 120));
   }
 
   if (onProgress) {
     onProgress({
-      percent: 92,
-      message: `✨ 구독자 2000명+ 및 쉐도잉 품질 필터 최종 정렬 중 (${collectedVideos.length}개)...`
+      percent: 95,
+      message: `✨ TED 및 고품질 딕션 쉐도잉 데이터 100선 정리 중 (${collectedVideos.length}개)...`
     });
   }
 
@@ -558,25 +496,27 @@ export async function curateYouTubeLinksDynamic({
   const selected = collectedVideos.slice(0, targetTotal);
   const curatedItems = selected.map((v, idx) => {
     const durBadge = v.duration ? `⏱️ ${v.duration}` : '⏱️ 10분+';
+    const pubBadge = v.publishedText ? `📅 ${v.publishedText}` : '📅 최근 3년';
     return {
       id: 'yt_sh_' + Date.now() + '_' + idx + '_' + Math.random().toString(36).slice(2, 6),
       videoId: v.videoId,
       title: v.title,
       url: v.url,
-      channelTitle: v.channelTitle || 'Native Speaker',
+      channelTitle: v.channelTitle || 'TED / Expert Speaker',
       duration: v.duration || '10분+',
+      publishedText: v.publishedText || '최근 3년 이내',
       description: v.description,
       thumbnailUrl: v.thumbnailUrl,
       publishedAt: new Date(Date.now() - (idx + 1) * 3600 * 1000).toISOString(),
-      category: 'daily_talk',
+      category: v.detectedCategory || 'ted_speech',
       channelPresetId: 'all',
-      tags: ['원어민쉐도잉', '20-30대여성', '최근7일', durBadge],
+      tags: ['TED강연', '고급딕션', '원어민스피킹', pubBadge, durBadge],
       bookmarked: false,
       bookmarkedAt: null,
       watched: false,
       rating: 0,
       memo: '',
-      source: 'shadowing_dynamic_200',
+      source: 'ted_education_diction_100',
       addedAt: Date.now() - idx * 1000,
       updatedAt: Date.now(),
     };
@@ -589,13 +529,13 @@ export async function curateYouTubeLinksDynamic({
 
   store.items = finalItems;
   store.lastCuratedAt = Date.now();
-  store.lastQuery = `20~30대 백인/원어민 여성 쉐도잉 영상 200개 초집중 수집 (최근 7일)`;
+  store.lastQuery = `최근 3년 TED·교육·명품 딕션 여성 쉐도잉 영상 100선`;
   saveYouTubeData(store);
 
   if (onProgress) {
     onProgress({
       percent: 100,
-      message: `🎉 수집 완료! 총 ${curatedItems.length}개 최신 쉐도잉 영상이 준비되었습니다.`
+      message: `🎉 수집 완료! 총 ${curatedItems.length}개의 TED 및 교육 쉐도잉 영상이 준비되었습니다.`
     });
   }
 

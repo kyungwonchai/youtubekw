@@ -56,7 +56,7 @@ body {
   border: 1px solid #2e3856;
   padding: 24px 30px;
   border-radius: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   flex-wrap: wrap;
   gap: 20px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.3);
@@ -161,6 +161,38 @@ body {
   background: linear-gradient(90deg, #3b82f6, #f43f5e);
   border-radius: 6px;
   transition: width 0.3s ease;
+}
+
+/* Category Pills */
+.yt-cat-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.cat-pill {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-muted);
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.cat-pill:hover {
+  color: white;
+  background: var(--card-hover);
+  border-color: #3b82f6;
+}
+
+.cat-pill.active {
+  background: #3b82f6;
+  color: white;
+  border-color: #60a5fa;
 }
 
 /* Nav & Tabs */
@@ -353,9 +385,23 @@ body {
 .channel-meta {
   display: flex;
   align-items: center;
-  font-size: 0.88rem;
+  justify-content: space-between;
+  font-size: 0.84rem;
   color: #cbd5e1;
   font-weight: 500;
+  gap: 6px;
+}
+
+.channel-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pub-text {
+  color: #94a3b8;
+  font-size: 0.78rem;
+  flex-shrink: 0;
 }
 
 .card-actions {
