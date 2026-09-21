@@ -17,6 +17,7 @@ import {
   loadBlacklist,
   blockVideoOrSpeaker,
 } from './youtube-control.mjs';
+import { getTranscriptForVideo, lookupWord } from './transcript-service.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -122,6 +123,34 @@ const handleGetSpeakers = (req, res) => {
 };
 app.get('/api/speakers', handleGetSpeakers);
 app.get('/youtubekw/api/speakers', handleGetSpeakers);
+
+// Language Reactor Full Transcript Endpoint
+const handleGetTranscript = async (req, res) => {
+  try {
+    const { videoId } = req.params;
+    if (!videoId) return res.status(400).json({ ok: false, error: 'Video ID is required' });
+    const data = await getTranscriptForVideo(videoId, { autoTranslate: true });
+    res.json(data);
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message, lines: [] });
+  }
+};
+app.get('/api/transcript/:videoId', handleGetTranscript);
+app.get('/youtubekw/api/transcript/:videoId', handleGetTranscript);
+
+// Word Dictionary & Translation Lookup Endpoint
+const handleWordLookup = async (req, res) => {
+  try {
+    const word = req.query.word;
+    if (!word) return res.status(400).json({ error: 'Word is required' });
+    const result = await lookupWord(word);
+    res.json(result || { word, translation: '', meanings: [] });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
+app.get('/api/dictionary/lookup', handleWordLookup);
+app.get('/youtubekw/api/dictionary/lookup', handleWordLookup);
 
 // Weekly Wednesday AI Council Sessions Endpoints
 const handleGetWeeklySessions = (req, res) => {

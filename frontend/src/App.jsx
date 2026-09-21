@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import './App.css';
+import LanguageReactorPlayer from './LanguageReactorPlayer';
 
 const API_BASE = window.location.pathname.startsWith('/youtubekw') ? '/youtubekw/api' : '/api';
 
@@ -10,13 +11,14 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [runningWeekly, setRunningWeekly] = useState(false);
   const [activeTab, setActiveTab] = useState('feed'); // 'feed', 'bookmarked', 'weekly', 'speakers'
-  const [selectedCategory, setSelectedCategory] = useState('all'); // 'all', 'ted_speech', 'essay_deep'
+  const [selectedCategory, setSelectedCategory] = useState('all'); // 'all', 'ted_speech', 'essay_deep', 'sleep_life'
   const [searchQuery, setSearchQuery] = useState('');
   const [customUrl, setCustomUrl] = useState('');
   const [addingCustom, setAddingCustom] = useState(false);
   const [toast, setToast] = useState(null);
   const [blockTarget, setBlockTarget] = useState(null); // { item, showModal: boolean }
   const [blocking, setBlocking] = useState(false);
+  const [selectedPlayerVideo, setSelectedPlayerVideo] = useState(null); // Language Reactor Studio Video
 
   const showToast = (message, type = 'info') => {
     setToast({ message, type });
@@ -363,11 +365,9 @@ export default function App() {
           ) : (
             <div className="yt-grid">
               {filteredItems.map((item, index) => (
-                <div key={item.id} className="video-card">
+                <div key={item.id} className="video-card" onClick={() => setSelectedPlayerVideo(item)}>
                   <div className="thumb-wrap">
-                    <a href={item.url} target="_blank" rel="noopener noreferrer">
-                      <img src={item.thumbnailUrl} alt={item.title} loading="lazy" />
-                    </a>
+                    <img src={item.thumbnailUrl} alt={item.title} loading="lazy" />
                     <button
                       className={`star-btn ${item.bookmarked ? 'active' : ''}`}
                       onClick={(e) => handleToggleBookmark(item.id, e)}
@@ -383,22 +383,32 @@ export default function App() {
                   </div>
                   <div className="card-body">
                     <h3 title={item.title}>
-                      <a href={item.url} target="_blank" rel="noopener noreferrer">
-                        {item.title}
-                      </a>
+                      {item.title}
                     </h3>
                     <div className="channel-meta">
                       <span className="channel-title">🎙️ {item.channelTitle}</span>
                       {item.publishedText && <span className="pub-text">📅 {item.publishedText}</span>}
                     </div>
                     <div className="card-actions">
+                      <button
+                        type="button"
+                        className="btn-play"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedPlayerVideo(item);
+                        }}
+                      >
+                        ⚡ 쉐도잉 스튜디오 (실시간 자막)
+                      </button>
                       <a
                         href={item.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="btn-play"
+                        className="btn-yt-link"
+                        onClick={(e) => e.stopPropagation()}
+                        title="유튜브 새창으로 열기"
                       >
-                        ▶ 쉐도잉 시작
+                        ↗️
                       </a>
                       <button
                         onClick={(e) => {
@@ -490,9 +500,15 @@ export default function App() {
                               </div>
                             )}
                             <div className="w-actions">
-                              <a href={v.url} target="_blank" rel="noopener noreferrer" className="btn-play-sm">
-                                ▶ 쉐도잉 시작
-                              </a>
+                              <button
+                                className="btn-play-sm"
+                                onClick={() => {
+                                  const videoId = v.videoId || (v.url ? v.url.match(/(?:youtu\.be\/|v=)([\w-]{11})/)?.[1] : null);
+                                  setSelectedPlayerVideo({ ...v, videoId: videoId || v.id });
+                                }}
+                              >
+                                ⚡ 쉐도잉 스튜디오 (실시간 자막)
+                              </button>
                               <button
                                 className="btn-add-w"
                                 onClick={async () => {
@@ -570,6 +586,15 @@ export default function App() {
           </div>
         )}
       </main>
+
+      {/* Language Reactor Studio Live Player Modal */}
+      {selectedPlayerVideo && (
+        <LanguageReactorPlayer
+          video={selectedPlayerVideo}
+          onClose={() => setSelectedPlayerVideo(null)}
+          onToggleBookmark={handleToggleBookmark}
+        />
+      )}
     </div>
   );
 }

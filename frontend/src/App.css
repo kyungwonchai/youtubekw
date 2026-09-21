@@ -550,20 +550,43 @@ body {
 .btn-play {
   flex: 1;
   text-align: center;
-  background: #1e293b;
-  color: #60a5fa;
-  border: 1px solid #3b82f6;
-  padding: 8px 12px;
+  background: linear-gradient(135deg, rgba(0, 242, 254, 0.15), rgba(59, 130, 246, 0.2));
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  padding: 8px 10px;
   border-radius: 8px;
+  cursor: pointer;
   text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 0.84rem;
+  font-weight: 700;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 
 .btn-play:hover {
-  background: #3b82f6;
-  color: white;
+  background: linear-gradient(135deg, #00f2fe, #3b82f6);
+  color: #0b0f19;
+  border-color: #00f2fe;
+  box-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
+}
+
+.btn-yt-link {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cbd5e1;
+  padding: 8px 10px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.btn-yt-link:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
 }
 
 .btn-block {
