@@ -150,15 +150,15 @@ export const MENTOR_SPEAKER_POOL = [
     keywords: ['Grace Beverley productivity speech', 'Grace Beverley founder interview talk', 'Grace Beverley Oxford talk'],
   },
   {
-    id: 'vanessa_van_edwards',
-    name: 'Vanessa Van Edwards',
-    role: 'Science of People 대표 & 소통 심리학 명강사',
+    id: 'erika_kullberg',
+    name: 'Erika Kullberg',
+    role: '변호사 & Plug 창업가',
     category: 'essay_deep',
-    avatar: '🧠',
-    badge: '🗣️ 카리스마 스피치',
-    dictionStyle: '밝고 또렷한 억양, 청중을 사로잡는 보컬 버라이어티와 발음',
-    coreTopics: '카리스마 스피치, 보컬 큐, 대화 심리학, 프레젠테이션',
-    keywords: ['Vanessa Van Edwards speech', 'Vanessa Van Edwards public speaking', 'Vanessa Van Edwards charisma talk'],
+    avatar: '⚖️',
+    badge: '⚖️ 스마트 협상가',
+    dictionStyle: '깔끔하고 명료한 논리 전개, 한 음절 한 음절 정확한 딕션',
+    coreTopics: '협상 스킬, 스마트한 마인드셋, 20대 커리어 성장',
+    keywords: ['Erika Kullberg interview speech', 'Erika Kullberg talk mindset', 'Erika Kullberg speech career'],
   },
   {
     id: 'maya_shankar',
@@ -172,28 +172,6 @@ export const MENTOR_SPEAKER_POOL = [
     keywords: ['Maya Shankar podcast talk', 'Maya Shankar change mind speech', 'Maya Shankar interview values'],
   },
   {
-    id: 'erika_kullberg',
-    name: 'Erika Kullberg',
-    role: '변호사 & Plug 창업가',
-    category: 'essay_deep',
-    avatar: '⚖️',
-    badge: '⚖️ 스마트 협상가',
-    dictionStyle: '깔끔하고 명료한 논리 전개, 한 음절 한 음절 정확한 딕션',
-    coreTopics: '협상 스킬, 스마트한 마인드셋, 20대 커리어 성장',
-    keywords: ['Erika Kullberg interview speech', 'Erika Kullberg talk mindset', 'Erika Kullberg speech career'],
-  },
-  {
-    id: 'cleo_abram',
-    name: 'Cleo Abram',
-    role: 'Huge If True 대표 저널리스트 & 테크 해설가',
-    category: 'essay_deep',
-    avatar: '🚀',
-    badge: '💡 테크/미래 딕션',
-    dictionStyle: '경쾌하고 지적인 딕션, 복잡한 아이디어를 명쾌하게 설명하는 스피킹',
-    coreTopics: '기술과 미래, 긍정적 미래관, 지적 호기심',
-    keywords: ['Cleo Abram talk', 'Cleo Abram presentation speech', 'Cleo Abram interview'],
-  },
-  {
     id: 'jess_ekstrom',
     name: 'Jess Ekstrom',
     role: 'Headbands of Hope 창업자 & TEDx 명연설가',
@@ -205,43 +183,33 @@ export const MENTOR_SPEAKER_POOL = [
     keywords: ['Jess Ekstrom TEDx talk', 'Jess Ekstrom public speaking speech', 'Jess Ekstrom presentation'],
   },
   {
-    id: 'mel_robbins',
-    name: 'Mel Robbins',
-    role: '베스트셀러 작가 & 세계 1위 동기부여 강연가',
+    id: 'mira_murati',
+    name: 'Mira Murati',
+    role: '전 OpenAI CTO & 테크 엔지니어링 리더',
     category: 'essay_deep',
-    avatar: '🔥',
-    badge: '⚡ 실행력/5초 법칙',
-    dictionStyle: '강렬한 몰입감과 뇌리에 꽂히는 단호한 스피치',
-    coreTopics: '행동 결단력, 5초 법칙, 불안 극복과 자존감',
-    keywords: ['Mel Robbins speech mindset', 'Mel Robbins mindset advice talk', 'Mel Robbins life change'],
+    avatar: '🤖',
+    badge: '🚀 차세대 AI 리더',
+    dictionStyle: '차분하고 정밀한 테크 리더십 스피치, 미래 비전 전달',
+    coreTopics: '기술의 미래, AI 리더십, 혁신을 이끄는 마인드셋',
+    keywords: ['Mira Murati interview keynote talk', 'Mira Murati AI speech leadership', 'Mira Murati keynote speech'],
   },
   {
-    id: 'reshma_saujani',
-    name: 'Reshma Saujani',
-    role: 'Girls Who Code 창립자 & 명기조연설가',
-    category: 'ted_speech',
-    avatar: '💪',
-    badge: '🔥 용기와 도전',
-    dictionStyle: '울림이 큰 기조연설 딕션, 용기를 북돋는 웅변력',
-    coreTopics: '완벽주의 극복, 용기와 도전, 여성 리더십',
-    keywords: ['Reshma Saujani commencement speech', 'Reshma Saujani talk bravery', 'Reshma Saujani TED talk'],
-  },
-  {
-    id: 'amy_cuddy',
-    name: 'Dr. Amy Cuddy',
-    role: '하버드 사회심리학자 & 명강사',
-    category: 'ted_speech',
-    avatar: '🌟',
-    badge: '🏛️ 프레즌스/자신감',
-    dictionStyle: '학술적이면서도 따뜻한 울림을 주는 명품 딕션',
-    coreTopics: '자신감, 프레즌스, 비언어적 커뮤니케이션',
-    keywords: ['Amy Cuddy speech presence', 'Amy Cuddy talk psychology confidence', 'Amy Cuddy TED talk'],
+    id: 'alex_cooper',
+    name: 'Alex Cooper',
+    role: 'Unwell Network 대표 & 20대 미디어 기업가',
+    category: 'essay_deep',
+    avatar: '🎙️',
+    badge: '🔥 20대 미디어 제국',
+    dictionStyle: '파격적인 자신감과 에너지, 상대를 무장해제시키는 스피치',
+    coreTopics: '자기 확신, 협상력, 20대 거대 미디어 비즈니스 구축',
+    keywords: ['Alex Cooper business interview speech', 'Alex Cooper media network talk', 'Alex Cooper Forbes talk'],
   },
 ];
 
-// Targeted queries focused on inspiring female leaders, young billionaire founders, TED speeches, and entrepreneur mindset (within 2-3 years)
+// Targeted queries focused strictly on young brilliant female entrepreneurs, billionaire founders, and TED/commencement speeches (within 2-3 years)
+// Targeted queries focused strictly on young brilliant female entrepreneurs, billionaire founders, and TED/commencement speeches (within 2-3 years)
 const SEARCH_QUERIES = [
-  // 1. Dynamic Young Ace Founder & Game Theorist Targeted Queries
+  // 1. Young Ace Tech Billionaires & Founders
   'Lucy Guo Passes Scale AI interview tech founder advice',
   'Whitney Wolfe Herd Bumble founder commencement speech',
   'Melanie Perkins Canva founder speech keynote lesson',
@@ -249,40 +217,34 @@ const SEARCH_QUERIES = [
   'Grace Beverley productivity business founder interview',
   'Codie Sanchez speaking trick CEO communication',
   'Codie Sanchez mindset business advice',
-  'Vanessa Van Edwards public speaking charisma presentation',
   'Leila Hormozi leadership talk clear diction advice',
-  'Maya Shankar deep talk mindset life advice',
   'Erika Kullberg speech career mindset advice',
-  'Cleo Abram talk clear explanation speech',
+  'Mira Murati interview keynote talk AI',
+  'Alex Cooper business interview speech mindset',
+  'Maya Shankar deep talk mindset life advice',
   'Jess Ekstrom TEDx talk public speaking story',
-  'Mel Robbins powerful speech mindset advice',
-  'Reshma Saujani speech bravery perfectionism',
-  'Amy Cuddy presence speech confidence talk',
 
-  // 2. High-Octane Young Female Founders & Forbes 30 Under 30 Keynotes
+  // 2. High-Energy Young Female Founders & Forbes 30 Under 30 Keynotes
   'Forbes 30 under 30 female founder speech mindset',
   'Y Combinator young female founder pitch presentation',
   'young female CEO public speech confidence clear diction',
   'young female tech founder interview rapid advice english',
-  'female billionaire entrepreneur mindset interview advice',
+  'young female billionaire entrepreneur mindset interview',
 
-  // 3. TED & Inspiring Public Speeches by Young Successful Women
+  // 3. TED & University Speeches by Inspiring Young Women
   'TED talk young female entrepreneur mindset speech',
-  'TED talk woman confidence public speaking storytelling',
-  'TEDx talk inspiring female founder mindset lesson',
-  'TED talk female communication leadership speech clear diction',
-  'TEDx talk woman career resilience life lessons',
+  'TED talk young woman confidence public speaking storytelling',
+  'TEDx talk young female founder mindset resilience',
   'female commencement speech inspiring life advice clear pronunciation',
-  'best female keynote speech clear english diction presentation',
-  'female university speech inspiring mindset english',
+  'best young female keynote speech clear english diction presentation',
+  'young female university speech inspiring mindset english',
 
-  // 4. Life Values, Philosophy & Entrepreneur Mindset Essays
-  'female founder interview mindset advice clear english',
-  'female CEO public talk business communication skills',
-  'inspiring woman life philosophy deep conversation english',
-  'female entrepreneur story overcoming failure success advice',
-  'clear American accent female presentation speech mindset',
-  'clear British accent articulate female speech talk'
+  // 4. Young Female Founder Mindset & Diction
+  'young female founder interview mindset advice clear english',
+  'young female CEO public talk business communication skills',
+  'young female entrepreneur story overcoming failure success advice',
+  'clear American accent young female presentation speech mindset',
+  'clear British accent young articulate female speech talk'
 ];
 
 /**
