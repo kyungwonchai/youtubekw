@@ -11,11 +11,45 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('feed'); // 'feed' or 'bookmarked'
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [customUrl, setCustomUrl] = useState('');
+  const [addingCustom, setAddingCustom] = useState(false);
   const [toast, setToast] = useState(null);
 
   const showToast = (message, type = 'info') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3500);
+  };
+
+  const handleAddCustomUrl = async (e) => {
+    if (e) e.preventDefault();
+    if (!customUrl.trim() || addingCustom) return;
+
+    setAddingCustom(true);
+    try {
+      const res = await fetch(`${API_BASE}/links/custom`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: customUrl.trim(), autoBookmark: true }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || '영상 추가에 실패했습니다.');
+      }
+
+      showToast(`⭐ "${data.item.title}" 영상이 목록 및 찜에 추가되었습니다!`, 'success');
+      setCustomUrl('');
+      
+      // Update local items state
+      setItems(prev => {
+        const filtered = prev.filter(i => i.id !== data.item.id && i.videoId !== data.item.videoId);
+        return [data.item, ...filtered];
+      });
+    } catch (err) {
+      showToast(err.message, 'error');
+    } finally {
+      setAddingCustom(false);
+    }
   };
 
   const fetchLinks = async () => {
@@ -154,6 +188,48 @@ export default function App() {
           </button>
         </div>
       </header>
+
+      {/* Custom URL Quick Add Bar (Instant Bookmark) */}
+      <div className="yt-custom-add-card">
+        <form className="yt-custom-add-form" onSubmit={handleAddCustomUrl}>
+          <div className="yt-custom-input-wrap">
+            <span className="input-icon">🔗</span>
+            <input
+              type="text"
+              className="yt-custom-input"
+              placeholder="추가하고 싶은 유튜브 영상 주소 복붙 (예: https://youtu.be/... 또는 watch?v=...)"
+              value={customUrl}
+              onChange={(e) => setCustomUrl(e.target.value)}
+              disabled={addingCustom}
+            />
+            {customUrl && (
+              <button
+                type="button"
+                className="clear-input-btn"
+                onClick={() => setCustomUrl('')}
+              >
+                ✕
+              </button>
+            )}
+          </div>
+          <button
+            type="submit"
+            className="btn-custom-add"
+            disabled={!customUrl.trim() || addingCustom}
+          >
+            {addingCustom ? (
+              <>
+                <span className="spinner small"></span>
+                <span>불러오는 중...</span>
+              </>
+            ) : (
+              <>
+                <span>⭐ 바로 찜 추가</span>
+              </>
+            )}
+          </button>
+        </form>
+      </div>
 
       {/* Realtime Progress Bar */}
       {curating && (

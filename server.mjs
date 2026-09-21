@@ -8,6 +8,7 @@ import {
   deleteYouTubeLink,
   clearUnbookmarkedLinks,
   curateYouTubeLinksDynamic,
+  addYouTubeLink,
 } from './youtube-control.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -57,6 +58,21 @@ const handleBookmark = (req, res) => {
 };
 app.post('/api/links/:id/bookmark', handleBookmark);
 app.post('/youtubekw/api/links/:id/bookmark', handleBookmark);
+
+const handleAddCustomLink = async (req, res) => {
+  try {
+    const { url, autoBookmark = true, category } = req.body || {};
+    if (!url) {
+      return res.status(400).json({ error: 'URL을 입력해주세요.' });
+    }
+    const result = await addYouTubeLink({ url, autoBookmark, category });
+    res.json({ ok: true, ...result });
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+};
+app.post('/api/links/custom', handleAddCustomLink);
+app.post('/youtubekw/api/links/custom', handleAddCustomLink);
 
 const handleClearFeed = (req, res) => {
   try {

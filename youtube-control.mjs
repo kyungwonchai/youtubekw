@@ -346,6 +346,92 @@ export function clearUnbookmarkedLinks() {
 }
 
 /**
+ * Dynamically add a YouTube link with automatic metadata fetching & instant bookmark
+ */
+export async function addYouTubeLink({ url, autoBookmark = true, category = 'ted_speech' } = {}) {
+  if (!url || typeof url !== 'string' || !url.trim()) {
+    throw new Error('유효한 유튜브 주소(URL)를 입력해주세요.');
+  }
+
+  const videoId = extractYouTubeId(url.trim());
+  if (!videoId) {
+    throw new Error('올바른 유튜브 영상 URL이나 비디오 ID 형식이 아닙니다.');
+  }
+
+  const canonicalUrl = `https://www.youtube.com/watch?v=${videoId}`;
+  const store = loadYouTubeData();
+
+  // Check if item already exists
+  const existingIndex = store.items.findIndex(i => i.videoId === videoId || i.url === canonicalUrl);
+  if (existingIndex >= 0) {
+    const existing = store.items[existingIndex];
+    if (autoBookmark) {
+      existing.bookmarked = true;
+      existing.bookmarkedAt = Date.now();
+    }
+    existing.updatedAt = Date.now();
+    // Bring to top
+    store.items.splice(existingIndex, 1);
+    store.items.unshift(existing);
+    saveYouTubeData(store);
+    return { item: existing, isNew: false };
+  }
+
+  // Fetch title & channel name via YouTube oEmbed API
+  let title = `유튜브 영상 (${videoId})`;
+  let channelTitle = 'YouTube / 직접추가';
+  let thumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+
+  try {
+    const oembedUrl = `https://www.youtube.com/oembed?url=${encodeURIComponent(canonicalUrl)}&format=json`;
+    const res = await fetch(oembedUrl, {
+      headers: { 'Accept': 'application/json' },
+      signal: AbortSignal.timeout(5000),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.title) title = data.title;
+      if (data.author_name) channelTitle = data.author_name;
+      if (data.thumbnail_url) thumbnailUrl = data.thumbnail_url;
+    }
+  } catch (err) {
+    console.warn('[AddYouTubeLink] oEmbed fetch failed, using fallback metadata:', err.message);
+  }
+
+  const detectedCategory = determineCategory(title, '');
+  const now = Date.now();
+
+  const newItem = {
+    id: 'yt_user_' + now + '_' + Math.random().toString(36).slice(2, 6),
+    videoId,
+    title,
+    url: canonicalUrl,
+    channelTitle,
+    duration: '직접추가',
+    publishedText: '직접 등록한 영상',
+    description: `${channelTitle} • 사용자 직접 추가 쉐도잉 영상`,
+    thumbnailUrl,
+    publishedAt: new Date().toISOString(),
+    category: detectedCategory || category || 'ted_speech',
+    channelPresetId: 'custom',
+    tags: ['직접등록', '⭐찜추가', '쉐도잉', '고급딕션'],
+    bookmarked: Boolean(autoBookmark),
+    bookmarkedAt: autoBookmark ? now : null,
+    watched: false,
+    rating: 5,
+    memo: '사용자 직접 추가 쉐도잉 영상',
+    source: 'user_direct_add',
+    addedAt: now,
+    updatedAt: now,
+  };
+
+  store.items.unshift(newItem);
+  saveYouTubeData(store);
+
+  return { item: newItem, isNew: true };
+}
+
+/**
  * Search YouTube HTML for high-quality speech & educational videos
  */
 async function searchYouTubeQuery(query) {
