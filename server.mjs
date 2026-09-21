@@ -18,6 +18,7 @@ import {
   blockVideoOrSpeaker,
 } from './youtube-control.mjs';
 import { getTranscriptForVideo, lookupWord } from './transcript-service.mjs';
+import { getDirectAudioUrl } from './audio-service.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -151,6 +152,33 @@ const handleWordLookup = async (req, res) => {
 };
 app.get('/api/dictionary/lookup', handleWordLookup);
 app.get('/youtubekw/api/dictionary/lookup', handleWordLookup);
+
+// Background Audio Stream & Direct URL Endpoints
+const handleAudioUrl = async (req, res) => {
+  try {
+    const { videoId } = req.params;
+    if (!videoId) return res.status(400).json({ ok: false, error: 'Video ID is required' });
+    const directUrl = await getDirectAudioUrl(videoId);
+    res.json({ ok: true, videoId, audioUrl: directUrl });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+};
+app.get('/api/audio-url/:videoId', handleAudioUrl);
+app.get('/youtubekw/api/audio-url/:videoId', handleAudioUrl);
+
+const handleAudioStreamRedirect = async (req, res) => {
+  try {
+    const { videoId } = req.params;
+    if (!videoId) return res.status(400).send('Video ID is required');
+    const directUrl = await getDirectAudioUrl(videoId);
+    res.redirect(302, directUrl);
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
+};
+app.get('/api/audio-stream/:videoId', handleAudioStreamRedirect);
+app.get('/youtubekw/api/audio-stream/:videoId', handleAudioStreamRedirect);
 
 // Weekly Wednesday AI Council Sessions Endpoints
 const handleGetWeeklySessions = (req, res) => {

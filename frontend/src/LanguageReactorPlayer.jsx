@@ -14,6 +14,11 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
   // Compact Video Mode (화면 상단 20%만 차지하여 자막 공간 극대화)
   const [compactVideo, setCompactVideo] = useState(true);
 
+  // Background Audio Mode (화면 꺼짐 / 잠금화면 1~2시간 연속 재생 모드)
+  const [bgAudioMode, setBgAudioMode] = useState(false);
+  const [audioUrl, setAudioUrl] = useState(null);
+  const [loadingAudio, setLoadingAudio] = useState(false);
+
   // Settings dropdown popup toggle
   const [showSettings, setShowSettings] = useState(false);
 
@@ -30,12 +35,13 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
   const [loopingIndex, setLoopingIndex] = useState(null);
 
   // Word Dictionary Popup
-  const [dictWord, setDictWord] = useState(null); // { word, phonetic, translation, meanings, loading }
+  const [dictWord, setDictWord] = useState(null);
   const [dictPos, setDictPos] = useState({ x: 0, y: 0 });
 
   const activeLineRef = useRef(null);
   const subtitleListRef = useRef(null);
   const timeUpdateInterval = useRef(null);
+  const audioRef = useRef(null);
 
   // 1. Fetch transcript from backend
   useEffect(() => {
@@ -63,7 +69,26 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     return () => { isMounted = false; };
   }, [video.videoId]);
 
-  // 2. Initialize YouTube IFrame API
+  // 2. Fetch direct audio URL for background playback
+  const fetchAudioUrl = async () => {
+    if (audioUrl) return audioUrl;
+    setLoadingAudio(true);
+    try {
+      const res = await fetch(`${API_BASE}/audio-url/${video.videoId}`);
+      const data = await res.json();
+      if (data.ok && data.audioUrl) {
+        setAudioUrl(data.audioUrl);
+        return data.audioUrl;
+      }
+    } catch (e) {
+      console.error('[Audio] Fetch audio url error:', e);
+    } finally {
+      setLoadingAudio(false);
+    }
+    return null;
+  };
+
+  // 3. Initialize YouTube IFrame API
   useEffect(() => {
     let ytPlayer = null;
 
@@ -84,7 +109,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
             setPlayer(event.target);
             setPlayerReady(true);
             setDuration(event.target.getDuration() || 0);
-            event.target.playVideo();
+            if (!bgAudioMode) event.target.playVideo();
           },
           onStateChange: (event) => {
             if (event.data === 1) {
@@ -113,13 +138,17 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     };
   }, [video.videoId]);
 
-  // 3. Time polling loop (100ms) for high-precision subtitle sync & loop handling
+  // 4. Time polling loop (100ms) for high-precision subtitle sync & loop handling
   useEffect(() => {
-    if (!playerReady || !player) return;
-
     timeUpdateInterval.current = setInterval(() => {
       try {
-        const t = player.getCurrentTime();
+        let t = 0;
+        if (bgAudioMode && audioRef.current) {
+          t = audioRef.current.currentTime || 0;
+        } else if (playerReady && player && typeof player.getCurrentTime === 'function') {
+          t = player.getCurrentTime() || 0;
+        }
+
         if (typeof t === 'number') {
           setCurrentTime(t);
 
@@ -129,7 +158,8 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
               setActiveIndex(idx);
 
               if (loopMode === 'pause_after_sentence' && loopingIndex !== null && idx > loopingIndex) {
-                player.pauseVideo();
+                if (bgAudioMode && audioRef.current) audioRef.current.pause();
+                else if (player) player.pauseVideo();
                 setLoopingIndex(null);
               }
             }
@@ -137,7 +167,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
             if (loopMode === 'single_loop' && loopingIndex !== null) {
               const curLine = transcript[loopingIndex];
               if (curLine && t >= curLine.end) {
-                player.seekTo(curLine.start, true);
+                handleSeekTo(curLine.start, loopingIndex);
               }
             }
           }
@@ -148,9 +178,112 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     return () => {
       if (timeUpdateInterval.current) clearInterval(timeUpdateInterval.current);
     };
-  }, [playerReady, player, transcript, activeIndex, loopMode, loopingIndex]);
+  }, [playerReady, player, bgAudioMode, transcript, activeIndex, loopMode, loopingIndex]);
 
-  // 4. Auto scroll active subtitle into center
+  // 5. MediaSession API integration (Galaxy Lockscreen & AOD & Notifications Control)
+  useEffect(() => {
+    if ('mediaSession' in navigator) {
+      try {
+        navigator.mediaSession.metadata = new window.MediaMetadata({
+          title: video.title || 'YouTube Shadowing',
+          artist: video.channelTitle || 'KW Shadowing Studio',
+          album: 'Language Reactor 백그라운드 쉐도잉',
+          artwork: [
+            { src: video.thumbnailUrl || 'https://img.youtube.com/vi/' + video.videoId + '/hqdefault.jpg', sizes: '512x512', type: 'image/jpeg' }
+          ]
+        });
+
+        navigator.mediaSession.setActionHandler('play', () => {
+          if (bgAudioMode && audioRef.current) {
+            audioRef.current.play();
+            setIsPlaying(true);
+          } else if (player) {
+            player.playVideo();
+          }
+        });
+
+        navigator.mediaSession.setActionHandler('pause', () => {
+          if (bgAudioMode && audioRef.current) {
+            audioRef.current.pause();
+            setIsPlaying(false);
+          } else if (player) {
+            player.pauseVideo();
+          }
+        });
+
+        navigator.mediaSession.setActionHandler('previoustrack', () => {
+          const prev = Math.max(0, activeIndex - 1);
+          if (transcript[prev]) handleSeekTo(transcript[prev].start, prev);
+        });
+
+        navigator.mediaSession.setActionHandler('nexttrack', () => {
+          const next = Math.min(transcript.length - 1, activeIndex + 1);
+          if (transcript[next]) handleSeekTo(transcript[next].start, next);
+        });
+
+        navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+          const skipTime = details.seekOffset || 10;
+          handleSeekTo(Math.max(0, currentTime - skipTime));
+        });
+
+        navigator.mediaSession.setActionHandler('seekforward', (details) => {
+          const skipTime = details.seekOffset || 10;
+          handleSeekTo(Math.min(duration || 99999, currentTime + skipTime));
+        });
+
+        navigator.mediaSession.setActionHandler('seekto', (details) => {
+          if (details.seekTime !== undefined) {
+            handleSeekTo(details.seekTime);
+          }
+        });
+      } catch (e) {}
+    }
+  }, [video, bgAudioMode, player, activeIndex, transcript, currentTime, duration]);
+
+  // 6. Toggle Background Audio Mode
+  const handleToggleBgAudio = async () => {
+    if (!bgAudioMode) {
+      // Switch to background audio mode
+      const curTime = player && typeof player.getCurrentTime === 'function' ? player.getCurrentTime() : currentTime;
+      if (player && typeof player.pauseVideo === 'function') {
+        player.pauseVideo();
+      }
+
+      let url = audioUrl;
+      if (!url) {
+        url = await fetchAudioUrl();
+      }
+
+      if (url && audioRef.current) {
+        audioRef.current.src = url;
+        audioRef.current.currentTime = curTime;
+        audioRef.current.playbackRate = playbackRate;
+        audioRef.current.play().then(() => {
+          setIsPlaying(true);
+          setBgAudioMode(true);
+        }).catch(err => {
+          console.warn('Audio play error:', err);
+          setBgAudioMode(true);
+        });
+      } else {
+        setBgAudioMode(true);
+      }
+    } else {
+      // Switch back to video mode
+      const curTime = audioRef.current ? audioRef.current.currentTime : currentTime;
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+      setBgAudioMode(false);
+      if (player && typeof player.seekTo === 'function') {
+        player.seekTo(curTime, true);
+        player.setPlaybackRate(playbackRate);
+        player.playVideo();
+      }
+    }
+  };
+
+  // 7. Auto scroll active subtitle into center
   useEffect(() => {
     if (autoScroll && activeLineRef.current && subtitleListRef.current) {
       activeLineRef.current.scrollIntoView({
@@ -160,19 +293,23 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     }
   }, [activeIndex, autoScroll]);
 
-  // 5. Jump to subtitle timestamp
+  // 8. Jump to subtitle timestamp
   const handleSeekTo = (startTime, index = null) => {
-    if (player && typeof player.seekTo === 'function') {
+    if (bgAudioMode && audioRef.current) {
+      audioRef.current.currentTime = startTime;
+      audioRef.current.play();
+      setIsPlaying(true);
+    } else if (player && typeof player.seekTo === 'function') {
       player.seekTo(startTime, true);
       player.playVideo();
-      if (index !== null) {
-        setActiveIndex(index);
-        if (loopMode === 'single_loop') setLoopingIndex(index);
-      }
+    }
+    if (index !== null) {
+      setActiveIndex(index);
+      if (loopMode === 'single_loop') setLoopingIndex(index);
     }
   };
 
-  // 6. Sentence Loop Toggle
+  // 9. Sentence Loop Toggle
   const handleToggleLineLoop = (index, e) => {
     if (e) e.stopPropagation();
     if (loopMode === 'single_loop' && loopingIndex === index) {
@@ -185,15 +322,17 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     }
   };
 
-  // 7. Change Playback Speed
+  // 10. Change Playback Speed
   const handleRateChange = (rate) => {
-    if (player && typeof player.setPlaybackRate === 'function') {
+    if (bgAudioMode && audioRef.current) {
+      audioRef.current.playbackRate = rate;
+    } else if (player && typeof player.setPlaybackRate === 'function') {
       player.setPlaybackRate(rate);
-      setPlaybackRate(rate);
     }
+    setPlaybackRate(rate);
   };
 
-  // 8. Word click dictionary popup
+  // 11. Word click dictionary popup
   const handleWordClick = async (word, e) => {
     if (e) e.stopPropagation();
     const cleanWord = word.replace(/[^a-zA-Z'-]/g, '').trim();
@@ -227,14 +366,22 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     }
   };
 
-  // 9. Keyboard shortcuts handler
+  // 12. Keyboard shortcuts handler
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
       if (e.code === 'Space') {
         e.preventDefault();
-        if (player) {
+        if (bgAudioMode && audioRef.current) {
+          if (isPlaying) {
+            audioRef.current.pause();
+            setIsPlaying(false);
+          } else {
+            audioRef.current.play();
+            setIsPlaying(true);
+          }
+        } else if (player) {
           if (isPlaying) player.pauseVideo();
           else player.playVideo();
         }
@@ -259,7 +406,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [player, isPlaying, activeIndex, transcript, showSettings, onClose]);
+  }, [player, isPlaying, bgAudioMode, activeIndex, transcript, showSettings, onClose]);
 
   // Format seconds to mm:ss
   const formatTime = (secs) => {
@@ -277,8 +424,17 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
 
   return (
     <div className="lr-modal-backdrop" onClick={onClose}>
-      <div className={`lr-studio-container ${compactVideo ? 'compact-video-mode' : ''}`} onClick={e => e.stopPropagation()}>
+      <div className={`lr-studio-container ${compactVideo ? 'compact-video-mode' : ''} ${bgAudioMode ? 'bg-audio-active' : ''}`} onClick={e => e.stopPropagation()}>
         
+        {/* Hidden HTML5 Audio Element for Background Lockscreen Playback */}
+        <audio
+          ref={audioRef}
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+          onEnded={() => setIsPlaying(false)}
+          playsInline
+        />
+
         {/* COMPACT TOP HEADER */}
         <div className="lr-header">
           <div className="lr-title-info">
@@ -287,14 +443,25 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
           </div>
 
           <div className="lr-header-actions">
-            {/* COMPACT VIDEO TOGGLE ICON (화면 상단 20% 미니 영상 모드) */}
+            {/* BACKGROUND AUDIO LOCKSCREEN PLAYBACK TOGGLE BUTTON */}
             <button
-              className={`lr-icon-btn ${compactVideo ? 'active' : ''}`}
-              onClick={() => setCompactVideo(!compactVideo)}
-              title={compactVideo ? '영상 기본 크기로 확대' : '영상 상단 20% 최소화 (자막 공간 극대화)'}
+              className={`lr-icon-btn ${bgAudioMode ? 'bg-active' : ''}`}
+              onClick={handleToggleBgAudio}
+              title={bgAudioMode ? '백그라운드 모드 끄기 (비디오로 복귀)' : '🎧 백그라운드 취침 모드 (화면 꺼짐 재생)'}
             >
-              {compactVideo ? '🗖 영상확대' : '📱 20% 콤팩트'}
+              {loadingAudio ? '⏳ 오디오 준비...' : bgAudioMode ? '🌙 취침모드 ON' : '🎧 백그라운드'}
             </button>
+
+            {/* COMPACT VIDEO TOGGLE ICON (상단 20% 미니 영상 모드) */}
+            {!bgAudioMode && (
+              <button
+                className={`lr-icon-btn ${compactVideo ? 'active' : ''}`}
+                onClick={() => setCompactVideo(!compactVideo)}
+                title={compactVideo ? '영상 기본 크기로 확대' : '영상 상단 20% 최소화 (자막 공간 극대화)'}
+              >
+                {compactVideo ? '🗖 영상확대' : '📱 20% 콤팩트'}
+              </button>
+            )}
 
             {/* SETTINGS GEAR ICON BUTTON */}
             <button
@@ -367,6 +534,16 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
             </div>
 
             <div className="settings-section">
+              <span className="section-title">🎧 백그라운드 / 취침 모드</span>
+              <button
+                className={`set-toggle-btn ${bgAudioMode ? 'active' : ''}`}
+                onClick={() => { handleToggleBgAudio(); setShowSettings(false); }}
+              >
+                {bgAudioMode ? '🌙 백그라운드 취침 모드 활성화됨 (화면꺼짐 재생)' : '🎧 백그라운드 모드 켜기 (화면꺼짐 재생)'}
+              </button>
+            </div>
+
+            <div className="settings-section">
               <span className="section-title">📜 자막 제어</span>
               <button
                 className={`set-toggle-btn ${autoScroll ? 'active' : ''}`}
@@ -378,19 +555,29 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
           </div>
         )}
 
-        {/* MAIN BODY: VIDEO + SUBTITLES STREAM */}
+        {/* MAIN BODY: VIDEO / AUDIO VISUALIZER + SUBTITLES STREAM */}
         <div className="lr-main-grid">
           
-          {/* VIDEO PLAYER & SLIM ICON CONTROL DECK */}
+          {/* VIDEO PLAYER / BG AUDIO STATUS PANEL */}
           <div className="lr-player-panel">
-            <div className="lr-video-wrapper">
-              <div id="lr-yt-embed"></div>
-            </div>
+            {bgAudioMode ? (
+              <div className="lr-bg-audio-banner">
+                <div className="bg-banner-icon">🌙</div>
+                <div className="bg-banner-text">
+                  <h3>백그라운드 취침 모드 재생 중</h3>
+                  <p>화면을 끄거나 다른 앱을 켜도 끊김 없이 재생됩니다.<br />갤럭시 잠금화면 및 알림창에서 컨트롤하세요.</p>
+                </div>
+              </div>
+            ) : (
+              <div className="lr-video-wrapper">
+                <div id="lr-yt-embed"></div>
+              </div>
+            )}
 
-            {/* SLIM ICON-ONLY CONTROL DECK (공간 절약 극대화) */}
+            {/* SLIM ICON-ONLY CONTROL DECK */}
             <div className="lr-control-deck">
               <div className="lr-icon-controls">
-                {/* PREVIOUS SENTENCE ICON BUTTON */}
+                {/* PREVIOUS SENTENCE */}
                 <button
                   className="lr-icon-action-btn"
                   onClick={() => {
@@ -402,11 +589,19 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                   ⏮️
                 </button>
 
-                {/* PLAY / PAUSE TOGGLE ICON */}
+                {/* PLAY / PAUSE TOGGLE */}
                 <button
                   className="lr-icon-action-btn play-pause-btn"
                   onClick={() => {
-                    if (player) {
+                    if (bgAudioMode && audioRef.current) {
+                      if (isPlaying) {
+                        audioRef.current.pause();
+                        setIsPlaying(false);
+                      } else {
+                        audioRef.current.play();
+                        setIsPlaying(true);
+                      }
+                    } else if (player) {
                       if (isPlaying) player.pauseVideo();
                       else player.playVideo();
                     }
@@ -416,7 +611,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                   {isPlaying ? '⏸️' : '▶️'}
                 </button>
 
-                {/* REPLAY CURRENT SENTENCE ICON BUTTON */}
+                {/* REPLAY CURRENT SENTENCE */}
                 <button
                   className="lr-icon-action-btn active-highlight"
                   onClick={() => {
@@ -429,7 +624,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                   🔄
                 </button>
 
-                {/* NEXT SENTENCE ICON BUTTON */}
+                {/* NEXT SENTENCE */}
                 <button
                   className="lr-icon-action-btn"
                   onClick={() => {
@@ -441,7 +636,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                   ⏭️
                 </button>
 
-                {/* SINGLE SENTENCE LOOP ICON BUTTON */}
+                {/* SINGLE SENTENCE LOOP */}
                 <button
                   className={`lr-icon-action-btn ${loopMode === 'single_loop' ? 'loop-active' : ''}`}
                   onClick={() => {
@@ -463,7 +658,6 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
 
           {/* RIGHT / BOTTOM: MAXIMIZED REAL-TIME SUBTITLES STREAM */}
           <div className="lr-subtitles-panel">
-            {/* SUBTITLE LIST CONTAINER */}
             <div className="lr-sub-list-container" ref={subtitleListRef}>
               {loadingTranscript ? (
                 <div className="lr-sub-loading">
@@ -504,7 +698,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                           </button>
                         </div>
 
-                        {/* SUBTITLE TEXT (MAXIMIZED FOR GALAXY ULTRA) */}
+                        {/* SUBTITLE TEXT */}
                         <div className="line-content">
                           {/* ENGLISH TEXT */}
                           {(displayMode === 'dual' || displayMode === 'en_only') && (
