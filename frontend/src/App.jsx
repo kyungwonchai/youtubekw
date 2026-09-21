@@ -175,12 +175,23 @@ export default function App() {
     { id: 'all', label: '✨ 전체 추천 영상' },
     { id: 'ted_speech', label: '🎤 TED & 명품 강연' },
     { id: 'essay_deep', label: '📚 에세이 & 마인드셋' },
+    { id: 'long_deep', label: '⏳ 긴 영상 (15분~2시간)' },
   ];
 
   const filteredItems = useMemo(() => {
     return items.filter(item => {
       if (activeTab === 'bookmarked' && !item.bookmarked) return false;
-      if (selectedCategory !== 'all' && item.category !== selectedCategory) return false;
+      if (selectedCategory !== 'all') {
+        if (selectedCategory === 'long_deep') {
+          const parts = (item.duration || '').split(':').map(Number);
+          let secs = 0;
+          if (parts.length === 3) secs = parts[0] * 3600 + parts[1] * 60 + parts[2];
+          else if (parts.length === 2) secs = parts[0] * 60 + parts[1];
+          if (item.category !== 'long_deep' && secs < 900) return false;
+        } else if (item.category !== selectedCategory) {
+          return false;
+        }
+      }
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
         const matchTitle = item.title?.toLowerCase().includes(q);
@@ -196,16 +207,6 @@ export default function App() {
   return (
     <div className="yt-app">
       {toast && <div className={`yt-toast ${toast.type}`}>{toast.message}</div>}
-
-      {/* Hero Header */}
-      <header className="yt-hero-header">
-        <div className="yt-hero-title">
-          <span className="hero-emoji">🎙️</span>
-          <div>
-            <h1>TED & 에세이 쉐도잉</h1>
-          </div>
-        </div>
-      </header>
 
       {/* Confirmation Modal for Permanent Dislike / Video Blacklist */}
       {blockTarget && (
@@ -375,7 +376,9 @@ export default function App() {
                       {item.bookmarked ? '⭐' : '☆'}
                     </button>
                     <span className="duration-tag">{item.duration || '10분+'}</span>
-                    <span className="cat-badge">{item.category === 'ted_speech' ? '🎤 TED 강연' : '📚 에세이·마인드'}</span>
+                    <span className="cat-badge">
+                      {item.category === 'ted_speech' ? '🎤 TED 강연' : item.category === 'long_deep' ? '⏳ 긴 영상' : '📚 에세이·마인드'}
+                    </span>
                     <span className="index-tag">#{index + 1}</span>
                   </div>
                   <div className="card-body">

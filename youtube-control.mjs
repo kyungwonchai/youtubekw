@@ -161,6 +161,16 @@ export const CURATION_CHANNELS = [
     category: 'essay_deep',
     defaultTags: ['기업가정신', '인생가치관', '경험담', '고급에세이'],
   },
+  {
+    id: 'long_deep',
+    label: '⏳ 긴 영상 (15분~2시간)',
+    shortLabel: '긴 영상 (15분~2시간)',
+    target: '15분 이상 최대 2시간 이내의 심층 팟캐스트, 렉처, 롱폼 스피치 & 인생 대담',
+    icon: '⏳',
+    desc: '몰입도 높은 15분~120분 길이의 젊고 유창한 여성 리더들의 풀버전 롱폼 대담 및 렉처',
+    category: 'long_deep',
+    defaultTags: ['롱폼쉐도잉', '15분이상', '심층대담', '풀렉처'],
+  },
 ];
 
 /**
@@ -343,7 +353,17 @@ const SEARCH_QUERIES = [
   'Dr Maya Shankar change mind deep talk values',
   'Jess Ekstrom TEDx talk public speaking story',
   'Kat Cole TED talk leadership hot shot rule speech',
-  'Sarah Crawford-Bohl TED talk speaking up'
+  // 4. Long-form Speeches & Deep Podcasts (15 min ~ 2 hours)
+  'inspiring long speech young woman full talk podcast',
+  'TED talk extended lecture female leadership mindset',
+  'Oxford Union address articulate young woman full speech',
+  'young female CEO deep dive interview full podcast clear diction',
+  'Dr Maya Shankar deep conversation podcast full',
+  'Liv Boeree game theory full podcast interview',
+  'Melanie Perkins Canva founder full keynote speech',
+  'Grace Beverley full length business podcast talk',
+  'Whitney Wolfe Herd full university commencement address',
+  'long format inspiring speech articulate woman english'
 ];
 
 /**
@@ -449,12 +469,12 @@ export function parseDurationInSeconds(durationStr) {
 }
 
 /**
- * Require at least 3 minutes (180 seconds) for shadowing / speech
+ * Require at least 3 minutes (180 seconds) up to 2 hours (7200 seconds)
  */
 export function isGoodShadowingLength(durationStr) {
   if (!durationStr) return true;
   const secs = parseDurationInSeconds(durationStr);
-  return secs >= 180; // >= 3 min
+  return secs >= 180 && secs <= 7200; // 3 min <= duration <= 120 min (2 hours)
 }
 
 /**
@@ -634,7 +654,14 @@ export function getYouTubeLinks({ filter = 'all', category = 'all', search = '' 
   }
 
   if (category && category !== 'all') {
-    list = list.filter(item => item.category === category);
+    if (category === 'long_deep') {
+      list = list.filter(item => {
+        const secs = parseDurationInSeconds(item.duration);
+        return item.category === 'long_deep' || secs >= 900;
+      });
+    } else {
+      list = list.filter(item => item.category === category);
+    }
   }
 
   if (search && search.trim()) {
@@ -877,10 +904,18 @@ async function searchYouTubeQuery(query) {
 }
 
 /**
- * Determine category between 2 main categories: 'ted_speech' vs 'essay_deep'
+ * Determine category between categories: 'ted_speech' vs 'essay_deep' vs 'long_deep'
  */
-export function determineCategory(title = '', query = '') {
+export function determineCategory(title = '', query = '', durationStr = '') {
   const text = `${title} ${query}`.toLowerCase();
+  const secs = parseDurationInSeconds(durationStr);
+
+  // 1. Long-form video (>= 15 minutes, up to 2 hours)
+  if (secs >= 900 || text.includes('podcast') || text.includes('full lecture') || text.includes('extended') || text.includes('full interview') || text.includes('deep dive')) {
+    if (secs >= 900) return 'long_deep';
+  }
+
+  // 2. TED & speech
   if (
     text.includes('ted') ||
     text.includes('speech') ||
@@ -933,7 +968,7 @@ export async function curateYouTubeLinksDynamic({
     for (const item of results) {
       if (!seenIds.has(item.videoId)) {
         seenIds.add(item.videoId);
-        item.detectedCategory = determineCategory(item.title, q);
+        item.detectedCategory = determineCategory(item.title, q, item.duration);
         collectedVideos.push(item);
       }
       if (collectedVideos.length >= targetTotal) break;
