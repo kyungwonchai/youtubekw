@@ -11,6 +11,12 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
   const [duration, setDuration] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1);
   
+  // Compact Video Mode (화면 상단 20%만 차지하여 자막 공간 극대화)
+  const [compactVideo, setCompactVideo] = useState(true);
+
+  // Settings dropdown popup toggle
+  const [showSettings, setShowSettings] = useState(false);
+
   // Subtitles state
   const [transcript, setTranscript] = useState([]);
   const [loadingTranscript, setLoadingTranscript] = useState(true);
@@ -81,7 +87,6 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
             event.target.playVideo();
           },
           onStateChange: (event) => {
-            // YT.PlayerState.PLAYING = 1, PAUSED = 2, ENDED = 0
             if (event.data === 1) {
               setIsPlaying(true);
             } else {
@@ -118,20 +123,17 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
         if (typeof t === 'number') {
           setCurrentTime(t);
 
-          // Find current active subtitle
           if (transcript.length > 0) {
             const idx = transcript.findIndex(line => t >= line.start && t < line.end + 0.3);
             if (idx !== -1 && idx !== activeIndex) {
               setActiveIndex(idx);
 
-              // Pause after sentence mode
               if (loopMode === 'pause_after_sentence' && loopingIndex !== null && idx > loopingIndex) {
                 player.pauseVideo();
                 setLoopingIndex(null);
               }
             }
 
-            // Single line loop check
             if (loopMode === 'single_loop' && loopingIndex !== null) {
               const curLine = transcript[loopingIndex];
               if (curLine && t >= curLine.end) {
@@ -228,7 +230,6 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
   // 9. Keyboard shortcuts handler
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Ignore if typing in input
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
       if (e.code === 'Space') {
@@ -238,29 +239,27 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
           else player.playVideo();
         }
       } else if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') {
-        // Previous sentence
         e.preventDefault();
         const prevIdx = Math.max(0, (activeIndex === -1 ? 0 : activeIndex) - 1);
         if (transcript[prevIdx]) handleSeekTo(transcript[prevIdx].start, prevIdx);
       } else if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') {
-        // Next sentence
         e.preventDefault();
         const nextIdx = Math.min(transcript.length - 1, (activeIndex === -1 ? 0 : activeIndex) + 1);
         if (transcript[nextIdx]) handleSeekTo(transcript[nextIdx].start, nextIdx);
       } else if (e.key === 's' || e.key === 'S' || e.key === 'r' || e.key === 'R') {
-        // Replay current sentence
         e.preventDefault();
         if (activeIndex !== -1 && transcript[activeIndex]) {
           handleSeekTo(transcript[activeIndex].start, activeIndex);
         }
       } else if (e.key === 'Escape') {
-        onClose();
+        if (showSettings) setShowSettings(false);
+        else onClose();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [player, isPlaying, activeIndex, transcript, onClose]);
+  }, [player, isPlaying, activeIndex, transcript, showSettings, onClose]);
 
   // Format seconds to mm:ss
   const formatTime = (secs) => {
@@ -269,25 +268,49 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
+  const getDisplayModeLabel = () => {
+    if (displayMode === 'dual') return '🔤 듀얼';
+    if (displayMode === 'en_only') return '🇺🇸 영문';
+    if (displayMode === 'ko_only') return '🇰🇷 한글';
+    return '🙈 블라인드';
+  };
+
   return (
     <div className="lr-modal-backdrop" onClick={onClose}>
-      <div className="lr-studio-container" onClick={e => e.stopPropagation()}>
+      <div className={`lr-studio-container ${compactVideo ? 'compact-video-mode' : ''}`} onClick={e => e.stopPropagation()}>
         
-        {/* TOP HEADER */}
+        {/* COMPACT TOP HEADER */}
         <div className="lr-header">
           <div className="lr-title-info">
-            <span className="lr-badge">⚡ Language Reactor Mode</span>
-            <h2>{video.title}</h2>
-            <span className="lr-channel">🎙️ {video.channelTitle}</span>
+            <span className="lr-badge">⚡ 쉐도잉</span>
+            <h2 title={video.title}>{video.title}</h2>
           </div>
 
           <div className="lr-header-actions">
+            {/* COMPACT VIDEO TOGGLE ICON (화면 상단 20% 미니 영상 모드) */}
+            <button
+              className={`lr-icon-btn ${compactVideo ? 'active' : ''}`}
+              onClick={() => setCompactVideo(!compactVideo)}
+              title={compactVideo ? '영상 기본 크기로 확대' : '영상 상단 20% 최소화 (자막 공간 극대화)'}
+            >
+              {compactVideo ? '🗖 영상확대' : '📱 20% 콤팩트'}
+            </button>
+
+            {/* SETTINGS GEAR ICON BUTTON */}
+            <button
+              className={`lr-icon-btn ${showSettings ? 'active' : ''}`}
+              onClick={() => setShowSettings(!showSettings)}
+              title="자막 모드 & 배속 설정"
+            >
+              ⚙️ {getDisplayModeLabel()}
+            </button>
+
             <button
               className={`lr-star-btn ${video.bookmarked ? 'active' : ''}`}
               onClick={() => onToggleBookmark && onToggleBookmark(video.id)}
               title={video.bookmarked ? '찜 해제' : '다시보기 찜'}
             >
-              {video.bookmarked ? '⭐ 찜됨' : '☆ 찜하기'}
+              {video.bookmarked ? '⭐' : '☆'}
             </button>
             <button className="lr-close-btn" onClick={onClose} title="닫기 (ESC)">
               ✕
@@ -295,30 +318,107 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
           </div>
         </div>
 
-        {/* MAIN BODY: VIDEO (LEFT) + SUBTITLES STREAM (RIGHT) */}
+        {/* SETTINGS FLOATING DROPDOWN MENU */}
+        {showSettings && (
+          <div className="lr-settings-dropdown" onClick={e => e.stopPropagation()}>
+            <div className="settings-section">
+              <span className="section-title">🔤 자막 표시 모드</span>
+              <div className="settings-btn-grid">
+                <button
+                  className={`set-choice-btn ${displayMode === 'dual' ? 'active' : ''}`}
+                  onClick={() => { setDisplayMode('dual'); setShowSettings(false); }}
+                >
+                  🔤 영문 + 한글 듀얼
+                </button>
+                <button
+                  className={`set-choice-btn ${displayMode === 'en_only' ? 'active' : ''}`}
+                  onClick={() => { setDisplayMode('en_only'); setShowSettings(false); }}
+                >
+                  🇺🇸 영문 자막만
+                </button>
+                <button
+                  className={`set-choice-btn ${displayMode === 'ko_only' ? 'active' : ''}`}
+                  onClick={() => { setDisplayMode('ko_only'); setShowSettings(false); }}
+                >
+                  🇰🇷 한글 번역만
+                </button>
+                <button
+                  className={`set-choice-btn ${displayMode === 'blind' ? 'active' : ''}`}
+                  onClick={() => { setDisplayMode('blind'); setShowSettings(false); }}
+                >
+                  🙈 블라인드 (가리기)
+                </button>
+              </div>
+            </div>
+
+            <div className="settings-section">
+              <span className="section-title">⚡ 재생 속도</span>
+              <div className="settings-rate-row">
+                {[0.75, 0.9, 1.0, 1.1, 1.25].map(rate => (
+                  <button
+                    key={rate}
+                    className={`rate-pill ${playbackRate === rate ? 'active' : ''}`}
+                    onClick={() => handleRateChange(rate)}
+                  >
+                    {rate}x
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="settings-section">
+              <span className="section-title">📜 자막 제어</span>
+              <button
+                className={`set-toggle-btn ${autoScroll ? 'active' : ''}`}
+                onClick={() => setAutoScroll(!autoScroll)}
+              >
+                {autoScroll ? '✅ 실시간 자동 스크롤 ON' : '❌ 자동 스크롤 OFF'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* MAIN BODY: VIDEO + SUBTITLES STREAM */}
         <div className="lr-main-grid">
           
-          {/* LEFT: VIDEO PLAYER & CONTROL DECK */}
+          {/* VIDEO PLAYER & SLIM ICON CONTROL DECK */}
           <div className="lr-player-panel">
             <div className="lr-video-wrapper">
               <div id="lr-yt-embed"></div>
             </div>
 
-            {/* QUICK CONTROL BAR */}
+            {/* SLIM ICON-ONLY CONTROL DECK (공간 절약 극대화) */}
             <div className="lr-control-deck">
-              <div className="lr-playback-controls">
+              <div className="lr-icon-controls">
+                {/* PREVIOUS SENTENCE ICON BUTTON */}
                 <button
-                  className="lr-deck-btn"
+                  className="lr-icon-action-btn"
                   onClick={() => {
                     const prev = Math.max(0, activeIndex - 1);
                     if (transcript[prev]) handleSeekTo(transcript[prev].start, prev);
                   }}
                   title="이전 문장 (A)"
                 >
-                  ⏮️ 이전 문장
+                  ⏮️
                 </button>
+
+                {/* PLAY / PAUSE TOGGLE ICON */}
                 <button
-                  className="lr-deck-btn active-highlight"
+                  className="lr-icon-action-btn play-pause-btn"
+                  onClick={() => {
+                    if (player) {
+                      if (isPlaying) player.pauseVideo();
+                      else player.playVideo();
+                    }
+                  }}
+                  title="재생 / 일시정지 (Space)"
+                >
+                  {isPlaying ? '⏸️' : '▶️'}
+                </button>
+
+                {/* REPLAY CURRENT SENTENCE ICON BUTTON */}
+                <button
+                  className="lr-icon-action-btn active-highlight"
                   onClick={() => {
                     if (activeIndex !== -1 && transcript[activeIndex]) {
                       handleSeekTo(transcript[activeIndex].start, activeIndex);
@@ -326,115 +426,54 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                   }}
                   title="현재 문장 다시듣기 (S)"
                 >
-                  🔄 현재 문장 반복
+                  🔄
                 </button>
+
+                {/* NEXT SENTENCE ICON BUTTON */}
                 <button
-                  className="lr-deck-btn"
+                  className="lr-icon-action-btn"
                   onClick={() => {
                     const next = Math.min(transcript.length - 1, activeIndex + 1);
                     if (transcript[next]) handleSeekTo(transcript[next].start, next);
                   }}
                   title="다음 문장 (D)"
                 >
-                  다음 문장 ⏭️
+                  ⏭️
                 </button>
-              </div>
 
-              {/* SPEED & LOOP MODES */}
-              <div className="lr-deck-settings">
-                <div className="lr-setting-group">
-                  <span className="setting-label">⚡ 속도:</span>
-                  {[0.75, 0.9, 1.0, 1.25].map(rate => (
-                    <button
-                      key={rate}
-                      className={`rate-btn ${playbackRate === rate ? 'active' : ''}`}
-                      onClick={() => handleRateChange(rate)}
-                    >
-                      {rate}x
-                    </button>
-                  ))}
-                </div>
-
-                <div className="lr-setting-group">
-                  <button
-                    className={`loop-mode-btn ${loopMode === 'single_loop' ? 'active' : ''}`}
-                    onClick={() => {
-                      if (loopMode === 'single_loop') {
-                        setLoopMode('none');
-                        setLoopingIndex(null);
-                      } else {
-                        setLoopMode('single_loop');
-                        setLoopingIndex(activeIndex !== -1 ? activeIndex : 0);
-                      }
-                    }}
-                    title="한 문장 무한 반복 쉐도잉 모드"
-                  >
-                    🔁 문장 무한반복 {loopMode === 'single_loop' ? 'ON' : 'OFF'}
-                  </button>
-                </div>
-              </div>
-
-              {/* SHORTCUTS GUIDE */}
-              <div className="lr-shortcuts-hint">
-                <span>⌨️ <strong>단축키:</strong> [Space] 일시정지/재생 | [A/D] 이전/다음 문장 | [S] 현재 문장 반복 | [ESC] 닫기</span>
+                {/* SINGLE SENTENCE LOOP ICON BUTTON */}
+                <button
+                  className={`lr-icon-action-btn ${loopMode === 'single_loop' ? 'loop-active' : ''}`}
+                  onClick={() => {
+                    if (loopMode === 'single_loop') {
+                      setLoopMode('none');
+                      setLoopingIndex(null);
+                    } else {
+                      setLoopMode('single_loop');
+                      setLoopingIndex(activeIndex !== -1 ? activeIndex : 0);
+                    }
+                  }}
+                  title="현재 문장 무한반복 토글"
+                >
+                  🔁
+                </button>
               </div>
             </div>
           </div>
 
-          {/* RIGHT: REAL-TIME SUBTITLES STREAM (LANGUAGE REACTOR VIEW) */}
+          {/* RIGHT / BOTTOM: MAXIMIZED REAL-TIME SUBTITLES STREAM */}
           <div className="lr-subtitles-panel">
-            
-            {/* SUBTITLE DISPLAY MODE SELECTOR */}
-            <div className="lr-sub-toolbar">
-              <div className="lr-mode-selector">
-                <button
-                  className={`sub-mode-btn ${displayMode === 'dual' ? 'active' : ''}`}
-                  onClick={() => setDisplayMode('dual')}
-                >
-                  🔤 영문 + 한글 (듀얼)
-                </button>
-                <button
-                  className={`sub-mode-btn ${displayMode === 'en_only' ? 'active' : ''}`}
-                  onClick={() => setDisplayMode('en_only')}
-                >
-                  🇺🇸 영문만
-                </button>
-                <button
-                  className={`sub-mode-btn ${displayMode === 'ko_only' ? 'active' : ''}`}
-                  onClick={() => setDisplayMode('ko_only')}
-                >
-                  🇰🇷 한글만
-                </button>
-                <button
-                  className={`sub-mode-btn ${displayMode === 'blind' ? 'active' : ''}`}
-                  onClick={() => setDisplayMode('blind')}
-                  title="자막 가리기 (리스닝 훈련)"
-                >
-                  🙈 블라인드
-                </button>
-              </div>
-
-              <button
-                className={`autoscroll-btn ${autoScroll ? 'active' : ''}`}
-                onClick={() => setAutoScroll(!autoScroll)}
-                title="자동 스크롤 켜기/끄기"
-              >
-                📜 자동스크롤 {autoScroll ? 'ON' : 'OFF'}
-              </button>
-            </div>
-
-            {/* SUBTITLES LIST */}
+            {/* SUBTITLE LIST CONTAINER */}
             <div className="lr-sub-list-container" ref={subtitleListRef}>
               {loadingTranscript ? (
                 <div className="lr-sub-loading">
                   <div className="spinner large"></div>
-                  <p>실시간 전문 자막 및 한글 번역 로딩 중...</p>
+                  <p>실시간 자막 & 번역 불러오는 중...</p>
                 </div>
               ) : transcriptError ? (
                 <div className="lr-sub-error">
                   <div className="error-icon">⚠️</div>
                   <p>{transcriptError}</p>
-                  <span>유튜브 플레이어 자체 자막(CC)을 켜고 시청하실 수 있습니다.</span>
                 </div>
               ) : transcript.length === 0 ? (
                 <div className="lr-sub-empty">
@@ -453,9 +492,9 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                         className={`lr-sub-line ${isActive ? 'active' : ''} ${isLooping ? 'looping' : ''}`}
                         onClick={() => handleSeekTo(line.start, idx)}
                       >
-                        {/* TIMESTAMP & ACTIONS */}
+                        {/* TIMESTAMP & QUICK LOOP ICON */}
                         <div className="line-meta">
-                          <span className="line-time">⏱️ {formatTime(line.start)}</span>
+                          <span className="line-time">{formatTime(line.start)}</span>
                           <button
                             className={`line-loop-btn ${isLooping ? 'active' : ''}`}
                             onClick={(e) => handleToggleLineLoop(idx, e)}
@@ -465,9 +504,9 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                           </button>
                         </div>
 
-                        {/* SUBTITLE TEXT */}
+                        {/* SUBTITLE TEXT (MAXIMIZED FOR GALAXY ULTRA) */}
                         <div className="line-content">
-                          {/* ENGLISH TEXT (Interactive Words) */}
+                          {/* ENGLISH TEXT */}
                           {(displayMode === 'dual' || displayMode === 'en_only') && (
                             <div className="line-en">
                               {line.text.split(' ').map((word, wIdx) => (
@@ -475,7 +514,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                                   key={wIdx}
                                   className="clickable-word"
                                   onClick={(e) => handleWordClick(word, e)}
-                                  title="클릭하여 단어 사전 보기"
+                                  title="단어 사전"
                                 >
                                   {word}{' '}
                                 </span>
@@ -490,10 +529,10 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                             </div>
                           )}
 
-                          {/* BLIND MODE PLACEHOLDER */}
+                          {/* BLIND MODE */}
                           {displayMode === 'blind' && (
                             <div className="line-blind-placeholder">
-                              🔒 [자막 숨김 모드 - 귀로 집중하여 들어보세요]
+                              🔒 [자막 숨김 - 듣기 집중]
                             </div>
                           )}
                         </div>
