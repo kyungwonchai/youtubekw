@@ -539,8 +539,11 @@ export default function App() {
                 <div key={sp.id} className="speaker-card">
                   <div className="speaker-head">
                     <span className="speaker-avatar">{sp.avatar || '✨'}</span>
-                    <div>
-                      <h3>{sp.name}</h3>
+                    <div className="speaker-head-text">
+                      <div className="speaker-title-row">
+                        <h3>{sp.name}</h3>
+                        {sp.badge && <span className="speaker-badge-pill">{sp.badge}</span>}
+                      </div>
                       <span className="speaker-role">{sp.role}</span>
                     </div>
                   </div>

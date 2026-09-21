@@ -3,6 +3,34 @@ import path from 'path';
 
 const YOUTUBE_FILE = '/home/kw/.kwsoft-youtube-links.json';
 const WEEKLY_FILE = '/home/kw/.kwsoft-youtube-weekly.json';
+const SPEAKERS_FILE = '/home/kw/.kwsoft-youtube-speakers.json';
+
+/**
+ * Load all speakers (base pool + dynamically discovered ace speakers)
+ */
+export function loadAllSpeakers() {
+  let customSpeakers = [];
+  if (existsSync(SPEAKERS_FILE)) {
+    try {
+      const raw = readFileSync(SPEAKERS_FILE, 'utf8');
+      const data = JSON.parse(raw);
+      if (Array.isArray(data)) customSpeakers = data;
+    } catch (e) {}
+  }
+  const map = new Map();
+  MENTOR_SPEAKER_POOL.forEach(s => map.set(s.id, s));
+  customSpeakers.forEach(s => map.set(s.id, s));
+  return Array.from(map.values());
+}
+
+export function saveCustomSpeakers(speakers) {
+  try {
+    writeFileSync(SPEAKERS_FILE, JSON.stringify(speakers, null, 2), 'utf8');
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
 
 /**
  * 2 Main Categories Focus: TED 강연 vs 에세이 & 마인드셋
@@ -45,24 +73,48 @@ export const CURATION_CHANNELS = [
  */
 export const MENTOR_SPEAKER_POOL = [
   {
+    id: 'lucy_guo',
+    name: 'Lucy Guo',
+    role: 'Passes & Scale AI 창업가 (포브스 30대 이하 최연소 억만장자)',
+    category: 'essay_deep',
+    avatar: '⚡',
+    badge: '🔥 20대 테크 에이스',
+    dictionStyle: '극도로 빠른 템포와 거침없는 비즈니스 결단력, 실리콘밸리 CEO 딕션',
+    coreTopics: '창업 실행력, 20대 자수성가, 실패를 두려워하지 않는 공격적 마인드',
+    keywords: ['Lucy Guo interview tech founder', 'Lucy Guo Scale AI Passes speech', 'Lucy Guo founder mindset advice'],
+  },
+  {
+    id: 'whitney_wolfe_herd',
+    name: 'Whitney Wolfe Herd',
+    role: 'Bumble 최연소 여성 억만장자 창업가 & CEO',
+    category: 'essay_deep',
+    avatar: '🐝',
+    badge: '🌟 유니콘 신화',
+    dictionStyle: '우아하면서도 단단한 카리스마, 설득력 높은 비즈니스 피칭',
+    coreTopics: '거절 극복, 여성 주도적 플랫폼 창업, 20대 리더십',
+    keywords: ['Whitney Wolfe Herd keynote speech', 'Whitney Wolfe Herd interview advice', 'Whitney Wolfe Herd commencement speech'],
+  },
+  {
+    id: 'liv_boeree',
+    name: 'Liv Boeree',
+    role: '케임브리지 물리학 & 세계 챔피언 포커 플레이어·게임이론가',
+    category: 'ted_speech',
+    avatar: '🎯',
+    badge: '🧠 게임이론/의사결정',
+    dictionStyle: '날카롭고 지적인 영국식 고급 딕션, 빈틈없는 논리 전개',
+    coreTopics: '게임이론, 확률적 사고, 불확실성 속 최고의 의사결정',
+    keywords: ['Liv Boeree TED talk speech', 'Liv Boeree decision making game theory', 'Liv Boeree podcast talk'],
+  },
+  {
     id: 'codie_sanchez',
     name: 'Codie Sanchez',
     role: '성공 투자자 & Contrarian Thinking 창업가',
     category: 'essay_deep',
     avatar: '💼',
+    badge: '💎 3-2-1 스피치 마스터',
     dictionStyle: '직설적이고 빠른 템포의 CEO급 비즈니스 딕션, 3-2-1 스피치 기법',
     coreTopics: '자본주의 마인드셋, 기업가정신, 실행력, 스피치 구조화',
     keywords: ['Codie Sanchez speech', 'Codie Sanchez speaking trick', 'Codie Sanchez mindset advice', 'BigDeal Codie Sanchez'],
-  },
-  {
-    id: 'vanessa_van_edwards',
-    name: 'Vanessa Van Edwards',
-    role: 'Science of People 대표 & 소통 심리학 명강사',
-    category: 'essay_deep',
-    avatar: '🧠',
-    dictionStyle: '밝고 또렷한 억양, 청중을 사로잡는 보컬 버라이어티와 발음',
-    coreTopics: '카리스마 스피치, 보컬 큐, 대화 심리학, 프레젠테이션',
-    keywords: ['Vanessa Van Edwards speech', 'Vanessa Van Edwards public speaking', 'Vanessa Van Edwards charisma talk'],
   },
   {
     id: 'leila_hormozi',
@@ -70,9 +122,43 @@ export const MENTOR_SPEAKER_POOL = [
     role: 'Acquisition.com CEO & 경영 리더',
     category: 'essay_deep',
     avatar: '👑',
+    badge: '👑 고성과 리더십',
     dictionStyle: '당당하고 확신에 찬 에너지, 또렷하고 단호한 발음',
     coreTopics: '사업 확장, 리더십, 극복의 경험담, 여성 CEO 마인드셋',
     keywords: ['Leila Hormozi speech', 'Leila Hormozi interview advice', 'Leila Hormozi leadership talk'],
+  },
+  {
+    id: 'melanie_perkins',
+    name: 'Melanie Perkins',
+    role: 'Canva 공동창업자 & 글로벌 CEO',
+    category: 'essay_deep',
+    avatar: '🎨',
+    badge: '🚀 글로벌 유니콘 CEO',
+    dictionStyle: '또렷하고 명확한 호주식 고급 딕션, 열정과 비전이 담긴 스피치',
+    coreTopics: '100번의 거절을 딛고 일어선 끈기, 글로벌 제품 빌딩, 창업가 마인드',
+    keywords: ['Melanie Perkins Canva speech interview', 'Melanie Perkins founder story mindset', 'Melanie Perkins keynote talk'],
+  },
+  {
+    id: 'grace_beverley',
+    name: 'Grace Beverley',
+    role: 'TALA & Shreddy 20대 창업가 / 옥스퍼드 출신 비즈니스 리더',
+    category: 'essay_deep',
+    avatar: '🏆',
+    badge: '🇬🇧 20대 생산성 에이스',
+    dictionStyle: '유려하고 빠른 영국식 RP 딕션, 체계적인 논리와 에너지',
+    coreTopics: '20대 사업 성공, 워크-라이프 생산성, 소셜미디어 제국 구축',
+    keywords: ['Grace Beverley productivity speech', 'Grace Beverley founder interview talk', 'Grace Beverley Oxford talk'],
+  },
+  {
+    id: 'vanessa_van_edwards',
+    name: 'Vanessa Van Edwards',
+    role: 'Science of People 대표 & 소통 심리학 명강사',
+    category: 'essay_deep',
+    avatar: '🧠',
+    badge: '🗣️ 카리스마 스피치',
+    dictionStyle: '밝고 또렷한 억양, 청중을 사로잡는 보컬 버라이어티와 발음',
+    coreTopics: '카리스마 스피치, 보컬 큐, 대화 심리학, 프레젠테이션',
+    keywords: ['Vanessa Van Edwards speech', 'Vanessa Van Edwards public speaking', 'Vanessa Van Edwards charisma talk'],
   },
   {
     id: 'maya_shankar',
@@ -80,6 +166,7 @@ export const MENTOR_SPEAKER_POOL = [
     role: '인지과학자 (옥스퍼드/스탠퍼드) & 전 백악관 선임고문',
     category: 'essay_deep',
     avatar: '✨',
+    badge: '🧠 뇌과학 & 딥토크',
     dictionStyle: '지적이고 정돈된 표준 미국식 발음, 차분하면서도 깊은 울림의 딕션',
     coreTopics: '삶의 변화, 정체성 재정의, 가치관, 딥 인터뷰',
     keywords: ['Maya Shankar podcast talk', 'Maya Shankar change mind speech', 'Maya Shankar interview values'],
@@ -90,6 +177,7 @@ export const MENTOR_SPEAKER_POOL = [
     role: '변호사 & Plug 창업가',
     category: 'essay_deep',
     avatar: '⚖️',
+    badge: '⚖️ 스마트 협상가',
     dictionStyle: '깔끔하고 명료한 논리 전개, 한 음절 한 음절 정확한 딕션',
     coreTopics: '협상 스킬, 스마트한 마인드셋, 20대 커리어 성장',
     keywords: ['Erika Kullberg interview speech', 'Erika Kullberg talk mindset', 'Erika Kullberg speech career'],
@@ -100,6 +188,7 @@ export const MENTOR_SPEAKER_POOL = [
     role: 'Huge If True 대표 저널리스트 & 테크 해설가',
     category: 'essay_deep',
     avatar: '🚀',
+    badge: '💡 테크/미래 딕션',
     dictionStyle: '경쾌하고 지적인 딕션, 복잡한 아이디어를 명쾌하게 설명하는 스피킹',
     coreTopics: '기술과 미래, 긍정적 미래관, 지적 호기심',
     keywords: ['Cleo Abram talk', 'Cleo Abram presentation speech', 'Cleo Abram interview'],
@@ -110,6 +199,7 @@ export const MENTOR_SPEAKER_POOL = [
     role: 'Headbands of Hope 창업자 & TEDx 명연설가',
     category: 'ted_speech',
     avatar: '🎤',
+    badge: '🎤 스토리텔링 정수',
     dictionStyle: '감정을 울리는 스토리텔링과 완벽한 호흡 조절',
     coreTopics: '스토리텔링, 대중 연설, 소셜 벤처 기업가정신',
     keywords: ['Jess Ekstrom TEDx talk', 'Jess Ekstrom public speaking speech', 'Jess Ekstrom presentation'],
@@ -120,6 +210,7 @@ export const MENTOR_SPEAKER_POOL = [
     role: '베스트셀러 작가 & 세계 1위 동기부여 강연가',
     category: 'essay_deep',
     avatar: '🔥',
+    badge: '⚡ 실행력/5초 법칙',
     dictionStyle: '강렬한 몰입감과 뇌리에 꽂히는 단호한 스피치',
     coreTopics: '행동 결단력, 5초 법칙, 불안 극복과 자존감',
     keywords: ['Mel Robbins speech mindset', 'Mel Robbins mindset advice talk', 'Mel Robbins life change'],
@@ -130,6 +221,7 @@ export const MENTOR_SPEAKER_POOL = [
     role: 'Girls Who Code 창립자 & 명기조연설가',
     category: 'ted_speech',
     avatar: '💪',
+    badge: '🔥 용기와 도전',
     dictionStyle: '울림이 큰 기조연설 딕션, 용기를 북돋는 웅변력',
     coreTopics: '완벽주의 극복, 용기와 도전, 여성 리더십',
     keywords: ['Reshma Saujani commencement speech', 'Reshma Saujani talk bravery', 'Reshma Saujani TED talk'],
@@ -140,19 +232,24 @@ export const MENTOR_SPEAKER_POOL = [
     role: '하버드 사회심리학자 & 명강사',
     category: 'ted_speech',
     avatar: '🌟',
+    badge: '🏛️ 프레즌스/자신감',
     dictionStyle: '학술적이면서도 따뜻한 울림을 주는 명품 딕션',
     coreTopics: '자신감, 프레즌스, 비언어적 커뮤니케이션',
     keywords: ['Amy Cuddy speech presence', 'Amy Cuddy talk psychology confidence', 'Amy Cuddy TED talk'],
   },
 ];
 
-// Targeted queries focused on inspiring female leaders, TED speeches, and entrepreneur mindset (within 2-3 years)
+// Targeted queries focused on inspiring female leaders, young billionaire founders, TED speeches, and entrepreneur mindset (within 2-3 years)
 const SEARCH_QUERIES = [
-  // 1. Mentor Pool Targeted Search
+  // 1. Dynamic Young Ace Founder & Game Theorist Targeted Queries
+  'Lucy Guo Passes Scale AI interview tech founder advice',
+  'Whitney Wolfe Herd Bumble founder commencement speech',
+  'Melanie Perkins Canva founder speech keynote lesson',
+  'Liv Boeree TED talk decision making game theory speech',
+  'Grace Beverley productivity business founder interview',
   'Codie Sanchez speaking trick CEO communication',
   'Codie Sanchez mindset business advice',
   'Vanessa Van Edwards public speaking charisma presentation',
-  'Vanessa Van Edwards communication speech tips',
   'Leila Hormozi leadership talk clear diction advice',
   'Maya Shankar deep talk mindset life advice',
   'Erika Kullberg speech career mindset advice',
@@ -162,7 +259,14 @@ const SEARCH_QUERIES = [
   'Reshma Saujani speech bravery perfectionism',
   'Amy Cuddy presence speech confidence talk',
 
-  // 2. TED & Inspiring Public Speeches by Young Successful Women
+  // 2. High-Octane Young Female Founders & Forbes 30 Under 30 Keynotes
+  'Forbes 30 under 30 female founder speech mindset',
+  'Y Combinator young female founder pitch presentation',
+  'young female CEO public speech confidence clear diction',
+  'young female tech founder interview rapid advice english',
+  'female billionaire entrepreneur mindset interview advice',
+
+  // 3. TED & Inspiring Public Speeches by Young Successful Women
   'TED talk young female entrepreneur mindset speech',
   'TED talk woman confidence public speaking storytelling',
   'TEDx talk inspiring female founder mindset lesson',
@@ -172,7 +276,7 @@ const SEARCH_QUERIES = [
   'best female keynote speech clear english diction presentation',
   'female university speech inspiring mindset english',
 
-  // 3. Life Values, Philosophy & Entrepreneur Mindset Essays
+  // 4. Life Values, Philosophy & Entrepreneur Mindset Essays
   'female founder interview mindset advice clear english',
   'female CEO public talk business communication skills',
   'inspiring woman life philosophy deep conversation english',
@@ -472,7 +576,7 @@ export function getYouTubeLinks({ filter = 'all', category = 'all', search = '' 
     lastCuratedAt: store.lastCuratedAt || null,
     lastQuery: store.lastQuery || '',
     channels: CURATION_CHANNELS,
-    speakers: MENTOR_SPEAKER_POOL,
+    speakers: loadAllSpeakers(),
   };
 }
 

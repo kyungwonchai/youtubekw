@@ -10,6 +10,7 @@ import {
   curateYouTubeLinksDynamic,
   addYouTubeLink,
   MENTOR_SPEAKER_POOL,
+  loadAllSpeakers,
   loadWeeklyData,
   runWednesdayMeeting,
   checkAndRunWeeklyCatchup,
@@ -91,7 +92,7 @@ app.post('/youtubekw/api/clear-feed', handleClearFeed);
 
 // Mentors & Speakers Pool Endpoint
 const handleGetSpeakers = (req, res) => {
-  res.json({ speakers: MENTOR_SPEAKER_POOL });
+  res.json({ speakers: loadAllSpeakers() });
 };
 app.get('/api/speakers', handleGetSpeakers);
 app.get('/youtubekw/api/speakers', handleGetSpeakers);
