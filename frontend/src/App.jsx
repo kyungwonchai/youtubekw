@@ -180,7 +180,7 @@ export default function App() {
   };
 
   const categories = [
-    { id: 'all', label: '✨ 전체 모아보기 (100선)' },
+    { id: 'all', label: '✨ 전체 추천 영상' },
     { id: 'ted_speech', label: '🎤 TED & 명품 강연' },
     { id: 'essay_deep', label: '📚 에세이 & 마인드셋' },
   ];
@@ -210,8 +210,8 @@ export default function App() {
         <div className="yt-hero-title">
           <span className="hero-emoji">🎙️</span>
           <div>
-            <h1>TED & 에세이 쉐도잉 (100선)</h1>
-            <p>젊고 성공한 여성 리더들의 TED 명연설 & 인생 가치관·기업가정신 에세이 | 명품 딕션 스피치 훈련</p>
+            <h1>TED & 에세이 쉐도잉</h1>
+            <p>밝고 지적인 여성 리더·명사들의 명품 TED 강연 & 인생 가치관 에세이 | 원어민 딕션 스피치 훈련</p>
           </div>
         </div>
 
@@ -221,17 +221,17 @@ export default function App() {
               className={`btn-main-collect ${curating ? 'is-loading' : ''}`}
               disabled={curating}
               onClick={handleStartCuration}
-              title="최신 100개 수집 (내가 찜한 영상은 안전하게 보존됩니다)"
+              title="최신 명품 강연 영상 수집 (내가 찜한 영상은 안전하게 보존됩니다)"
             >
               {curating ? (
                 <>
                   <span className="spinner"></span>
-                  <span>100개 수집 중 ({progress.percent}%)</span>
+                  <span>최신 수집 중 ({progress.percent}%)</span>
                 </>
               ) : (
                 <>
                   <span className="btn-icon">⚡</span>
-                  <span>100개 최신 수집하기</span>
+                  <span>최신 쉐도잉 영상 수집하기</span>
                 </>
               )}
             </button>

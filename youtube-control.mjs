@@ -38,9 +38,9 @@ export function saveCustomSpeakers(speakers) {
 export const CURATION_CHANNELS = [
   {
     id: 'all',
-    label: '✨ 전체 모아보기 (TED & 에세이 100선)',
-    shortLabel: '전체 100선',
-    target: '최근 2~3년 이내 젊고 성공한 여성 리더들의 TED 명연설 및 인생 가치관·마인드셋 쉐도잉 100선',
+    label: '✨ 전체 추천 영상',
+    shortLabel: '전체 추천',
+    target: '최근 2~3년 이내 밝고 지적인 여성 리더·명사들의 명품 TED 강연 및 인생 가치관·마인드셋 쉐도잉',
     icon: '✨',
     desc: '스피치 훈련 & 영어 쉐도잉에 최적화된 유창하고 또렷한 딕션의 명사 강연 및 에세이',
     category: 'all',
@@ -206,52 +206,48 @@ export const MENTOR_SPEAKER_POOL = [
   },
 ];
 
-// Targeted queries focused strictly on young brilliant female entrepreneurs, billionaire founders, and TED/commencement speeches (within 2-3 years)
-// Targeted queries focused strictly on young brilliant female entrepreneurs, billionaire founders, and TED/commencement speeches (within 2-3 years)
+// Targeted queries focused strictly on bright, young, inspiring female speakers, TEDx talks, and elite diction essays
 const SEARCH_QUERIES = [
-  // 1. Young Ace Tech Billionaires & Founders
-  'Lucy Guo Passes Scale AI interview tech founder advice',
+  // 1. Core TED & TEDx Talks by Inspiring, Articulate Young Women
+  'TED talk inspiring young woman clear english diction speech',
+  'TED talk female psychology mindset clear english pronunciation',
+  'TED talk female leadership resilience storytelling speech',
+  'TEDx talk young woman confidence public speaking storytelling',
+  'TED talk woman brain science communication speech',
+  'TED talk inspiring female founder mindset lesson',
+  'TED talk female productivity habits clear speech english',
+  'TEDx talk young woman overcoming obstacles resilience speech',
+  'TED talk female storytelling public speaking masterclass',
+  
+  // 2. High-Diction Speeches, University Commencements & Presentations
+  'commencement speech inspiring young female clear english',
+  'inspiring speech young woman life advice clear pronunciation',
+  'best speeches by women clear english diction presentation',
+  'Oxford Union speech articulate inspiring young woman',
+  'female university student commencement speech inspiring',
+  'inspiring keynote speech young female founder mindset',
+  'great speeches by young women clear diction english',
+  
+  // 3. Top-Tier Young Ace Mentors & Role Models
+  'Liv Boeree TED talk decision making game theory speech',
   'Whitney Wolfe Herd Bumble founder commencement speech',
   'Melanie Perkins Canva founder speech keynote lesson',
-  'Liv Boeree TED talk decision making game theory speech',
-  'Grace Beverley productivity business founder interview',
+  'Grace Beverley productivity business speech Oxford talk',
   'Codie Sanchez speaking trick CEO communication',
-  'Codie Sanchez mindset business advice',
+  'Codie Sanchez mindset business advice speech',
   'Leila Hormozi leadership talk clear diction advice',
-  'Erika Kullberg speech career mindset advice',
-  'Mira Murati interview keynote talk AI',
-  'Alex Cooper business interview speech mindset',
-  'Maya Shankar deep talk mindset life advice',
+  'Erika Kullberg speech career negotiation mindset',
+  'Dr Maya Shankar change mind deep talk values',
   'Jess Ekstrom TEDx talk public speaking story',
-
-  // 2. High-Energy Young Female Founders & Forbes 30 Under 30 Keynotes
-  'Forbes 30 under 30 female founder speech mindset',
-  'Y Combinator young female founder pitch presentation',
-  'young female CEO public speech confidence clear diction',
-  'young female tech founder interview rapid advice english',
-  'young female billionaire entrepreneur mindset interview',
-
-  // 3. TED & University Speeches by Inspiring Young Women
-  'TED talk young female entrepreneur mindset speech',
-  'TED talk young woman confidence public speaking storytelling',
-  'TEDx talk young female founder mindset resilience',
-  'female commencement speech inspiring life advice clear pronunciation',
-  'best young female keynote speech clear english diction presentation',
-  'young female university speech inspiring mindset english',
-
-  // 4. Young Female Founder Mindset & Diction
-  'young female founder interview mindset advice clear english',
-  'young female CEO public talk business communication skills',
-  'young female entrepreneur story overcoming failure success advice',
-  'clear American accent young female presentation speech mindset',
-  'clear British accent young articulate female speech talk'
+  'Kat Cole TED talk leadership hot shot rule speech',
+  'Sarah Crawford-Bohl TED talk speaking up'
 ];
 
 /**
  * Filter keywords
  */
 const MALE_KEYWORDS = [
-  '남자', '남성', 'man', 'men', 'male', 'guy', 'guys', 'husband', 'boyfriend', 'boy', 'boys', 'bro', 'bros',
+  '남자', '남성', 'male', 'guy', 'guys', 'husband', 'boyfriend', 'boy', 'boys', 'bro', 'bros',
   'father', 'dad', 'brother', 'son', 'gentleman', 'gentlemen', 'he', 'his', 'him', 'mr.', 'mr ', 'sir', 'himself',
   'jack', 'john', 'david', 'michael', 'james', 'robert', 'william', 'thomas', 'daniel', 'matthew',
   'anthony', 'mark', 'donald', 'steven', 'paul', 'andrew', 'joshua', 'kenneth', 'kevin', 'brian',
@@ -265,11 +261,18 @@ const MALE_KEYWORDS = [
   'vincent', 'russell', 'louis', 'philip', 'bobby', 'johnny', 'bradley', 'martin', 'neil', 'luke',
   'elliott', 'elliot', 'liam', 'oliver', 'lucas', 'mason', 'sebastian', 'owen',
   'theodore', 'wyatt', 'jayden', 'matteo', 'julian', 'leo', 'ezra', 'harrison',
-  'pewdiepie', 'clint', 'steve', 'mike', 'dave', 'tom', 'chris', 'dan', 'matt', 'alex', 'sam', 'ian',
-  'shetty', 'abdaal', 'charles'
+  'pewdiepie', 'clint', 'steve', 'mike', 'dave', 'tom', 'chris', 'dan', 'matt', 'sam', 'ian',
+  'shetty', 'abdaal', 'charles', 'moseley', 'roland frasier', 'simon sinek', 'huberman', 'peterson',
+  'jensen huang', 'shashi tharoor', 'konstantin kisin', 'mehdi hasan', 'raj persaud'
 ];
 
 const TRASH_KEYWORDS = [
+  // Banned or low-quality speakers / filters
+  'mel robbins', 'cleo abram', 'vanessa van edwards', 'dr. justin moseley', 'moseley',
+  'black woman', 'black female', 'african', 'olamide olowe', 'chidera eggerue', 'kamala harris',
+  'grandma', 'elderly', 'wrinkle', 'senior citizen', 'old woman', 'old lady', '70-year', '80-year', '90-year',
+  'wrinkles', 'aging skin', 'grandparent', 'retiree',
+
   // 집안일 / 청소 / 잡담 단순노동
   '집청소', '청소업체', '쓰레기집', '특수청소', '청소', '극혐', 'hoarder', 'cleaning extreme',
   'dirty room', 'cleaning dirty', 'cleaning motivation', 'deep clean dirty', 'filthy',
@@ -420,7 +423,7 @@ export function loadWeeklyData() {
           agenda: 'Codie Sanchez의 3-2-1 스피치 구조화, Leila Hormozi의 실행력 마인드셋 및 TEDx 스토리텔링 훈련',
           speakerHighlights: [
             { name: 'Codie Sanchez', point: 'CEO처럼 명확하게 말하는 3-2-1 스피치 공식 (불필요한 군더더기 제거)' },
-            { name: 'Vanessa Van Edwards', point: '상대방을 몰입시키는 카리스마 보컬 큐 & 보컬 버라이어티' },
+            { name: 'Whitney Wolfe Herd', point: '최연소 여성 유니콘 창업가의 우아하고 단단한 카리스마 스피치' },
             { name: 'Maya Shankar', point: '인생의 급격한 전환점에서 가치관을 정립하고 단단해지는 법' },
           ],
           summary: '금주 회의에서는 청중을 단숨에 사로잡는 빠른 템포의 비즈니스 딕션과 깊이 있는 인생 에세이를 엄선하여 추천 목록을 확정하였습니다.',
@@ -709,6 +712,18 @@ async function searchYouTubeQuery(query) {
             continue;
           }
 
+          // 1-1. Male speaker filter
+          const combinedLower = `${title} ${channelTitle} ${descSnippet}`.toLowerCase();
+          const isMale = MALE_KEYWORDS.some(kw => {
+            const lowerKw = kw.trim().toLowerCase();
+            if (!lowerKw) return false;
+            const regex = new RegExp(`(?:^|[^a-z0-9])${lowerKw}(?:$|[^a-z0-9])`, 'i');
+            return regex.test(combinedLower);
+          });
+          if (isMale) {
+            continue;
+          }
+
           // 2. Duration filter (must be >= 3 min for speech/shadowing)
           if (duration && !isGoodShadowingLength(duration)) {
             continue;
@@ -839,7 +854,7 @@ export async function curateYouTubeLinksDynamic({
       watched: false,
       rating: 0,
       memo: '',
-      source: 'ted_essay_mindset_100',
+      source: 'ted_essay_shadowing',
       addedAt: Date.now() - idx * 1000,
       updatedAt: Date.now(),
     };
@@ -859,7 +874,7 @@ export async function curateYouTubeLinksDynamic({
 
   store.items = finalItems;
   store.lastCuratedAt = Date.now();
-  store.lastQuery = `최근 2~3년 TED & 여성 리더 에세이·마인드셋 쉐도잉 100선`;
+  store.lastQuery = `최근 TED & 명품 여성 리더 에세이·마인드셋 쉐도잉`;
   saveYouTubeData(store);
 
   if (onProgress) {
