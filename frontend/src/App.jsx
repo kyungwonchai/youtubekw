@@ -17,6 +17,8 @@ export default function App() {
   const [customUrl, setCustomUrl] = useState('');
   const [addingCustom, setAddingCustom] = useState(false);
   const [toast, setToast] = useState(null);
+  const [blockTarget, setBlockTarget] = useState(null); // { item, showModal: boolean }
+  const [blocking, setBlocking] = useState(false);
 
   const showToast = (message, type = 'info') => {
     setToast({ message, type });
@@ -64,11 +66,11 @@ export default function App() {
     fetchSpeakers();
   }, []);
 
-  // Realtime 100 TED & Essay Shadowing Videos Curation with SSE Progress Bar
+  // Realtime TED & Essay Shadowing Videos Curation with SSE Progress Bar
   const handleStartCuration = () => {
     if (curating) return;
     setCurating(true);
-    setProgress({ percent: 5, message: '🚀 젊은 여성 리더들의 TED 강연 & 에세이 쉐도잉 100선 수집 시작...' });
+    setProgress({ percent: 5, message: '🚀 젊은 여성 리더들의 TED 강연 & 에세이 쉐도잉 수집 시작...' });
 
     const eventSource = new EventSource(`${API_BASE}/curate-stream?limit=100`);
 
@@ -156,11 +158,39 @@ export default function App() {
     }
   };
 
+  // Permanent Blacklist / Dislike (절대비추 영구차단 확인 및 실행)
+  const handleConfirmBlock = async () => {
+    if (!blockTarget || blocking) return;
+    setBlocking(true);
+    try {
+      const res = await fetch(`${API_BASE}/blacklist`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          videoId: blockTarget.videoId,
+          channelTitle: blockTarget.channelTitle,
+          title: blockTarget.title,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || '차단 실패');
+
+      // Purge from local items
+      setItems(prev => prev.filter(i => i.videoId !== blockTarget.videoId && i.channelTitle !== blockTarget.channelTitle));
+      showToast(`🚫 "${blockTarget.channelTitle}" 및 관련 영상이 영구 차단(절대비추)되었습니다.`, 'error');
+      setBlockTarget(null);
+    } catch (err) {
+      showToast(err.message, 'error');
+    } finally {
+      setBlocking(false);
+    }
+  };
+
   // Run Wednesday AI Council manually
   const handleRunWeeklyMeetingNow = async () => {
     if (runningWeekly) return;
     setRunningWeekly(true);
-    showToast('🤖 주간 AI 추천 회의 진행 중 (명강사 최근 2년 강연 분석)...', 'info');
+    showToast('🤖 주간 AI 추천 회의 진행 중 (명강사 최근 강연 분석)...', 'info');
     try {
       const res = await fetch(`${API_BASE}/weekly-sessions/run`, {
         method: 'POST',
@@ -211,7 +241,6 @@ export default function App() {
           <span className="hero-emoji">🎙️</span>
           <div>
             <h1>TED & 에세이 쉐도잉</h1>
-            <p>밝고 지적인 여성 리더·명사들의 명품 TED 강연 & 인생 가치관 에세이 | 원어민 딕션 스피치 훈련</p>
           </div>
         </div>
 
@@ -239,6 +268,39 @@ export default function App() {
           </div>
         </div>
       </header>
+
+      {/* Confirmation Modal for Permanent Dislike / Blacklist */}
+      {blockTarget && (
+        <div className="modal-backdrop" onClick={() => !blocking && setBlockTarget(null)}>
+          <div className="block-modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-icon">🚫</div>
+            <h3>절대비추 (영구 차단) 등록</h3>
+            <p className="modal-desc">
+              <strong>"{blockTarget.title}"</strong><br />
+              <span className="channel-highlight">연설자/채널: {blockTarget.channelTitle}</span>
+            </p>
+            <div className="modal-warning-box">
+              ⚠️ 이 연설자 및 채널은 <strong>영구 블랙리스트</strong>에 등록되어, 지금 즉시 피드에서 제거되고 향후 모든 추천 및 수집에서 <strong>영원히 제외</strong>됩니다.
+            </div>
+            <div className="modal-actions">
+              <button
+                className="btn-modal-cancel"
+                disabled={blocking}
+                onClick={() => setBlockTarget(null)}
+              >
+                취소
+              </button>
+              <button
+                className="btn-modal-confirm"
+                disabled={blocking}
+                onClick={handleConfirmBlock}
+              >
+                {blocking ? '차단 처리 중...' : '🔥 확인 (영구 차단)'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Custom URL Quick Add Bar (Instant Bookmark) */}
       <div className="yt-custom-add-card">
@@ -373,7 +435,7 @@ export default function App() {
             <div className="empty-state">
               <div className="empty-icon">🎧</div>
               <h2>준비된 영상이 없습니다.</h2>
-              <p>상단의 <strong>[⚡ 100개 최신 수집하기]</strong> 버튼을 눌러 TED & 에세이 쉐도잉 영상을 즉시 채워보세요!</p>
+              <p>상단의 <strong>[⚡ 최신 쉐도잉 영상 수집하기]</strong> 버튼을 눌러 TED & 에세이 쉐도잉 영상을 즉시 채워보세요!</p>
             </div>
           ) : (
             <div className="yt-grid">
@@ -413,6 +475,16 @@ export default function App() {
                       >
                         ▶ 쉐도잉 시작
                       </a>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setBlockTarget(item);
+                        }}
+                        className="btn-block"
+                        title="절대비추 (연설자/채널 영구 차단)"
+                      >
+                        🚫 절대비추
+                      </button>
                       <button
                         onClick={(e) => handleDelete(item.id, e)}
                         className="btn-del"

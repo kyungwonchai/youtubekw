@@ -14,6 +14,8 @@ import {
   loadWeeklyData,
   runWednesdayMeeting,
   checkAndRunWeeklyCatchup,
+  loadBlacklist,
+  blockVideoOrSpeaker,
 } from './youtube-control.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -26,6 +28,30 @@ app.use(express.json({ limit: '10mb' }));
 // Static files for both root / and /youtubekw/
 app.use('/', express.static(path.join(__dirname, 'public')));
 app.use('/youtubekw', express.static(path.join(__dirname, 'public')));
+
+// Blacklist (절대비추 영구차단) Handlers
+const handleGetBlacklist = (req, res) => {
+  try {
+    const data = loadBlacklist();
+    res.json(data);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
+app.get('/api/blacklist', handleGetBlacklist);
+app.get('/youtubekw/api/blacklist', handleGetBlacklist);
+
+const handleBlockSpeaker = (req, res) => {
+  try {
+    const { videoId, channelTitle, title, speakerName } = req.body || {};
+    const result = blockVideoOrSpeaker({ videoId, channelTitle, title, speakerName });
+    res.json(result);
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+};
+app.post('/api/blacklist', handleBlockSpeaker);
+app.post('/youtubekw/api/blacklist', handleBlockSpeaker);
 
 // API Handlers
 const handleGetLinks = (req, res) => {

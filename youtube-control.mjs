@@ -4,6 +4,133 @@ import path from 'path';
 const YOUTUBE_FILE = '/home/kw/.kwsoft-youtube-links.json';
 const WEEKLY_FILE = '/home/kw/.kwsoft-youtube-weekly.json';
 const SPEAKERS_FILE = '/home/kw/.kwsoft-youtube-speakers.json';
+const BLACKLIST_FILE = '/home/kw/.kwsoft-youtube-blacklist.json';
+
+/**
+ * Permanent Blacklist Management (절대비추 / 영구 차단 목록)
+ */
+export function loadBlacklist() {
+  if (!existsSync(BLACKLIST_FILE)) {
+    return { channels: [], speakers: [], videoIds: [], keywords: [] };
+  }
+  try {
+    const raw = readFileSync(BLACKLIST_FILE, 'utf8');
+    const data = JSON.parse(raw);
+    return {
+      channels: Array.isArray(data.channels) ? data.channels : [],
+      speakers: Array.isArray(data.speakers) ? data.speakers : [],
+      videoIds: Array.isArray(data.videoIds) ? data.videoIds : [],
+      keywords: Array.isArray(data.keywords) ? data.keywords : [],
+    };
+  } catch (e) {
+    return { channels: [], speakers: [], videoIds: [], keywords: [] };
+  }
+}
+
+export function saveBlacklist(data) {
+  try {
+    writeFileSync(BLACKLIST_FILE, JSON.stringify(data, null, 2), 'utf8');
+    return true;
+  } catch (e) {
+    console.error('[Blacklist] Save error:', e.message);
+    return false;
+  }
+}
+
+/**
+ * Block a video, channel, and speaker permanently
+ */
+export function blockVideoOrSpeaker({ videoId, channelTitle, title, speakerName } = {}) {
+  const bl = loadBlacklist();
+  let modified = false;
+
+  if (videoId && !bl.videoIds.includes(videoId)) {
+    bl.videoIds.push(videoId);
+    modified = true;
+  }
+
+  if (channelTitle && typeof channelTitle === 'string' && channelTitle.trim()) {
+    const cleanChan = channelTitle.trim();
+    if (!bl.channels.includes(cleanChan)) {
+      bl.channels.push(cleanChan);
+      modified = true;
+    }
+  }
+
+  if (speakerName && typeof speakerName === 'string' && speakerName.trim()) {
+    const cleanSp = speakerName.trim();
+    if (!bl.speakers.includes(cleanSp)) {
+      bl.speakers.push(cleanSp);
+      modified = true;
+    }
+  }
+
+  // Auto-extract speaker name from title if format "Title | Speaker | TEDx"
+  if (title && typeof title === 'string') {
+    const parts = title.split(/[|·•-]/).map(p => p.trim());
+    if (parts.length >= 2) {
+      for (const part of parts) {
+        if (
+          !part.toLowerCase().includes('ted') &&
+          !part.toLowerCase().includes('speech') &&
+          !part.toLowerCase().includes('talk') &&
+          !part.toLowerCase().includes('how') &&
+          !part.toLowerCase().includes('why') &&
+          !part.toLowerCase().includes('the') &&
+          part.length >= 3 &&
+          part.length <= 25 &&
+          /^[a-zA-Z\s.]+$/.test(part)
+        ) {
+          if (!bl.speakers.includes(part)) {
+            bl.speakers.push(part);
+            modified = true;
+          }
+        }
+      }
+    }
+  }
+
+  if (modified) {
+    saveBlacklist(bl);
+  }
+
+  // Also purge blocked items from current youtube links
+  const store = loadYouTubeData();
+  const beforeLen = store.items.length;
+  store.items = store.items.filter(item => !isBlacklisted(item.title, item.description, item.channelTitle, item.videoId));
+  if (store.items.length !== beforeLen) {
+    saveYouTubeData(store);
+  }
+
+  return { ok: true, blacklist: bl, purgedCount: beforeLen - store.items.length };
+}
+
+/**
+ * Check if an item matches the permanent blacklist
+ */
+export function isBlacklisted(title = '', desc = '', channelTitle = '', videoId = '') {
+  const bl = loadBlacklist();
+  if (videoId && bl.videoIds.includes(videoId)) return true;
+
+  const combined = `${title} ${desc} ${channelTitle}`.toLowerCase();
+  
+  for (const chan of bl.channels) {
+    if (chan && channelTitle.toLowerCase().includes(chan.toLowerCase())) return true;
+  }
+
+  for (const sp of bl.speakers) {
+    if (!sp || sp.length < 2) continue;
+    const lower = sp.toLowerCase();
+    const regex = new RegExp(`(?:^|[^a-z0-9])${lower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?:$|[^a-z0-9])`, 'i');
+    if (regex.test(combined)) return true;
+  }
+
+  for (const kw of bl.keywords) {
+    if (kw && combined.includes(kw.toLowerCase())) return true;
+  }
+
+  return false;
+}
 
 /**
  * Load all speakers (base pool + dynamically discovered ace speakers)
@@ -206,9 +333,17 @@ export const MENTOR_SPEAKER_POOL = [
   },
 ];
 
-// Targeted queries focused strictly on bright, young, inspiring female speakers, TEDx talks, and elite diction essays
+// Targeted queries focused strictly on bright, young, inspiring female speakers, diverse TED topics, and elite diction essays
 const SEARCH_QUERIES = [
-  // 1. Core TED & TEDx Talks by Inspiring, Articulate Young Women
+  // 1. Core TED & TEDx Talks by Inspiring, Articulate Young Women (Life, Travel, Climate, Family, Hobbies, Film, Music, Culture, Speech, Confidence, Ambition)
+  'TED talk young woman travel life adventure clear english speech',
+  'TED talk young female climate change nature future speech',
+  'TED talk woman life philosophy family relationships clear speech',
+  'TEDx talk young woman hobbies creativity passion storytelling',
+  'TED talk female film cinema art culture english diction speech',
+  'TED talk young woman music psychology sound emotion speech',
+  'TED talk female public speaking confidence stage presence',
+  'TEDx talk young woman ambition desire success mindset speech',
   'TED talk inspiring young woman clear english diction speech',
   'TED talk female psychology mindset clear english pronunciation',
   'TED talk female leadership resilience storytelling speech',
@@ -355,23 +490,40 @@ export function isGoodShadowingLength(durationStr) {
 }
 
 /**
- * Check upload date within 3 years
+ * Check upload date strictly within 5 years (reject anything > 5 years)
  */
-export function isWithin3Years(publishedText = '') {
+export function isWithin5Years(publishedText = '') {
   if (!publishedText) return true;
   const p = publishedText.toLowerCase().trim();
-  if (p === 'recently' || p.includes('hour') || p.includes('minute') || p.includes('second') || p.includes('day') || p.includes('week') || p.includes('month') || p.includes('방금') || p.includes('시간') || p.includes('분') || p.includes('일') || p.includes('주') || p.includes('개월') || p.includes('달')) {
-    if (!p.includes('year') && !p.includes('년')) {
-      return true;
-    }
+  
+  // Shorthand formats: "13y ago", "6mo ago", "3d ago", "2w ago"
+  const shortYearMatch = p.match(/(\d+)\s*y(?:ear)?s?(?:\s*ago)?/);
+  if (shortYearMatch) {
+    const years = parseInt(shortYearMatch[1], 10);
+    return years <= 5;
   }
-  const yearMatch = p.match(/(\d+)\s*(?:year|년)/);
-  if (yearMatch) {
-    const years = parseInt(yearMatch[1], 10);
-    return years <= 3;
+
+  // Korean year match: "13년 전"
+  const krYearMatch = p.match(/(\d+)\s*년/);
+  if (krYearMatch) {
+    const years = parseInt(krYearMatch[1], 10);
+    return years <= 5;
   }
+
+  // If text has hours, minutes, seconds, days, weeks, months without 'year' or 'y ago', it's recent
+  if (
+    p === 'recently' ||
+    p.includes('hour') || p.includes('minute') || p.includes('second') ||
+    p.includes('day') || p.includes('week') || p.includes('month') || p.includes('mo ago') ||
+    p.includes('방금') || p.includes('시간') || p.includes('분') || p.includes('일') || p.includes('주') || p.includes('개월') || p.includes('달')
+  ) {
+    return true;
+  }
+
   return true;
 }
+
+export const isWithin3Years = isWithin5Years;
 
 /**
  * Load YouTube links data from local JSON database
@@ -707,8 +859,8 @@ async function searchYouTubeQuery(query) {
           const views = v.viewCountText?.simpleText || '';
           const descSnippet = v.detailedMetadataSnippets?.[0]?.snippetText?.runs?.map(r => r.text).join('') || '';
 
-          // 1. Strict Trash / Foreign language filter
-          if (isTrashContent(title, descSnippet, channelTitle)) {
+          // 1. Strict Trash / Foreign language / Permanent Blacklist filter
+          if (isTrashContent(title, descSnippet, channelTitle) || isBlacklisted(title, descSnippet, channelTitle, videoId)) {
             continue;
           }
 
@@ -729,8 +881,8 @@ async function searchYouTubeQuery(query) {
             continue;
           }
 
-          // 3. Strict 3-year upload filter
-          if (!isWithin3Years(publishedText)) {
+          // 3. Strict 5-year upload filter
+          if (!isWithin5Years(publishedText)) {
             continue;
           }
 
@@ -786,7 +938,7 @@ export async function curateYouTubeLinksDynamic({
   const store = loadYouTubeData();
   const targetTotal = Number(limit) || 100;
 
-  if (onProgress) onProgress({ percent: 5, message: `🚀 젊은 여성 리더 & 명사들의 TED 강연 및 에세이 쉐도잉 100선 수집 시작...` });
+  if (onProgress) onProgress({ percent: 5, message: `🚀 젊은 여성 리더 & 명사들의 명품 TED 강연 및 에세이 쉐도잉 수집 시작...` });
 
   const seenIds = new Set();
   // Preserve bookmarked video IDs
@@ -826,7 +978,7 @@ export async function curateYouTubeLinksDynamic({
   if (onProgress) {
     onProgress({
       percent: 95,
-      message: `✨ TED 및 에세이·마인드셋 쉐도잉 데이터 100선 정리 중 (${collectedVideos.length}개)...`
+      message: `✨ TED 및 에세이·마인드셋 쉐도잉 데이터 정리 중 (${collectedVideos.length}개)...`
     });
   }
 
