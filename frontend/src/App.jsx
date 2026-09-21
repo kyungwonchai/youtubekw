@@ -121,7 +121,7 @@ export default function App() {
     }
   };
 
-  // Permanent Blacklist / Dislike (절대비추 영구차단 확인 및 실행)
+  // Permanent Blacklist / Dislike (영상 절대안봄 영구 등록)
   const handleConfirmBlock = async () => {
     if (!blockTarget || blocking) return;
     setBlocking(true);
@@ -131,16 +131,15 @@ export default function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           videoId: blockTarget.videoId,
-          channelTitle: blockTarget.channelTitle,
           title: blockTarget.title,
         }),
       });
       const data = await res.json();
       if (!res.ok || !data.ok) throw new Error(data.error || '차단 실패');
 
-      // Purge from local items
-      setItems(prev => prev.filter(i => i.videoId !== blockTarget.videoId && i.channelTitle !== blockTarget.channelTitle));
-      showToast(`🚫 "${blockTarget.channelTitle}" 및 관련 영상이 영구 차단(절대비추)되었습니다.`, 'error');
+      // Purge only this specific video from local items
+      setItems(prev => prev.filter(i => i.videoId !== blockTarget.videoId && i.id !== blockTarget.id));
+      showToast(`🚫 "${blockTarget.title}" 영상이 [절대안봄]으로 영구 등록되었습니다.`, 'error');
       setBlockTarget(null);
     } catch (err) {
       showToast(err.message, 'error');
@@ -208,18 +207,18 @@ export default function App() {
         </div>
       </header>
 
-      {/* Confirmation Modal for Permanent Dislike / Blacklist */}
+      {/* Confirmation Modal for Permanent Dislike / Video Blacklist */}
       {blockTarget && (
         <div className="modal-backdrop" onClick={() => !blocking && setBlockTarget(null)}>
           <div className="block-modal" onClick={e => e.stopPropagation()}>
             <div className="modal-icon">🚫</div>
-            <h3>절대비추 (영구 차단) 등록</h3>
+            <h3>영상 절대안봄 (비추천) 등록</h3>
             <p className="modal-desc">
               <strong>"{blockTarget.title}"</strong><br />
-              <span className="channel-highlight">연설자/채널: {blockTarget.channelTitle}</span>
+              <span className="channel-highlight">채널: {blockTarget.channelTitle}</span>
             </p>
             <div className="modal-warning-box">
-              ⚠️ 이 연설자 및 채널은 <strong>영구 블랙리스트</strong>에 등록되어, 지금 즉시 피드에서 제거되고 향후 모든 추천 및 수집에서 <strong>영원히 제외</strong>됩니다.
+              ⚠️ 이 영상은 <strong>절대안봄 목록</strong>에 등록되어 피드에서 즉시 제거되며, 향후 추천 및 목록에서 <strong>영원히 제외</strong>됩니다.
             </div>
             <div className="modal-actions">
               <button
@@ -234,7 +233,7 @@ export default function App() {
                 disabled={blocking}
                 onClick={handleConfirmBlock}
               >
-                {blocking ? '차단 처리 중...' : '🔥 확인 (영구 차단)'}
+                {blocking ? '처리 중...' : '🔥 확인 (영상 절대안봄)'}
               </button>
             </div>
           </div>
@@ -404,9 +403,9 @@ export default function App() {
                           setBlockTarget(item);
                         }}
                         className="btn-block"
-                        title="절대비추 (연설자/채널 영구 차단)"
+                        title="해당 영상 비추 (절대안봄 목록에 영구 등록)"
                       >
-                        🚫 절대비추
+                        🚫 절대안봄
                       </button>
                       <button
                         onClick={(e) => handleDelete(item.id, e)}

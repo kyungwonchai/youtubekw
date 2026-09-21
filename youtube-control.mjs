@@ -38,7 +38,7 @@ export function saveBlacklist(data) {
 }
 
 /**
- * Block a video, channel, and speaker permanently
+ * Block a video permanently (절대안봄 / 해당 영상 비추천 영구 등록)
  */
 export function blockVideoOrSpeaker({ videoId, channelTitle, title, speakerName } = {}) {
   const bl = loadBlacklist();
@@ -49,14 +49,7 @@ export function blockVideoOrSpeaker({ videoId, channelTitle, title, speakerName 
     modified = true;
   }
 
-  if (channelTitle && typeof channelTitle === 'string' && channelTitle.trim()) {
-    const cleanChan = channelTitle.trim();
-    if (!bl.channels.includes(cleanChan)) {
-      bl.channels.push(cleanChan);
-      modified = true;
-    }
-  }
-
+  // Only block speaker if explicitly provided (not automatic from title)
   if (speakerName && typeof speakerName === 'string' && speakerName.trim()) {
     const cleanSp = speakerName.trim();
     if (!bl.speakers.includes(cleanSp)) {
@@ -65,36 +58,11 @@ export function blockVideoOrSpeaker({ videoId, channelTitle, title, speakerName 
     }
   }
 
-  // Auto-extract speaker name from title if format "Title | Speaker | TEDx"
-  if (title && typeof title === 'string') {
-    const parts = title.split(/[|·•-]/).map(p => p.trim());
-    if (parts.length >= 2) {
-      for (const part of parts) {
-        if (
-          !part.toLowerCase().includes('ted') &&
-          !part.toLowerCase().includes('speech') &&
-          !part.toLowerCase().includes('talk') &&
-          !part.toLowerCase().includes('how') &&
-          !part.toLowerCase().includes('why') &&
-          !part.toLowerCase().includes('the') &&
-          part.length >= 3 &&
-          part.length <= 25 &&
-          /^[a-zA-Z\s.]+$/.test(part)
-        ) {
-          if (!bl.speakers.includes(part)) {
-            bl.speakers.push(part);
-            modified = true;
-          }
-        }
-      }
-    }
-  }
-
   if (modified) {
     saveBlacklist(bl);
   }
 
-  // Also purge blocked items from current youtube links
+  // Purge the blocked video from current youtube links
   const store = loadYouTubeData();
   const beforeLen = store.items.length;
   store.items = store.items.filter(item => !isBlacklisted(item.title, item.description, item.channelTitle, item.videoId));
@@ -106,7 +74,7 @@ export function blockVideoOrSpeaker({ videoId, channelTitle, title, speakerName 
 }
 
 /**
- * Check if an item matches the permanent blacklist
+ * Check if an item matches the permanent blacklist (영상 ID 기반 절대안봄 + 수동 지정 키워드)
  */
 export function isBlacklisted(title = '', desc = '', channelTitle = '', videoId = '') {
   const bl = loadBlacklist();
