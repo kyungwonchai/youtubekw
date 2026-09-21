@@ -169,23 +169,27 @@ export default function App() {
         </div>
 
         <div className="yt-hero-action">
-          <button
-            className={`btn-main-collect ${curating ? 'is-loading' : ''}`}
-            disabled={curating}
-            onClick={handleStartCuration}
-          >
-            {curating ? (
-              <>
-                <span className="spinner"></span>
-                <span>100개 수집 중 ({progress.percent}%)</span>
-              </>
-            ) : (
-              <>
-                <span className="btn-icon">⚡</span>
-                <span>100개 최신 수집하기</span>
-              </>
-            )}
-          </button>
+          <div className="action-with-badge">
+            <button
+              className={`btn-main-collect ${curating ? 'is-loading' : ''}`}
+              disabled={curating}
+              onClick={handleStartCuration}
+              title="최신 100개 수집 (내가 찜한 영상은 안전하게 보존됩니다)"
+            >
+              {curating ? (
+                <>
+                  <span className="spinner"></span>
+                  <span>100개 수집 중 ({progress.percent}%)</span>
+                </>
+              ) : (
+                <>
+                  <span className="btn-icon">⚡</span>
+                  <span>100개 최신 수집하기</span>
+                </>
+              )}
+            </button>
+            <span className="safe-badge">🛡️ 찜(⭐) 영상 영구 보존</span>
+          </div>
         </div>
       </header>
 
@@ -229,6 +233,9 @@ export default function App() {
             )}
           </button>
         </form>
+        <div className="custom-add-hint">
+          <span>💡 <strong>데이터 보존 원칙:</strong> 최신 100개를 다시 수집하더라도 찜(⭐)한 영상과 직접 추가한 영상은 <strong>절대 삭제되지 않고 영구 보존</strong>됩니다.</span>
+        </div>
       </div>
 
       {/* Realtime Progress Bar */}

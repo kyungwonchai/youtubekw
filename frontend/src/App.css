@@ -122,14 +122,45 @@ body {
   font-size: 1.3rem;
 }
 
+.action-with-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.safe-badge {
+  font-size: 0.78rem;
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
 /* Custom URL Quick Add Bar */
 .yt-custom-add-card {
   background: var(--card-bg);
   border: 1px solid #2e3856;
   border-radius: 14px;
-  padding: 12px 16px;
+  padding: 14px 18px;
   margin-bottom: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+}
+
+.custom-add-hint {
+  margin-top: 10px;
+  font-size: 0.84rem;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.custom-add-hint strong {
+  color: #38bdf8;
 }
 
 .yt-custom-add-form {
