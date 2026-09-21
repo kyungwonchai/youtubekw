@@ -9,6 +9,9 @@ import {
   clearUnbookmarkedLinks,
   curateYouTubeLinksDynamic,
   addYouTubeLink,
+  MENTOR_SPEAKER_POOL,
+  loadWeeklyData,
+  runWednesdayMeeting,
 } from './youtube-control.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -84,6 +87,37 @@ const handleClearFeed = (req, res) => {
 };
 app.post('/api/clear-feed', handleClearFeed);
 app.post('/youtubekw/api/clear-feed', handleClearFeed);
+
+// Mentors & Speakers Pool Endpoint
+const handleGetSpeakers = (req, res) => {
+  res.json({ speakers: MENTOR_SPEAKER_POOL });
+};
+app.get('/api/speakers', handleGetSpeakers);
+app.get('/youtubekw/api/speakers', handleGetSpeakers);
+
+// Weekly Wednesday AI Council Sessions Endpoints
+const handleGetWeeklySessions = (req, res) => {
+  try {
+    const data = loadWeeklyData();
+    res.json(data);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
+app.get('/api/weekly-sessions', handleGetWeeklySessions);
+app.get('/youtubekw/api/weekly-sessions', handleGetWeeklySessions);
+
+const handleRunWeeklyMeeting = async (req, res) => {
+  try {
+    const { force } = req.body || {};
+    const result = await runWednesdayMeeting({ force: Boolean(force) });
+    res.json(result);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
+app.post('/api/weekly-sessions/run', handleRunWeeklyMeeting);
+app.post('/youtubekw/api/weekly-sessions/run', handleRunWeeklyMeeting);
 
 // SSE Progress Streaming Curate Endpoint
 const handleCurateStream = async (req, res) => {

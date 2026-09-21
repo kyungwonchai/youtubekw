@@ -5,11 +5,14 @@ const API_BASE = window.location.pathname.startsWith('/youtubekw') ? '/youtubekw
 
 export default function App() {
   const [items, setItems] = useState([]);
+  const [speakers, setSpeakers] = useState([]);
+  const [weeklyData, setWeeklyData] = useState({ sessions: [] });
   const [loading, setLoading] = useState(false);
   const [curating, setCurating] = useState(false);
+  const [runningWeekly, setRunningWeekly] = useState(false);
   const [progress, setProgress] = useState({ percent: 0, message: '' });
-  const [activeTab, setActiveTab] = useState('feed'); // 'feed' or 'bookmarked'
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [activeTab, setActiveTab] = useState('feed'); // 'feed', 'bookmarked', 'weekly', 'speakers'
+  const [selectedCategory, setSelectedCategory] = useState('all'); // 'all', 'ted_speech', 'essay_deep'
   const [searchQuery, setSearchQuery] = useState('');
   const [customUrl, setCustomUrl] = useState('');
   const [addingCustom, setAddingCustom] = useState(false);
@@ -18,6 +21,82 @@ export default function App() {
   const showToast = (message, type = 'info') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3500);
+  };
+
+  const fetchLinks = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/links`);
+      if (!res.ok) throw new Error('데이터를 불러오지 못했습니다.');
+      const data = await res.json();
+      setItems(data.items || []);
+      if (data.speakers) setSpeakers(data.speakers);
+    } catch (err) {
+      showToast(err.message, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchWeeklySessions = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/weekly-sessions`);
+      if (res.ok) {
+        const data = await res.json();
+        setWeeklyData(data);
+      }
+    } catch (err) {}
+  };
+
+  const fetchSpeakers = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/speakers`);
+      if (res.ok) {
+        const data = await res.json();
+        setSpeakers(data.speakers || []);
+      }
+    } catch (err) {}
+  };
+
+  useEffect(() => {
+    fetchLinks();
+    fetchWeeklySessions();
+    fetchSpeakers();
+  }, []);
+
+  // Realtime 100 TED & Essay Shadowing Videos Curation with SSE Progress Bar
+  const handleStartCuration = () => {
+    if (curating) return;
+    setCurating(true);
+    setProgress({ percent: 5, message: '🚀 젊은 여성 리더들의 TED 강연 & 에세이 쉐도잉 100선 수집 시작...' });
+
+    const eventSource = new EventSource(`${API_BASE}/curate-stream?limit=100`);
+
+    eventSource.addEventListener('progress', (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        setProgress({ percent: data.percent || 10, message: data.message || '수집 중...' });
+      } catch (err) {}
+    });
+
+    eventSource.addEventListener('done', async (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        setProgress({ percent: 100, message: `🎉 수집 완료! 총 ${data.addedCount}개의 TED & 에세이 쉐도잉 영상 확보.` });
+        showToast(`✅ ${data.addedCount}개의 TED 및 에세이 쉐도잉 영상이 수집되었습니다!`, 'success');
+        eventSource.close();
+        await fetchLinks();
+      } catch (err) {}
+      setTimeout(() => {
+        setCurating(false);
+      }, 1500);
+    });
+
+    eventSource.addEventListener('error', (e) => {
+      eventSource.close();
+      setCurating(false);
+      showToast('수집 중 오류가 발생했습니다. 다시 시도해주세요.', 'error');
+    });
   };
 
   const handleAddCustomUrl = async (e) => {
@@ -52,59 +131,6 @@ export default function App() {
     }
   };
 
-  const fetchLinks = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(`${API_BASE}/links`);
-      if (!res.ok) throw new Error('데이터를 불러오지 못했습니다.');
-      const data = await res.json();
-      setItems(data.items || []);
-    } catch (err) {
-      showToast(err.message, 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchLinks();
-  }, []);
-
-  // Realtime 100 TED & High-Diction Shadowing Videos Curation with SSE Progress Bar
-  const handleStartCuration = () => {
-    if (curating) return;
-    setCurating(true);
-    setProgress({ percent: 5, message: '🚀 최근 3년 이내 TED & 명품 딕션 여성 교육 쉐도잉 100선 수집 시작...' });
-
-    const eventSource = new EventSource(`${API_BASE}/curate-stream?limit=100`);
-
-    eventSource.addEventListener('progress', (e) => {
-      try {
-        const data = JSON.parse(e.data);
-        setProgress({ percent: data.percent || 10, message: data.message || '수집 중...' });
-      } catch (err) {}
-    });
-
-    eventSource.addEventListener('done', async (e) => {
-      try {
-        const data = JSON.parse(e.data);
-        setProgress({ percent: 100, message: `🎉 수집 완료! 총 ${data.addedCount}개의 고품질 쉐도잉 영상 확보.` });
-        showToast(`✅ ${data.addedCount}개의 TED 및 명품 딕션 쉐도잉 영상이 수집되었습니다!`, 'success');
-        eventSource.close();
-        await fetchLinks();
-      } catch (err) {}
-      setTimeout(() => {
-        setCurating(false);
-      }, 1500);
-    });
-
-    eventSource.addEventListener('error', (e) => {
-      eventSource.close();
-      setCurating(false);
-      showToast('수집 중 오류가 발생했습니다. 다시 시도해주세요.', 'error');
-    });
-  };
-
   const handleToggleBookmark = async (id, e) => {
     if (e) e.stopPropagation();
     try {
@@ -130,12 +156,33 @@ export default function App() {
     }
   };
 
+  // Run Wednesday AI Council manually
+  const handleRunWeeklyMeetingNow = async () => {
+    if (runningWeekly) return;
+    setRunningWeekly(true);
+    showToast('🤖 주간 AI 추천 회의 진행 중 (명강사 최근 2년 강연 분석)...', 'info');
+    try {
+      const res = await fetch(`${API_BASE}/weekly-sessions/run`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ force: true }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || '주간 회의 생성 실패');
+      await fetchWeeklySessions();
+      showToast('🎉 주간 AI 추천 회의록이 성공적으로 등록되었습니다!', 'success');
+      setActiveTab('weekly');
+    } catch (err) {
+      showToast(err.message, 'error');
+    } finally {
+      setRunningWeekly(false);
+    }
+  };
+
   const categories = [
-    { id: 'all', label: '전체보기' },
-    { id: 'ted_speech', label: '🎤 TED & 명연설' },
-    { id: 'education_sci', label: '🧠 교양·지식·과학' },
-    { id: 'career_mind', label: '💼 커리어·소통' },
-    { id: 'diction_essay', label: '📚 에세이·북토크' },
+    { id: 'all', label: '✨ 전체 모아보기 (100선)' },
+    { id: 'ted_speech', label: '🎤 TED & 명품 강연' },
+    { id: 'essay_deep', label: '📚 에세이 & 마인드셋' },
   ];
 
   const filteredItems = useMemo(() => {
@@ -158,13 +205,13 @@ export default function App() {
     <div className="yt-app">
       {toast && <div className={`yt-toast ${toast.type}`}>{toast.message}</div>}
 
-      {/* Main Single-Focus Action Header */}
+      {/* Hero Header */}
       <header className="yt-hero-header">
         <div className="yt-hero-title">
           <span className="hero-emoji">🎙️</span>
           <div>
-            <h1>TED & 명품 딕션 교육 쉐도잉 (100선)</h1>
-            <p>최근 3년 이내 TED·명사 강연·교양 | 여성 원어민 또렷한 발음(고급 딕션) 중심</p>
+            <h1>TED & 에세이 쉐도잉 (100선)</h1>
+            <p>젊고 성공한 여성 리더들의 TED 명연설 & 인생 가치관·기업가정신 에세이 | 명품 딕션 스피치 훈련</p>
           </div>
         </div>
 
@@ -254,18 +301,20 @@ export default function App() {
         </div>
       )}
 
-      {/* Category Pills */}
-      <div className="yt-cat-bar">
-        {categories.map(cat => (
-          <button
-            key={cat.id}
-            className={`cat-pill ${selectedCategory === cat.id ? 'active' : ''}`}
-            onClick={() => setSelectedCategory(cat.id)}
-          >
-            {cat.label}
-          </button>
-        ))}
-      </div>
+      {/* 2 Main Categories Focus Pills */}
+      {(activeTab === 'feed' || activeTab === 'bookmarked') && (
+        <div className="yt-cat-bar">
+          {categories.map(cat => (
+            <button
+              key={cat.id}
+              className={`cat-pill ${selectedCategory === cat.id ? 'active' : ''}`}
+              onClick={() => setSelectedCategory(cat.id)}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Clean Navigation & Search Bar */}
       <div className="yt-nav-bar">
@@ -282,82 +331,242 @@ export default function App() {
           >
             ⭐ 찜한 영상 ({bookmarkedCount})
           </button>
+          <button
+            className={`tab-btn ${activeTab === 'weekly' ? 'active' : ''}`}
+            onClick={() => setActiveTab('weekly')}
+          >
+            📅 주간 AI 추천 회의록 ({weeklyData.sessions?.length || 0})
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'speakers' ? 'active' : ''}`}
+            onClick={() => setActiveTab('speakers')}
+          >
+            👥 롤모델 멘토 인재풀 ({speakers.length})
+          </button>
         </div>
 
-        <div className="yt-search-box">
-          <input
-            type="text"
-            placeholder="TED, 강연 주제, 스피커 검색..."
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-          />
-          {searchQuery && (
-            <button className="clear-search-btn" onClick={() => setSearchQuery('')}>✕</button>
-          )}
-        </div>
+        {(activeTab === 'feed' || activeTab === 'bookmarked') && (
+          <div className="yt-search-box">
+            <input
+              type="text"
+              placeholder="스피커, 강연 주제, 가치관 검색..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+            />
+            {searchQuery && (
+              <button className="clear-search-btn" onClick={() => setSearchQuery('')}>✕</button>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Content Grid */}
+      {/* Main Content Area */}
       <main className="yt-main">
-        {loading ? (
-          <div className="loading-state">
-            <div className="spinner large"></div>
-            <p>영상을 불러오는 중입니다...</p>
-          </div>
-        ) : filteredItems.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-icon">🎧</div>
-            <h2>준비된 영상이 없습니다.</h2>
-            <p>상단의 <strong>[⚡ 100개 최신 수집하기]</strong> 버튼을 눌러 최근 3년 이내 TED 및 명품 딕션 쉐도잉 영상을 즉시 채워보세요!</p>
-          </div>
-        ) : (
-          <div className="yt-grid">
-            {filteredItems.map((item, index) => (
-              <div key={item.id} className="video-card">
-                <div className="thumb-wrap">
-                  <a href={item.url} target="_blank" rel="noopener noreferrer">
-                    <img src={item.thumbnailUrl} alt={item.title} loading="lazy" />
-                  </a>
-                  <button
-                    className={`star-btn ${item.bookmarked ? 'active' : ''}`}
-                    onClick={(e) => handleToggleBookmark(item.id, e)}
-                    title={item.bookmarked ? "보관 취소" : "다시보기 보관"}
-                  >
-                    {item.bookmarked ? '⭐' : '☆'}
-                  </button>
-                  <span className="duration-tag">{item.duration || '10분+'}</span>
-                  <span className="index-tag">#{index + 1}</span>
-                </div>
-                <div className="card-body">
-                  <h3 title={item.title}>
+        {/* TAB 1 & 2: Video Grid (Feed / Bookmarked) */}
+        {(activeTab === 'feed' || activeTab === 'bookmarked') && (
+          loading ? (
+            <div className="loading-state">
+              <div className="spinner large"></div>
+              <p>영상을 불러오는 중입니다...</p>
+            </div>
+          ) : filteredItems.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-icon">🎧</div>
+              <h2>준비된 영상이 없습니다.</h2>
+              <p>상단의 <strong>[⚡ 100개 최신 수집하기]</strong> 버튼을 눌러 TED & 에세이 쉐도잉 영상을 즉시 채워보세요!</p>
+            </div>
+          ) : (
+            <div className="yt-grid">
+              {filteredItems.map((item, index) => (
+                <div key={item.id} className="video-card">
+                  <div className="thumb-wrap">
                     <a href={item.url} target="_blank" rel="noopener noreferrer">
-                      {item.title}
-                    </a>
-                  </h3>
-                  <div className="channel-meta">
-                    <span className="channel-title">🎙️ {item.channelTitle}</span>
-                    {item.publishedText && <span className="pub-text">📅 {item.publishedText}</span>}
-                  </div>
-                  <div className="card-actions">
-                    <a
-                      href={item.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-play"
-                    >
-                      ▶ 쉐도잉 시작
+                      <img src={item.thumbnailUrl} alt={item.title} loading="lazy" />
                     </a>
                     <button
-                      onClick={(e) => handleDelete(item.id, e)}
-                      className="btn-del"
-                      title="목록에서 삭제"
+                      className={`star-btn ${item.bookmarked ? 'active' : ''}`}
+                      onClick={(e) => handleToggleBookmark(item.id, e)}
+                      title={item.bookmarked ? "보관 취소" : "다시보기 보관"}
                     >
-                      🗑️
+                      {item.bookmarked ? '⭐' : '☆'}
                     </button>
+                    <span className="duration-tag">{item.duration || '10분+'}</span>
+                    <span className="cat-badge">{item.category === 'ted_speech' ? '🎤 TED 강연' : '📚 에세이·마인드'}</span>
+                    <span className="index-tag">#{index + 1}</span>
+                  </div>
+                  <div className="card-body">
+                    <h3 title={item.title}>
+                      <a href={item.url} target="_blank" rel="noopener noreferrer">
+                        {item.title}
+                      </a>
+                    </h3>
+                    <div className="channel-meta">
+                      <span className="channel-title">🎙️ {item.channelTitle}</span>
+                      {item.publishedText && <span className="pub-text">📅 {item.publishedText}</span>}
+                    </div>
+                    <div className="card-actions">
+                      <a
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-play"
+                      >
+                        ▶ 쉐도잉 시작
+                      </a>
+                      <button
+                        onClick={(e) => handleDelete(item.id, e)}
+                        className="btn-del"
+                        title="목록에서 삭제"
+                      >
+                        🗑️
+                      </button>
+                    </div>
                   </div>
                 </div>
+              ))}
+            </div>
+          )
+        )}
+
+        {/* TAB 3: Weekly Wednesday AI Council Archive */}
+        {activeTab === 'weekly' && (
+          <div className="weekly-archive-section">
+            <div className="weekly-header-bar">
+              <div>
+                <h2>📅 주간 AI 추천 회의 아카이브</h2>
+                <p>매주 수요일 오전 11:00, 롤모델 명강사들의 최근 2년 내 강연 & 에세이를 심층 분석하여 추천 목록을 자동 편찬합니다.</p>
               </div>
-            ))}
+              <button
+                className="btn-run-weekly"
+                disabled={runningWeekly}
+                onClick={handleRunWeeklyMeetingNow}
+              >
+                {runningWeekly ? '🔄 분석 및 회의 진행 중...' : '⚡ 지금 주간 회의 실행'}
+              </button>
+            </div>
+
+            {(!weeklyData.sessions || weeklyData.sessions.length === 0) ? (
+              <div className="empty-state">
+                <div className="empty-icon">📅</div>
+                <h2>주간 회의 기록이 아직 없습니다.</h2>
+                <p>우측 상단의 <strong>[⚡ 지금 주간 회의 실행]</strong> 버튼을 눌러 첫 번째 주간 추천 회의를 시작해보세요!</p>
+              </div>
+            ) : (
+              <div className="weekly-session-list">
+                {weeklyData.sessions.map((session, idx) => (
+                  <div key={session.id || idx} className="weekly-card">
+                    <div className="weekly-card-head">
+                      <div className="weekly-badge-group">
+                        <span className="weekly-week-badge">{session.weekLabel || session.date}</span>
+                        <span className="weekly-date-badge">🕒 매주 수요일 11:00 회의록</span>
+                      </div>
+                      <h3>{session.meetingTitle}</h3>
+                      <p className="weekly-agenda"><strong>📌 회의 안건:</strong> {session.agenda}</p>
+                    </div>
+
+                    {session.speakerHighlights && session.speakerHighlights.length > 0 && (
+                      <div className="weekly-speakers-box">
+                        <h4>🎙️ 금주 집중 분석 멘토 & 딕션 포인트</h4>
+                        <div className="highlight-grid">
+                          {session.speakerHighlights.map((sp, sIdx) => (
+                            <div key={sIdx} className="highlight-pill">
+                              <span className="sp-name">✨ {sp.name}</span>
+                              <span className="sp-point">{sp.point}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <p className="weekly-summary">📝 {session.summary}</p>
+
+                    <div className="weekly-videos-grid">
+                      {session.videos?.map((v, vIdx) => (
+                        <div key={v.id || vIdx} className="weekly-vid-card">
+                          <img src={v.thumbnailUrl} alt={v.title} />
+                          <div className="weekly-vid-content">
+                            <h4>{v.title}</h4>
+                            <span className="w-chan">{v.channelTitle} • {v.duration}</span>
+                            {v.shadowingTip && (
+                              <div className="w-tip">
+                                <strong>💡 쉐도잉 팁:</strong> {v.shadowingTip}
+                              </div>
+                            )}
+                            <div className="w-actions">
+                              <a href={v.url} target="_blank" rel="noopener noreferrer" className="btn-play-sm">
+                                ▶ 쉐도잉 시작
+                              </a>
+                              <button
+                                className="btn-add-w"
+                                onClick={async () => {
+                                  try {
+                                    await fetch(`${API_BASE}/links/custom`, {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ url: v.url, autoBookmark: true }),
+                                    });
+                                    showToast(`⭐ "${v.title}" 영상이 내 찜 목록에 저장되었습니다!`, 'success');
+                                    await fetchLinks();
+                                  } catch (e) {
+                                    showToast('찜 저장 실패', 'error');
+                                  }
+                                }}
+                              >
+                                ⭐ 찜 보관함에 담기
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TAB 4: Role Model Mentors Pool */}
+        {activeTab === 'speakers' && (
+          <div className="speakers-section">
+            <div className="speakers-intro">
+              <h2>👥 롤모델 명강사 & CEO 인재풀</h2>
+              <p>스피치 훈련과 영어 실력 향상, 인생 마인드셋 정립을 위해 지속적으로 최신 강연을 추적하는 핵심 멘토진입니다.</p>
+            </div>
+
+            <div className="speakers-grid">
+              {speakers.map(sp => (
+                <div key={sp.id} className="speaker-card">
+                  <div className="speaker-head">
+                    <span className="speaker-avatar">{sp.avatar || '✨'}</span>
+                    <div>
+                      <h3>{sp.name}</h3>
+                      <span className="speaker-role">{sp.role}</span>
+                    </div>
+                  </div>
+                  <div className="speaker-body">
+                    <div className="speaker-info-row">
+                      <span className="label">🎯 핵심 주제:</span>
+                      <span className="val">{sp.coreTopics}</span>
+                    </div>
+                    <div className="speaker-info-row">
+                      <span className="label">🗣️ 딕션 특징:</span>
+                      <span className="val">{sp.dictionStyle}</span>
+                    </div>
+                  </div>
+                  <button
+                    className="btn-filter-speaker"
+                    onClick={() => {
+                      setSearchQuery(sp.name);
+                      setActiveTab('feed');
+                      showToast(`🔍 '${sp.name}' 멘토의 영상 검색 결과를 표시합니다.`, 'info');
+                    }}
+                  >
+                    🔍 이 멘토의 영상 보기
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </main>

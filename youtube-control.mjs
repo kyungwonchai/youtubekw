@@ -2,97 +2,183 @@ import { readFileSync, writeFileSync, existsSync } from 'fs';
 import path from 'path';
 
 const YOUTUBE_FILE = '/home/kw/.kwsoft-youtube-links.json';
+const WEEKLY_FILE = '/home/kw/.kwsoft-youtube-weekly.json';
 
 /**
- * High-Quality TED, Educational & Native English Speaking Female Categories
+ * 2 Main Categories Focus: TED 강연 vs 에세이 & 마인드셋
  */
 export const CURATION_CHANNELS = [
   {
     id: 'all',
-    label: '✨ 100개 초집중 수집 (TED·교육·고급 딕션 쉐도잉)',
-    shortLabel: '100개 TED·교육',
-    target: '최근 3년 이내 TED, 강연, 교육, 명확한 딕션의 여성 원어민 스피킹 쉐도잉 100선',
+    label: '✨ 전체 모아보기 (TED & 에세이 100선)',
+    shortLabel: '전체 100선',
+    target: '최근 2~3년 이내 젊고 성공한 여성 리더들의 TED 명연설 및 인생 가치관·마인드셋 쉐도잉 100선',
     icon: '✨',
-    desc: '최근 3년 이내 업로드된 TED 강연, 명문대 강의, 교양·교육 및 또렷한 발음(고급 딕션)의 여성 스피커 영상',
+    desc: '스피치 훈련 & 영어 쉐도잉에 최적화된 유창하고 또렷한 딕션의 명사 강연 및 에세이',
     category: 'all',
-    defaultTags: ['TED강연', '고급딕션', '교육쉐도잉', '최근3년'],
+    defaultTags: ['명품딕션', '롤모델스피치', '기업가정신', '쉐도잉최적'],
   },
   {
     id: 'ted_speech',
-    label: '🎤 TED & 명사 강연 (TED & Speeches)',
+    label: '🎤 TED & 명품 강연',
     shortLabel: 'TED & 명연설',
-    target: 'TED, TEDx, 기념사, 대중 연설 스피커',
+    target: 'TED, TEDx, 명문대 졸업사, 기조연설 등 대중 스피치 마스터클래스',
     icon: '🎤',
-    desc: '전달력과 발음이 뛰어난 여성 명사들의 감동적이고 지적인 TED/TEDx 강연',
+    desc: '전달력과 발음이 탁월한 젊은 여성 리더 및 명사들의 압도적인 TED/TEDx 및 대중 강연',
     category: 'ted_speech',
-    defaultTags: ['TED', 'TEDx', '명연설', '스피치쉐도잉'],
+    defaultTags: ['TED강연', 'TEDx', '명연설', '스피치훈련'],
   },
   {
-    id: 'education_sci',
-    label: '🧠 교양·과학·지식 (Education & Science)',
-    shortLabel: '교양 & 지식',
-    target: 'BBC Ideas, Big Think, 교수진, 연구원, 교양 해설가',
-    icon: '🧠',
-    desc: '심리학, 뇌과학, 인문학, 테크 등 명확한 딕션과 정돈된 문장의 지식 콘텐츠',
-    category: 'education_sci',
-    defaultTags: ['지식교양', 'BBC_Ideas', 'BigThink', '학술영어'],
-  },
-  {
-    id: 'career_mind',
-    label: '💼 커리어 & 마인드셋 (Career & Mindset)',
-    shortLabel: '커리어 & 마인드',
-    target: '커리어 코치, 리더십, 소통 전문가, 자기계발 스피커',
-    icon: '💼',
-    desc: '비즈니스 영어, 인터뷰 및 소통 스킬, 생산성 향상을 위한 프로페셔널 스피킹',
-    category: 'career_mind',
-    defaultTags: ['비즈니스영어', '리더십', '커리어', '동기부여'],
-  },
-  {
-    id: 'diction_essay',
-    label: '📚 에세이 & 낭독 & 북토크 (Diction & Essay)',
-    shortLabel: '에세이 & 북토크',
-    target: '에세이스트, 북튜버, 발음/딕션 코치, 인터뷰어',
+    id: 'essay_deep',
+    label: '📚 에세이 & 마인드셋',
+    shortLabel: '에세이 & 마인드',
+    target: '기업가정신, 인생 가치관, 삶의 태도, 성공 경험담 및 심층 대담',
     icon: '📚',
-    desc: '표준 발음과 풍부한 어휘력이 돋보이는 생각 정리, 에세이 및 심층 도서 리뷰',
-    category: 'diction_essay',
-    defaultTags: ['명품발음', '북리뷰', '에세이', '원어민딕션'],
-  }
+    desc: '성공한 젊은 여성 CEO/투자자/학자들의 비즈니스 마인드셋, 3-2-1 스피치 기법, 삶을 살아가는 법',
+    category: 'essay_deep',
+    defaultTags: ['기업가정신', '인생가치관', '경험담', '고급에세이'],
+  },
 ];
 
-// Rich queries focused on TED talks, education, public speeches, clear English diction
+/**
+ * Inspiring Role Model Mentor Speakers Pool (존경받는 젊은 여성 명사 & CEO 인재풀)
+ */
+export const MENTOR_SPEAKER_POOL = [
+  {
+    id: 'codie_sanchez',
+    name: 'Codie Sanchez',
+    role: '성공 투자자 & Contrarian Thinking 창업가',
+    category: 'essay_deep',
+    avatar: '💼',
+    dictionStyle: '직설적이고 빠른 템포의 CEO급 비즈니스 딕션, 3-2-1 스피치 기법',
+    coreTopics: '자본주의 마인드셋, 기업가정신, 실행력, 스피치 구조화',
+    keywords: ['Codie Sanchez speech', 'Codie Sanchez speaking trick', 'Codie Sanchez mindset advice', 'BigDeal Codie Sanchez'],
+  },
+  {
+    id: 'vanessa_van_edwards',
+    name: 'Vanessa Van Edwards',
+    role: 'Science of People 대표 & 소통 심리학 명강사',
+    category: 'essay_deep',
+    avatar: '🧠',
+    dictionStyle: '밝고 또렷한 억양, 청중을 사로잡는 보컬 버라이어티와 발음',
+    coreTopics: '카리스마 스피치, 보컬 큐, 대화 심리학, 프레젠테이션',
+    keywords: ['Vanessa Van Edwards speech', 'Vanessa Van Edwards public speaking', 'Vanessa Van Edwards charisma talk'],
+  },
+  {
+    id: 'leila_hormozi',
+    name: 'Leila Hormozi',
+    role: 'Acquisition.com CEO & 경영 리더',
+    category: 'essay_deep',
+    avatar: '👑',
+    dictionStyle: '당당하고 확신에 찬 에너지, 또렷하고 단호한 발음',
+    coreTopics: '사업 확장, 리더십, 극복의 경험담, 여성 CEO 마인드셋',
+    keywords: ['Leila Hormozi speech', 'Leila Hormozi interview advice', 'Leila Hormozi leadership talk'],
+  },
+  {
+    id: 'maya_shankar',
+    name: 'Dr. Maya Shankar',
+    role: '인지과학자 (옥스퍼드/스탠퍼드) & 전 백악관 선임고문',
+    category: 'essay_deep',
+    avatar: '✨',
+    dictionStyle: '지적이고 정돈된 표준 미국식 발음, 차분하면서도 깊은 울림의 딕션',
+    coreTopics: '삶의 변화, 정체성 재정의, 가치관, 딥 인터뷰',
+    keywords: ['Maya Shankar podcast talk', 'Maya Shankar change mind speech', 'Maya Shankar interview values'],
+  },
+  {
+    id: 'erika_kullberg',
+    name: 'Erika Kullberg',
+    role: '변호사 & Plug 창업가',
+    category: 'essay_deep',
+    avatar: '⚖️',
+    dictionStyle: '깔끔하고 명료한 논리 전개, 한 음절 한 음절 정확한 딕션',
+    coreTopics: '협상 스킬, 스마트한 마인드셋, 20대 커리어 성장',
+    keywords: ['Erika Kullberg interview speech', 'Erika Kullberg talk mindset', 'Erika Kullberg speech career'],
+  },
+  {
+    id: 'cleo_abram',
+    name: 'Cleo Abram',
+    role: 'Huge If True 대표 저널리스트 & 테크 해설가',
+    category: 'essay_deep',
+    avatar: '🚀',
+    dictionStyle: '경쾌하고 지적인 딕션, 복잡한 아이디어를 명쾌하게 설명하는 스피킹',
+    coreTopics: '기술과 미래, 긍정적 미래관, 지적 호기심',
+    keywords: ['Cleo Abram talk', 'Cleo Abram presentation speech', 'Cleo Abram interview'],
+  },
+  {
+    id: 'jess_ekstrom',
+    name: 'Jess Ekstrom',
+    role: 'Headbands of Hope 창업자 & TEDx 명연설가',
+    category: 'ted_speech',
+    avatar: '🎤',
+    dictionStyle: '감정을 울리는 스토리텔링과 완벽한 호흡 조절',
+    coreTopics: '스토리텔링, 대중 연설, 소셜 벤처 기업가정신',
+    keywords: ['Jess Ekstrom TEDx talk', 'Jess Ekstrom public speaking speech', 'Jess Ekstrom presentation'],
+  },
+  {
+    id: 'mel_robbins',
+    name: 'Mel Robbins',
+    role: '베스트셀러 작가 & 세계 1위 동기부여 강연가',
+    category: 'essay_deep',
+    avatar: '🔥',
+    dictionStyle: '강렬한 몰입감과 뇌리에 꽂히는 단호한 스피치',
+    coreTopics: '행동 결단력, 5초 법칙, 불안 극복과 자존감',
+    keywords: ['Mel Robbins speech mindset', 'Mel Robbins mindset advice talk', 'Mel Robbins life change'],
+  },
+  {
+    id: 'reshma_saujani',
+    name: 'Reshma Saujani',
+    role: 'Girls Who Code 창립자 & 명기조연설가',
+    category: 'ted_speech',
+    avatar: '💪',
+    dictionStyle: '울림이 큰 기조연설 딕션, 용기를 북돋는 웅변력',
+    coreTopics: '완벽주의 극복, 용기와 도전, 여성 리더십',
+    keywords: ['Reshma Saujani commencement speech', 'Reshma Saujani talk bravery', 'Reshma Saujani TED talk'],
+  },
+  {
+    id: 'amy_cuddy',
+    name: 'Dr. Amy Cuddy',
+    role: '하버드 사회심리학자 & 명강사',
+    category: 'ted_speech',
+    avatar: '🌟',
+    dictionStyle: '학술적이면서도 따뜻한 울림을 주는 명품 딕션',
+    coreTopics: '자신감, 프레즌스, 비언어적 커뮤니케이션',
+    keywords: ['Amy Cuddy speech presence', 'Amy Cuddy talk psychology confidence', 'Amy Cuddy TED talk'],
+  },
+];
+
+// Targeted queries focused on inspiring female leaders, TED speeches, and entrepreneur mindset (within 2-3 years)
 const SEARCH_QUERIES = [
-  // 1. TED & TEDx Talks by Inspiring Women
-  'TED talk female english diction speech',
-  'TEDx talks female clear English diction',
-  'TED talk female education communication speech',
-  'TED talk inspiring female psychology mindset',
-  'TED talk female science technology presentation',
-  'TED talk female leadership productivity career',
-  'TEDx talk woman confidence public speaking',
-  'TED talk woman brain science learning languages',
+  // 1. Mentor Pool Targeted Search
+  'Codie Sanchez speaking trick CEO communication',
+  'Codie Sanchez mindset business advice',
+  'Vanessa Van Edwards public speaking charisma presentation',
+  'Vanessa Van Edwards communication speech tips',
+  'Leila Hormozi leadership talk clear diction advice',
+  'Maya Shankar deep talk mindset life advice',
+  'Erika Kullberg speech career mindset advice',
+  'Cleo Abram talk clear explanation speech',
+  'Jess Ekstrom TEDx talk public speaking story',
+  'Mel Robbins powerful speech mindset advice',
+  'Reshma Saujani speech bravery perfectionism',
+  'Amy Cuddy presence speech confidence talk',
 
-  // 2. High-Diction Speeches, Lectures & Educational Channels
-  'best female speech clear english pronunciation',
-  'female public speaking presentation skills English',
-  'informative speech female presentation english diction',
-  'commencement speech female english clear pronunciation',
-  'great speeches by women clear diction english',
-  'educational lecture female english professor clear diction',
-  'science communication female english talk',
-  'BBC Ideas female explanation video english',
-  'Big Think female speaker english lecture',
-  'Oxford Union female address clear speech',
-  'Harvard talk female clear english pronunciation',
-  'masterclass female english presentation skills',
+  // 2. TED & Inspiring Public Speeches by Young Successful Women
+  'TED talk young female entrepreneur mindset speech',
+  'TED talk woman confidence public speaking storytelling',
+  'TEDx talk inspiring female founder mindset lesson',
+  'TED talk female communication leadership speech clear diction',
+  'TEDx talk woman career resilience life lessons',
+  'female commencement speech inspiring life advice clear pronunciation',
+  'best female keynote speech clear english diction presentation',
+  'female university speech inspiring mindset english',
 
-  // 3. Thoughtful Essay, Mindset & Intellect
-  'female philosophy essay discussion english',
-  'female psychology explanation talk english',
-  'female career advice presentation english diction',
-  'female intellect discussion deep talk english',
-  'female booktube wrap up analysis clear english',
-  'clear diction British RP female speech talk',
-  'clear American accent female presentation talk'
+  // 3. Life Values, Philosophy & Entrepreneur Mindset Essays
+  'female founder interview mindset advice clear english',
+  'female CEO public talk business communication skills',
+  'inspiring woman life philosophy deep conversation english',
+  'female entrepreneur story overcoming failure success advice',
+  'clear American accent female presentation speech mindset',
+  'clear British accent articulate female speech talk'
 ];
 
 /**
@@ -253,6 +339,81 @@ export function saveYouTubeData(data) {
 }
 
 /**
+ * Weekly Wednesday Archive Data Loader
+ */
+export function loadWeeklyData() {
+  if (!existsSync(WEEKLY_FILE)) {
+    const initial = {
+      lastMeetingAt: null,
+      sessions: [
+        {
+          id: 'session_2026_w38',
+          date: '2026-09-23',
+          weekLabel: '2026년 9월 4주차',
+          meetingTitle: '🎙️ 젊은 여성 CEO 스피치 기법 & 인생 가치관 멘토링 회의',
+          agenda: 'Codie Sanchez의 3-2-1 스피치 구조화, Leila Hormozi의 실행력 마인드셋 및 TEDx 스토리텔링 훈련',
+          speakerHighlights: [
+            { name: 'Codie Sanchez', point: 'CEO처럼 명확하게 말하는 3-2-1 스피치 공식 (불필요한 군더더기 제거)' },
+            { name: 'Vanessa Van Edwards', point: '상대방을 몰입시키는 카리스마 보컬 큐 & 보컬 버라이어티' },
+            { name: 'Maya Shankar', point: '인생의 급격한 전환점에서 가치관을 정립하고 단단해지는 법' },
+          ],
+          summary: '금주 회의에서는 청중을 단숨에 사로잡는 빠른 템포의 비즈니스 딕션과 깊이 있는 인생 에세이를 엄선하여 추천 목록을 확정하였습니다.',
+          videos: [
+            {
+              id: 'w_vid_1',
+              title: 'Stop Rambling: The 3-2-1 Speaking Trick That Makes You Sound Like A CEO',
+              channelTitle: 'BigDeal by Codie Sanchez',
+              url: 'https://www.youtube.com/watch?v=t260757b_vU',
+              thumbnailUrl: 'https://i.ytimg.com/vi/t260757b_vU/hqdefault.jpg',
+              duration: '12:45',
+              shadowingTip: '말의 서두에 핵심 결론을 3가지로 압축해 던지는 훈련에 집중하세요.',
+              category: 'essay_deep',
+            },
+            {
+              id: 'w_vid_2',
+              title: 'The Secret to Great Public Speaking (No, It\'s Not Confidence) | Jess Ekstrom | TEDx',
+              channelTitle: 'TEDx Talks',
+              url: 'https://www.youtube.com/watch?v=MT2q1YKZQPE',
+              thumbnailUrl: 'https://img.youtube.com/vi/MT2q1YKZQPE/hqdefault.jpg',
+              duration: '8:19',
+              shadowingTip: '자신감이 아닌 호기심과 스토리텔링으로 청중의 주의를 집중시키는 억양을 모방하세요.',
+              category: 'ted_speech',
+            },
+            {
+              id: 'w_vid_3',
+              title: 'How to talk to the worst parts of yourself | Karen Faith | TEDxKC',
+              channelTitle: 'TEDx Talks',
+              url: 'https://www.youtube.com/watch?v=gUV5DJb6KGs',
+              thumbnailUrl: 'https://img.youtube.com/vi/gUV5DJb6KGs/hqdefault.jpg',
+              duration: '14:32',
+              shadowingTip: '자기 수용과 내면 대화에 대한 명확한 포즈(pause)와 강세 훈련에 최적입니다.',
+              category: 'ted_speech',
+            },
+          ]
+        }
+      ]
+    };
+    saveWeeklyData(initial);
+    return initial;
+  }
+  try {
+    const raw = readFileSync(WEEKLY_FILE, 'utf8');
+    return JSON.parse(raw);
+  } catch (e) {
+    return { lastMeetingAt: null, sessions: [] };
+  }
+}
+
+export function saveWeeklyData(data) {
+  try {
+    writeFileSync(WEEKLY_FILE, JSON.stringify(data, null, 2), 'utf8');
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+/**
  * Extract 11-char YouTube Video ID
  */
 export function extractYouTubeId(url) {
@@ -270,6 +431,13 @@ export function getYouTubeLinks({ filter = 'all', category = 'all', search = '' 
   const store = loadYouTubeData();
   let list = store.items || [];
 
+  // Normalize existing legacy categories to the 2 main categories
+  list.forEach(item => {
+    if (item.category === 'education_sci' || item.category === 'career_mind' || item.category === 'diction_essay') {
+      item.category = 'essay_deep';
+    }
+  });
+
   if (filter === 'bookmarked') {
     list = list.filter(item => item.bookmarked);
   } else if (filter === 'unbookmarked') {
@@ -277,7 +445,7 @@ export function getYouTubeLinks({ filter = 'all', category = 'all', search = '' 
   }
 
   if (category && category !== 'all') {
-    list = list.filter(item => item.category === category || item.channelPresetId === category);
+    list = list.filter(item => item.category === category);
   }
 
   if (search && search.trim()) {
@@ -304,6 +472,7 @@ export function getYouTubeLinks({ filter = 'all', category = 'all', search = '' 
     lastCuratedAt: store.lastCuratedAt || null,
     lastQuery: store.lastQuery || '',
     channels: CURATION_CHANNELS,
+    speakers: MENTOR_SPEAKER_POOL,
   };
 }
 
@@ -348,7 +517,7 @@ export function clearUnbookmarkedLinks() {
 /**
  * Dynamically add a YouTube link with automatic metadata fetching & instant bookmark
  */
-export async function addYouTubeLink({ url, autoBookmark = true, category = 'ted_speech' } = {}) {
+export async function addYouTubeLink({ url, autoBookmark = true, category = 'essay_deep' } = {}) {
   if (!url || typeof url !== 'string' || !url.trim()) {
     throw new Error('유효한 유튜브 주소(URL)를 입력해주세요.');
   }
@@ -412,7 +581,7 @@ export async function addYouTubeLink({ url, autoBookmark = true, category = 'ted
     description: `${channelTitle} • 사용자 직접 추가 쉐도잉 영상`,
     thumbnailUrl,
     publishedAt: new Date().toISOString(),
-    category: detectedCategory || category || 'ted_speech',
+    category: detectedCategory || category || 'essay_deep',
     channelPresetId: 'custom',
     tags: ['직접등록', '⭐찜추가', '쉐도잉', '고급딕션'],
     bookmarked: Boolean(autoBookmark),
@@ -507,20 +676,22 @@ async function searchYouTubeQuery(query) {
 }
 
 /**
- * Determine category by query or title keywords
+ * Determine category between 2 main categories: 'ted_speech' vs 'essay_deep'
  */
-function determineCategory(title = '', query = '') {
+export function determineCategory(title = '', query = '') {
   const text = `${title} ${query}`.toLowerCase();
-  if (text.includes('ted') || text.includes('speech') || text.includes('commencement') || text.includes('presentation')) {
+  if (
+    text.includes('ted') ||
+    text.includes('speech') ||
+    text.includes('commencement') ||
+    text.includes('keynote') ||
+    text.includes('address') ||
+    text.includes('stage') ||
+    text.includes('presentation')
+  ) {
     return 'ted_speech';
   }
-  if (text.includes('science') || text.includes('bbc') || text.includes('big think') || text.includes('lecture') || text.includes('harvard') || text.includes('oxford')) {
-    return 'education_sci';
-  }
-  if (text.includes('career') || text.includes('leader') || text.includes('productivity') || text.includes('confidence') || text.includes('mindset')) {
-    return 'career_mind';
-  }
-  return 'diction_essay';
+  return 'essay_deep';
 }
 
 /**
@@ -534,7 +705,7 @@ export async function curateYouTubeLinksDynamic({
   const store = loadYouTubeData();
   const targetTotal = Number(limit) || 100;
 
-  if (onProgress) onProgress({ percent: 5, message: `🚀 최근 3년 이내 TED & 명품 딕션 여성 교육 쉐도잉 영상 수집 시작... (목표: ${targetTotal}개)` });
+  if (onProgress) onProgress({ percent: 5, message: `🚀 젊은 여성 리더 & 명사들의 TED 강연 및 에세이 쉐도잉 100선 수집 시작...` });
 
   const seenIds = new Set();
   // Preserve bookmarked video IDs
@@ -552,7 +723,7 @@ export async function curateYouTubeLinksDynamic({
     if (onProgress) {
       onProgress({
         percent: progressPercent,
-        message: `🔍 TED/교육자료 탐색 중 (${i + 1}/${totalQueries}): "${q}" (현재 수집: ${collectedVideos.length}/${targetTotal}개)`
+        message: `🔍 멘토/강연 탐색 중 (${i + 1}/${totalQueries}): "${q}" (수집: ${collectedVideos.length}/${targetTotal}개)`
       });
     }
 
@@ -568,13 +739,13 @@ export async function curateYouTubeLinksDynamic({
     }
 
     if (collectedVideos.length >= targetTotal) break;
-    await new Promise(r => setTimeout(r, 120));
+    await new Promise(r => setTimeout(r, 100));
   }
 
   if (onProgress) {
     onProgress({
       percent: 95,
-      message: `✨ TED 및 고품질 딕션 쉐도잉 데이터 100선 정리 중 (${collectedVideos.length}개)...`
+      message: `✨ TED 및 에세이·마인드셋 쉐도잉 데이터 100선 정리 중 (${collectedVideos.length}개)...`
     });
   }
 
@@ -582,46 +753,53 @@ export async function curateYouTubeLinksDynamic({
   const selected = collectedVideos.slice(0, targetTotal);
   const curatedItems = selected.map((v, idx) => {
     const durBadge = v.duration ? `⏱️ ${v.duration}` : '⏱️ 10분+';
-    const pubBadge = v.publishedText ? `📅 ${v.publishedText}` : '📅 최근 3년';
+    const pubBadge = v.publishedText ? `📅 ${v.publishedText}` : '📅 최근 2~3년';
     return {
       id: 'yt_sh_' + Date.now() + '_' + idx + '_' + Math.random().toString(36).slice(2, 6),
       videoId: v.videoId,
       title: v.title,
       url: v.url,
-      channelTitle: v.channelTitle || 'TED / Expert Speaker',
+      channelTitle: v.channelTitle || 'Inspiring Speaker / TED',
       duration: v.duration || '10분+',
-      publishedText: v.publishedText || '최근 3년 이내',
+      publishedText: v.publishedText || '최근 2~3년 이내',
       description: v.description,
       thumbnailUrl: v.thumbnailUrl,
       publishedAt: new Date(Date.now() - (idx + 1) * 3600 * 1000).toISOString(),
-      category: v.detectedCategory || 'ted_speech',
+      category: v.detectedCategory || 'essay_deep',
       channelPresetId: 'all',
-      tags: ['TED강연', '고급딕션', '원어민스피킹', pubBadge, durBadge],
+      tags: ['명품딕션', '롤모델스피치', '기업가정신', pubBadge, durBadge],
       bookmarked: false,
       bookmarkedAt: null,
       watched: false,
       rating: 0,
       memo: '',
-      source: 'ted_education_diction_100',
+      source: 'ted_essay_mindset_100',
       addedAt: Date.now() - idx * 1000,
       updatedAt: Date.now(),
     };
   });
 
   const preservedBookmarked = store.items.filter(item => item.bookmarked);
+  // Normalize preserved bookmarks categories as well
+  preservedBookmarked.forEach(item => {
+    if (item.category !== 'ted_speech' && item.category !== 'essay_deep') {
+      item.category = determineCategory(item.title, '');
+    }
+  });
+
   let finalItems = replaceExisting 
     ? [...preservedBookmarked, ...curatedItems]
     : [...preservedBookmarked, ...curatedItems, ...store.items.filter(i => !i.bookmarked)];
 
   store.items = finalItems;
   store.lastCuratedAt = Date.now();
-  store.lastQuery = `최근 3년 TED·교육·명품 딕션 여성 쉐도잉 영상 100선`;
+  store.lastQuery = `최근 2~3년 TED & 여성 리더 에세이·마인드셋 쉐도잉 100선`;
   saveYouTubeData(store);
 
   if (onProgress) {
     onProgress({
       percent: 100,
-      message: `🎉 수집 완료! 총 ${curatedItems.length}개의 TED 및 교육 쉐도잉 영상이 준비되었습니다.`
+      message: `🎉 수집 완료! 총 ${curatedItems.length}개의 TED 및 에세이 영상이 준비되었습니다.`
     });
   }
 
@@ -636,3 +814,59 @@ export async function curateYouTubeLinksDynamic({
 }
 
 export const curateYouTubeLinks = curateYouTubeLinksDynamic;
+
+/**
+ * Run Wednesday 11:00 AI Council Meeting & Recommendation Generation
+ */
+export async function runWednesdayMeeting({ force = false } = {}) {
+  const weeklyData = loadWeeklyData();
+  const todayStr = new Date().toISOString().split('T')[0];
+
+  // Pick top mentor speakers to feature this week
+  const shuffledMentors = [...MENTOR_SPEAKER_POOL].sort(() => 0.5 - Math.random());
+  const featuredMentors = shuffledMentors.slice(0, 4);
+
+  const meetingVideos = [];
+  for (const mentor of featuredMentors) {
+    const q = mentor.keywords[0] || `${mentor.name} speech`;
+    const results = await searchYouTubeQuery(q);
+    if (results.length > 0) {
+      const topV = results[0];
+      meetingVideos.push({
+        id: 'w_vid_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        title: topV.title,
+        channelTitle: topV.channelTitle || mentor.name,
+        url: topV.url,
+        thumbnailUrl: topV.thumbnailUrl,
+        duration: topV.duration || '12:00',
+        mentorName: mentor.name,
+        shadowingTip: `${mentor.name} 특유의 ${mentor.dictionStyle}을 집중 쉐도잉하세요.`,
+        category: mentor.category,
+      });
+    }
+  }
+
+  // Calculate week number
+  const now = new Date();
+  const weekNumber = Math.ceil((((now - new Date(now.getFullYear(), 0, 1)) / 86400000) + 1) / 7);
+
+  const newSession = {
+    id: `session_${now.getFullYear()}_w${weekNumber}_${Date.now()}`,
+    date: todayStr,
+    weekLabel: `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${Math.ceil(now.getDate() / 7)}주차`,
+    meetingTitle: `🎙️ ${featuredMentors.map(m => m.name).join(', ')} 스피치 & 인생 마인드셋 추천 회의`,
+    agenda: `${featuredMentors.map(m => m.coreTopics).join(' | ')} 중심의 최근 강연 분석 및 쉐도잉 추천`,
+    speakerHighlights: featuredMentors.map(m => ({
+      name: m.name,
+      point: `${m.role} - ${m.coreTopics} (${m.dictionStyle})`,
+    })),
+    summary: `금주 수요일 회의에서는 ${featuredMentors.map(m => m.name).join(', ')}의 최신 강연 중 발음의 명확성과 메시지 전달력이 가장 뛰어난 영상을 선별하여 추천 목록에 등록하였습니다.`,
+    videos: meetingVideos,
+  };
+
+  weeklyData.sessions.unshift(newSession);
+  weeklyData.lastMeetingAt = Date.now();
+  saveWeeklyData(weeklyData);
+
+  return { ok: true, session: newSession };
+}
