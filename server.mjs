@@ -12,6 +12,7 @@ import {
   MENTOR_SPEAKER_POOL,
   loadWeeklyData,
   runWednesdayMeeting,
+  checkAndRunWeeklyCatchup,
 } from './youtube-control.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -170,4 +171,22 @@ app.get('*', (req, res) => {
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🎬 YouTubeKW 쉐도잉 초집중 서버 실행 중: http://127.0.0.1:${PORT}`);
+
+  // Anacron-style Startup Catch-up Guard (If PC was turned off during Wednesday 11:00)
+  setTimeout(async () => {
+    try {
+      await checkAndRunWeeklyCatchup();
+    } catch (err) {
+      console.error('[Startup Weekly Guard] Error:', err.message);
+    }
+  }, 2000);
+
+  // Hourly background catch-up guard
+  setInterval(async () => {
+    try {
+      await checkAndRunWeeklyCatchup();
+    } catch (err) {
+      console.error('[Interval Weekly Guard] Error:', err.message);
+    }
+  }, 60 * 60 * 1000);
 });

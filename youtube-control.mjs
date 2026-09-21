@@ -816,9 +816,33 @@ export async function curateYouTubeLinksDynamic({
 export const curateYouTubeLinks = curateYouTubeLinksDynamic;
 
 /**
+ * Check if the weekly meeting has already been executed for the current week
+ */
+export function isWeeklyMeetingDue() {
+  const weeklyData = loadWeeklyData();
+  if (!weeklyData.sessions || weeklyData.sessions.length === 0) return true;
+
+  const now = new Date();
+  // Calculate Monday 00:00:00 of the current week
+  const dayOfWeek = now.getDay(); // 0 = Sunday, 1 = Monday...
+  const diffToMonday = (dayOfWeek === 0 ? -6 : 1) - dayOfWeek;
+  const monday = new Date(now);
+  monday.setDate(now.getDate() + diffToMonday);
+  monday.setHours(0, 0, 0, 0);
+
+  // Check if any session exists created in or after Monday of this week
+  const hasSessionThisWeek = weeklyData.sessions.some(s => {
+    const sDate = new Date(s.date || s.createdAt || 0);
+    return sDate >= monday;
+  });
+
+  return !hasSessionThisWeek;
+}
+
+/**
  * Run Wednesday 11:00 AI Council Meeting & Recommendation Generation
  */
-export async function runWednesdayMeeting({ force = false } = {}) {
+export async function runWednesdayMeeting({ force = false, isCatchup = false } = {}) {
   const weeklyData = loadWeeklyData();
   const todayStr = new Date().toISOString().split('T')[0];
 
@@ -850,17 +874,21 @@ export async function runWednesdayMeeting({ force = false } = {}) {
   const now = new Date();
   const weekNumber = Math.ceil((((now - new Date(now.getFullYear(), 0, 1)) / 86400000) + 1) / 7);
 
+  const catchupNotice = isCatchup ? ' [PC 재부팅 주간 자동 보충 실행]' : '';
+
   const newSession = {
     id: `session_${now.getFullYear()}_w${weekNumber}_${Date.now()}`,
     date: todayStr,
-    weekLabel: `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${Math.ceil(now.getDate() / 7)}주차`,
+    createdAt: Date.now(),
+    isCatchup: Boolean(isCatchup),
+    weekLabel: `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${Math.ceil(now.getDate() / 7)}주차${catchupNotice}`,
     meetingTitle: `🎙️ ${featuredMentors.map(m => m.name).join(', ')} 스피치 & 인생 마인드셋 추천 회의`,
     agenda: `${featuredMentors.map(m => m.coreTopics).join(' | ')} 중심의 최근 강연 분석 및 쉐도잉 추천`,
     speakerHighlights: featuredMentors.map(m => ({
       name: m.name,
       point: `${m.role} - ${m.coreTopics} (${m.dictionStyle})`,
     })),
-    summary: `금주 수요일 회의에서는 ${featuredMentors.map(m => m.name).join(', ')}의 최신 강연 중 발음의 명확성과 메시지 전달력이 가장 뛰어난 영상을 선별하여 추천 목록에 등록하였습니다.`,
+    summary: `금주 회의에서는 ${featuredMentors.map(m => m.name).join(', ')}의 최신 강연 중 발음의 명확성과 메시지 전달력이 가장 뛰어난 영상을 선별하여 추천 목록에 등록하였습니다.${isCatchup ? ' (수요일 PC 오프라인으로 인한 부팅 즉시 자동 보충 회의)' : ''}`,
     videos: meetingVideos,
   };
 
@@ -869,4 +897,15 @@ export async function runWednesdayMeeting({ force = false } = {}) {
   saveWeeklyData(weeklyData);
 
   return { ok: true, session: newSession };
+}
+
+/**
+ * Anacron-style Weekly Catchup Guard: Guarantees at least 1 meeting per week regardless of PC shutdown
+ */
+export async function checkAndRunWeeklyCatchup() {
+  if (isWeeklyMeetingDue()) {
+    console.log(`[Weekly Meeting Guard] 🛡️ 금주 정기 회의 미실행 감지(PC 오프라인 등). 즉시 주 1회 보충 회의를 자동 실행합니다...`);
+    return await runWednesdayMeeting({ force: true, isCatchup: true });
+  }
+  return { ok: true, skipped: true, reason: 'Already executed for this week' };
 }
