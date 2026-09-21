@@ -175,19 +175,19 @@ export default function App() {
     { id: 'all', label: '✨ 전체 추천 영상' },
     { id: 'ted_speech', label: '🎤 TED & 명품 강연' },
     { id: 'essay_deep', label: '📚 에세이 & 마인드셋' },
-    { id: 'long_deep', label: '⏳ 긴 영상 (15분~2시간)' },
+    { id: 'sleep_life', label: '🌙 수면 & 인생 딥토크 (1시간+ 미녀 엄선)' },
   ];
 
   const filteredItems = useMemo(() => {
     return items.filter(item => {
       if (activeTab === 'bookmarked' && !item.bookmarked) return false;
       if (selectedCategory !== 'all') {
-        if (selectedCategory === 'long_deep') {
+        if (selectedCategory === 'sleep_life') {
           const parts = (item.duration || '').split(':').map(Number);
           let secs = 0;
           if (parts.length === 3) secs = parts[0] * 3600 + parts[1] * 60 + parts[2];
           else if (parts.length === 2) secs = parts[0] * 60 + parts[1];
-          if (item.category !== 'long_deep' && secs < 900) return false;
+          if (item.category !== 'sleep_life' && secs < 3600) return false;
         } else if (item.category !== selectedCategory) {
           return false;
         }
@@ -377,7 +377,7 @@ export default function App() {
                     </button>
                     <span className="duration-tag">{item.duration || '10분+'}</span>
                     <span className="cat-badge">
-                      {item.category === 'ted_speech' ? '🎤 TED 강연' : item.category === 'long_deep' ? '⏳ 긴 영상' : '📚 에세이·마인드'}
+                      {item.category === 'ted_speech' ? '🎤 TED 강연' : item.category === 'sleep_life' ? '🌙 수면&인생 (1h+)' : '📚 에세이·마인드'}
                     </span>
                     <span className="index-tag">#{index + 1}</span>
                   </div>

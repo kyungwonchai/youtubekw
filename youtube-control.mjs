@@ -135,9 +135,9 @@ export const CURATION_CHANNELS = [
     id: 'all',
     label: '✨ 전체 추천 영상',
     shortLabel: '전체 추천',
-    target: '최근 2~3년 이내 밝고 지적인 여성 리더·명사들의 명품 TED 강연 및 인생 가치관·마인드셋 쉐도잉',
+    target: '최근 2~3년 이내 밝고 지적인 여성 리더·명사들의 명품 TED 강연, 인생 가치관 및 수면 딥토크',
     icon: '✨',
-    desc: '스피치 훈련 & 영어 쉐도잉에 최적화된 유창하고 또렷한 딕션의 명사 강연 및 에세이',
+    desc: '스피치 훈련 & 영어 쉐도잉에 최적화된 유창하고 또렷한 딕션의 명사 강연, 에세이 및 취침용 롱폼 토크',
     category: 'all',
     defaultTags: ['명품딕션', '롤모델스피치', '기업가정신', '쉐도잉최적'],
   },
@@ -162,14 +162,14 @@ export const CURATION_CHANNELS = [
     defaultTags: ['기업가정신', '인생가치관', '경험담', '고급에세이'],
   },
   {
-    id: 'long_deep',
-    label: '⏳ 긴 영상 (15분~2시간)',
-    shortLabel: '긴 영상 (15분~2시간)',
-    target: '15분 이상 최대 2시간 이내의 심층 팟캐스트, 렉처, 롱폼 스피치 & 인생 대담',
-    icon: '⏳',
-    desc: '몰입도 높은 15분~120분 길이의 젊고 유창한 여성 리더들의 풀버전 롱폼 대담 및 렉처',
-    category: 'long_deep',
-    defaultTags: ['롱폼쉐도잉', '15분이상', '심층대담', '풀렉처'],
+    id: 'sleep_life',
+    label: '🌙 수면 & 인생 딥토크 (1시간+)',
+    shortLabel: '수면 & 인생 (1시간+)',
+    target: '1시간 이상 잘 때 듣는 진솔한 인생 이야기, 심야 팟캐스트 & 잔잔한 롱폼 딥 인터뷰 (미녀 엄선)',
+    icon: '🌙',
+    desc: '취침·휴식 시 듣기 좋은 차분하고 또렷한 딕션의 매력적인 여성 호스트/명사들의 60분+ 인생 스토리텔링 및 딥토크',
+    category: 'sleep_life',
+    defaultTags: ['수면용팟캐스트', '1시간이상', '인생이야기', '차분한딕션', '미녀엄선'],
   },
 ];
 
@@ -177,6 +177,39 @@ export const CURATION_CHANNELS = [
  * Inspiring Role Model Mentor Speakers Pool (존경받는 젊은 여성 명사 & CEO 인재풀)
  */
 export const MENTOR_SPEAKER_POOL = [
+  {
+    id: 'emma_chamberlain',
+    name: 'Emma Chamberlain',
+    role: 'Anything Goes 호스트 & 글로벌 크리에이터 (포브스 30 Under 30)',
+    category: 'sleep_life',
+    avatar: '☕',
+    badge: '🌙 심야 감성 딥토크',
+    dictionStyle: '차분하고 나지막하면서도 명료한 톤, 밤에 듣기 편안한 솔직한 독백 & 대화',
+    coreTopics: '인생의 고난과 성장, 외로움 극복, 20대의 진솔한 생각과 인간관계',
+    keywords: ['Emma Chamberlain Anything Goes podcast life lessons full episode', 'Emma Chamberlain deep talk life philosophy 1 hour', 'Emma Chamberlain advice interview full'],
+  },
+  {
+    id: 'maya_shankar',
+    name: 'Dr. Maya Shankar',
+    role: '인지과학자 (옥스퍼드/스탠퍼드) & A Slight Change of Plans 진행자',
+    category: 'sleep_life',
+    avatar: '✨',
+    badge: '🧠 뇌과학 & 감동 딥토크',
+    dictionStyle: '지적이고 정돈된 표준 미국식 발음, 차분하면서도 깊은 울림의 딕션',
+    coreTopics: '삶의 극적인 변화, 상실과 회복, 인간의 정체성과 가치관 심층 탐구',
+    keywords: ['Dr Maya Shankar deep conversation podcast full episode', 'Maya Shankar podcast change mind life story', 'Dr Maya Shankar interview values full talk'],
+  },
+  {
+    id: 'liv_boeree',
+    name: 'Liv Boeree',
+    role: '케임브리지 물리학 & 세계 챔피언 포커 플레이어·게임이론가',
+    category: 'ted_speech',
+    avatar: '🎯',
+    badge: '🧠 게임이론/의사결정',
+    dictionStyle: '날카롭고 지적인 영국식 고급 딕션, 빈틈없는 논리 전개',
+    coreTopics: '게임이론, 확률적 사고, 불확실성 속 최고의 의사결정',
+    keywords: ['Liv Boeree TED talk speech', 'Liv Boeree decision making game theory', 'Liv Boeree podcast full length deep talk'],
+  },
   {
     id: 'lucy_guo',
     name: 'Lucy Guo',
@@ -198,17 +231,6 @@ export const MENTOR_SPEAKER_POOL = [
     dictionStyle: '우아하면서도 단단한 카리스마, 설득력 높은 비즈니스 피칭',
     coreTopics: '거절 극복, 여성 주도적 플랫폼 창업, 20대 리더십',
     keywords: ['Whitney Wolfe Herd keynote speech', 'Whitney Wolfe Herd interview advice', 'Whitney Wolfe Herd commencement speech'],
-  },
-  {
-    id: 'liv_boeree',
-    name: 'Liv Boeree',
-    role: '케임브리지 물리학 & 세계 챔피언 포커 플레이어·게임이론가',
-    category: 'ted_speech',
-    avatar: '🎯',
-    badge: '🧠 게임이론/의사결정',
-    dictionStyle: '날카롭고 지적인 영국식 고급 딕션, 빈틈없는 논리 전개',
-    coreTopics: '게임이론, 확률적 사고, 불확실성 속 최고의 의사결정',
-    keywords: ['Liv Boeree TED talk speech', 'Liv Boeree decision making game theory', 'Liv Boeree podcast talk'],
   },
   {
     id: 'codie_sanchez',
@@ -252,7 +274,7 @@ export const MENTOR_SPEAKER_POOL = [
     badge: '🇬🇧 20대 생산성 에이스',
     dictionStyle: '유려하고 빠른 영국식 RP 딕션, 체계적인 논리와 에너지',
     coreTopics: '20대 사업 성공, 워크-라이프 생산성, 소셜미디어 제국 구축',
-    keywords: ['Grace Beverley productivity speech', 'Grace Beverley founder interview talk', 'Grace Beverley Oxford talk'],
+    keywords: ['Grace Beverley productivity speech', 'Grace Beverley founder interview talk 1 hour', 'Grace Beverley Oxford talk'],
   },
   {
     id: 'erika_kullberg',
@@ -266,15 +288,15 @@ export const MENTOR_SPEAKER_POOL = [
     keywords: ['Erika Kullberg interview speech', 'Erika Kullberg talk mindset', 'Erika Kullberg speech career'],
   },
   {
-    id: 'maya_shankar',
-    name: 'Dr. Maya Shankar',
-    role: '인지과학자 (옥스퍼드/스탠퍼드) & 전 백악관 선임고문',
-    category: 'essay_deep',
-    avatar: '✨',
-    badge: '🧠 뇌과학 & 딥토크',
-    dictionStyle: '지적이고 정돈된 표준 미국식 발음, 차분하면서도 깊은 울림의 딕션',
-    coreTopics: '삶의 변화, 정체성 재정의, 가치관, 딥 인터뷰',
-    keywords: ['Maya Shankar podcast talk', 'Maya Shankar change mind speech', 'Maya Shankar interview values'],
+    id: 'alex_cooper',
+    name: 'Alex Cooper',
+    role: 'Unwell Network 대표 & 20대 미디어 기업가',
+    category: 'sleep_life',
+    avatar: '🎙️',
+    badge: '🔥 20대 미디어 제국',
+    dictionStyle: '진솔하고 몰입감 넘치는 대화, 편안하면서도 깊은 인생 스토리텔링',
+    coreTopics: '자기 확신, 협상력, 20대 거대 미디어 비즈니스 구축 및 인생 인터뷰',
+    keywords: ['Alex Cooper business interview speech 1 hour', 'Alex Cooper podcast deep conversation full', 'Alex Cooper Forbes talk'],
   },
   {
     id: 'jess_ekstrom',
@@ -298,22 +320,11 @@ export const MENTOR_SPEAKER_POOL = [
     coreTopics: '기술의 미래, AI 리더십, 혁신을 이끄는 마인드셋',
     keywords: ['Mira Murati interview keynote talk', 'Mira Murati AI speech leadership', 'Mira Murati keynote speech'],
   },
-  {
-    id: 'alex_cooper',
-    name: 'Alex Cooper',
-    role: 'Unwell Network 대표 & 20대 미디어 기업가',
-    category: 'essay_deep',
-    avatar: '🎙️',
-    badge: '🔥 20대 미디어 제국',
-    dictionStyle: '파격적인 자신감과 에너지, 상대를 무장해제시키는 스피치',
-    coreTopics: '자기 확신, 협상력, 20대 거대 미디어 비즈니스 구축',
-    keywords: ['Alex Cooper business interview speech', 'Alex Cooper media network talk', 'Alex Cooper Forbes talk'],
-  },
 ];
 
-// Targeted queries focused strictly on bright, young, inspiring female speakers, diverse TED topics, and elite diction essays
+// Targeted queries focused strictly on bright, young, inspiring female speakers, diverse TED topics, elite diction essays, and 1-hour+ sleep & life stories
 const SEARCH_QUERIES = [
-  // 1. Core TED & TEDx Talks by Inspiring, Articulate Young Women (Life, Travel, Climate, Family, Hobbies, Film, Music, Culture, Speech, Confidence, Ambition)
+  // 1. Core TED & TEDx Talks by Inspiring, Articulate Young Women
   'TED talk young woman travel life adventure clear english speech',
   'TED talk young female climate change nature future speech',
   'TED talk woman life philosophy family relationships clear speech',
@@ -353,17 +364,20 @@ const SEARCH_QUERIES = [
   'Dr Maya Shankar change mind deep talk values',
   'Jess Ekstrom TEDx talk public speaking story',
   'Kat Cole TED talk leadership hot shot rule speech',
-  // 4. Long-form Speeches & Deep Podcasts (15 min ~ 2 hours)
-  'inspiring long speech young woman full talk podcast',
-  'TED talk extended lecture female leadership mindset',
-  'Oxford Union address articulate young woman full speech',
-  'young female CEO deep dive interview full podcast clear diction',
-  'Dr Maya Shankar deep conversation podcast full',
-  'Liv Boeree game theory full podcast interview',
-  'Melanie Perkins Canva founder full keynote speech',
-  'Grace Beverley full length business podcast talk',
-  'Whitney Wolfe Herd full university commencement address',
-  'long format inspiring speech articulate woman english'
+
+  // 4. [New] 1 Hour+ Sleep, Life Stories & Deep Intimate Conversations (잘 때 듣는 1시간+ 인생 이야기 & 팟캐스트 - 미녀 엄선)
+  'Emma Chamberlain Anything Goes life story full podcast 1 hour',
+  'Dr Maya Shankar deep conversation podcast full episode 1 hour',
+  'inspiring young woman life story full podcast 1 hour calm voice',
+  'calm articulate young woman storytelling 1 hour sleep english',
+  'deep life conversation podcast young female founder 1 hour clear diction',
+  'Diary of a CEO female founder inspiring life story 1 hour calm english',
+  'soothing deep talk interview articulate woman life philosophy 1 hour',
+  'Liv Boeree full length podcast deep conversation life 1 hour',
+  'Alex Cooper podcast deep intimate life interview full 1 hour',
+  '1 hour podcast young woman life lessons advice calm clear voice',
+  'young articulate woman deep talk life journey podcast full episode 1 hour',
+  'calm clear english podcast woman mindset life philosophy sleep bedtime',
 ];
 
 /**
@@ -469,12 +483,12 @@ export function parseDurationInSeconds(durationStr) {
 }
 
 /**
- * Require at least 3 minutes (180 seconds) up to 2 hours (7200 seconds)
+ * Require at least 3 minutes (180 seconds) up to 3.5 hours (12600 seconds)
  */
 export function isGoodShadowingLength(durationStr) {
   if (!durationStr) return true;
   const secs = parseDurationInSeconds(durationStr);
-  return secs >= 180 && secs <= 7200; // 3 min <= duration <= 120 min (2 hours)
+  return secs >= 180 && secs <= 12600; // 3 min <= duration <= 210 min (3.5 hours)
 }
 
 /**
@@ -654,10 +668,10 @@ export function getYouTubeLinks({ filter = 'all', category = 'all', search = '' 
   }
 
   if (category && category !== 'all') {
-    if (category === 'long_deep') {
+    if (category === 'sleep_life') {
       list = list.filter(item => {
         const secs = parseDurationInSeconds(item.duration);
-        return item.category === 'long_deep' || secs >= 900;
+        return item.category === 'sleep_life' || secs >= 3600;
       });
     } else {
       list = list.filter(item => item.category === category);
@@ -904,15 +918,18 @@ async function searchYouTubeQuery(query) {
 }
 
 /**
- * Determine category between categories: 'ted_speech' vs 'essay_deep' vs 'long_deep'
+ * Determine category between categories: 'ted_speech' vs 'essay_deep' vs 'sleep_life'
  */
 export function determineCategory(title = '', query = '', durationStr = '') {
   const text = `${title} ${query}`.toLowerCase();
   const secs = parseDurationInSeconds(durationStr);
 
-  // 1. Long-form video (>= 15 minutes, up to 2 hours)
-  if (secs >= 900 || text.includes('podcast') || text.includes('full lecture') || text.includes('extended') || text.includes('full interview') || text.includes('deep dive')) {
-    if (secs >= 900) return 'long_deep';
+  // 1. Sleep & Long-form Life Stories / Deep Talks (>= 60 minutes, or sleep/intimate podcast >= 40 minutes)
+  if (
+    secs >= 3600 ||
+    ((text.includes('sleep') || text.includes('bedtime') || text.includes('life story') || text.includes('anything goes') || text.includes('slight change of plans') || text.includes('call her daddy') || text.includes('full episode') || text.includes('podcast')) && secs >= 2400)
+  ) {
+    return 'sleep_life';
   }
 
   // 2. TED & speech
@@ -923,7 +940,8 @@ export function determineCategory(title = '', query = '', durationStr = '') {
     text.includes('keynote') ||
     text.includes('address') ||
     text.includes('stage') ||
-    text.includes('presentation')
+    text.includes('presentation') ||
+    text.includes('oxford union')
   ) {
     return 'ted_speech';
   }
