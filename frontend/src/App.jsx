@@ -8,9 +8,7 @@ export default function App() {
   const [speakers, setSpeakers] = useState([]);
   const [weeklyData, setWeeklyData] = useState({ sessions: [] });
   const [loading, setLoading] = useState(false);
-  const [curating, setCurating] = useState(false);
   const [runningWeekly, setRunningWeekly] = useState(false);
-  const [progress, setProgress] = useState({ percent: 0, message: '' });
   const [activeTab, setActiveTab] = useState('feed'); // 'feed', 'bookmarked', 'weekly', 'speakers'
   const [selectedCategory, setSelectedCategory] = useState('all'); // 'all', 'ted_speech', 'essay_deep'
   const [searchQuery, setSearchQuery] = useState('');
@@ -65,41 +63,6 @@ export default function App() {
     fetchWeeklySessions();
     fetchSpeakers();
   }, []);
-
-  // Realtime TED & Essay Shadowing Videos Curation with SSE Progress Bar
-  const handleStartCuration = () => {
-    if (curating) return;
-    setCurating(true);
-    setProgress({ percent: 5, message: '🚀 젊은 여성 리더들의 TED 강연 & 에세이 쉐도잉 수집 시작...' });
-
-    const eventSource = new EventSource(`${API_BASE}/curate-stream?limit=100`);
-
-    eventSource.addEventListener('progress', (e) => {
-      try {
-        const data = JSON.parse(e.data);
-        setProgress({ percent: data.percent || 10, message: data.message || '수집 중...' });
-      } catch (err) {}
-    });
-
-    eventSource.addEventListener('done', async (e) => {
-      try {
-        const data = JSON.parse(e.data);
-        setProgress({ percent: 100, message: `🎉 수집 완료! 총 ${data.addedCount}개의 TED & 에세이 쉐도잉 영상 확보.` });
-        showToast(`✅ ${data.addedCount}개의 TED 및 에세이 쉐도잉 영상이 수집되었습니다!`, 'success');
-        eventSource.close();
-        await fetchLinks();
-      } catch (err) {}
-      setTimeout(() => {
-        setCurating(false);
-      }, 1500);
-    });
-
-    eventSource.addEventListener('error', (e) => {
-      eventSource.close();
-      setCurating(false);
-      showToast('수집 중 오류가 발생했습니다. 다시 시도해주세요.', 'error');
-    });
-  };
 
   const handleAddCustomUrl = async (e) => {
     if (e) e.preventDefault();
@@ -243,30 +206,6 @@ export default function App() {
             <h1>TED & 에세이 쉐도잉</h1>
           </div>
         </div>
-
-        <div className="yt-hero-action">
-          <div className="action-with-badge">
-            <button
-              className={`btn-main-collect ${curating ? 'is-loading' : ''}`}
-              disabled={curating}
-              onClick={handleStartCuration}
-              title="최신 명품 강연 영상 수집 (내가 찜한 영상은 안전하게 보존됩니다)"
-            >
-              {curating ? (
-                <>
-                  <span className="spinner"></span>
-                  <span>최신 수집 중 ({progress.percent}%)</span>
-                </>
-              ) : (
-                <>
-                  <span className="btn-icon">⚡</span>
-                  <span>최신 쉐도잉 영상 수집하기</span>
-                </>
-              )}
-            </button>
-            <span className="safe-badge">🛡️ 찜(⭐) 영상 영구 보존</span>
-          </div>
-        </div>
       </header>
 
       {/* Confirmation Modal for Permanent Dislike / Blacklist */}
@@ -343,25 +282,9 @@ export default function App() {
           </button>
         </form>
         <div className="custom-add-hint">
-          <span>💡 <strong>데이터 보존 원칙:</strong> 최신 100개를 다시 수집하더라도 찜(⭐)한 영상과 직접 추가한 영상은 <strong>절대 삭제되지 않고 영구 보존</strong>됩니다.</span>
+          <span>💡 <strong>데이터 보존 원칙:</strong> 내가 찜(⭐)한 영상과 직접 등록한 영상은 <strong>영구 보존</strong>됩니다.</span>
         </div>
       </div>
-
-      {/* Realtime Progress Bar */}
-      {curating && (
-        <div className="yt-progress-container">
-          <div className="progress-info">
-            <span className="progress-msg">{progress.message}</span>
-            <span className="progress-num">{progress.percent}%</span>
-          </div>
-          <div className="progress-track">
-            <div
-              className="progress-fill"
-              style={{ width: `${progress.percent}%` }}
-            ></div>
-          </div>
-        </div>
-      )}
 
       {/* 2 Main Categories Focus Pills */}
       {(activeTab === 'feed' || activeTab === 'bookmarked') && (
@@ -435,7 +358,7 @@ export default function App() {
             <div className="empty-state">
               <div className="empty-icon">🎧</div>
               <h2>준비된 영상이 없습니다.</h2>
-              <p>상단의 <strong>[⚡ 최신 쉐도잉 영상 수집하기]</strong> 버튼을 눌러 TED & 에세이 쉐도잉 영상을 즉시 채워보세요!</p>
+              <p>상단의 주소 입력창으로 쉐도잉할 유튜브 영상을 추가하거나, 주간 AI 회의록에서 영상을 확인해보세요.</p>
             </div>
           ) : (
             <div className="yt-grid">
