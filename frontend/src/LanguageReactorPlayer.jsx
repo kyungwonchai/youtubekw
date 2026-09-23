@@ -9,7 +9,40 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [playbackRate, setPlaybackRate] = useState(1);
+  
+  // Font scale mode (1.0x ~ 3.0x) for PC / large screen reading
+  const [fontScale, setFontScale] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ytkw_font_scale');
+      return saved ? Math.min(3.0, Math.max(1.0, parseFloat(saved))) : 1.0;
+    } catch (e) {
+      return 1.0;
+    }
+  });
+
+  // Playback rate (0.60x ~ 2.0x with 0.05 increments)
+  const [playbackRate, setPlaybackRate] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ytkw_playback_rate');
+      return saved ? Math.min(2.0, Math.max(0.6, parseFloat(saved))) : 1.0;
+    } catch (e) {
+      return 1.0;
+    }
+  });
+
+  const handleFontScaleChange = (scale) => {
+    const clamped = Math.min(3.0, Math.max(1.0, Math.round(scale * 10) / 10));
+    setFontScale(clamped);
+    try {
+      localStorage.setItem('ytkw_font_scale', clamped.toString());
+    } catch (e) {}
+  };
+
+  const handleFontScaleCycle = () => {
+    const scales = [1.0, 1.5, 2.0, 2.5, 3.0];
+    const nextIdx = (scales.findIndex(s => Math.abs(s - fontScale) < 0.1) + 1) % scales.length;
+    handleFontScaleChange(scales[nextIdx]);
+  };
   
   // Compact Video Mode (화면 상단 20%만 차지하여 자막 공간 극대화)
   const [compactVideo, setCompactVideo] = useState(true);
@@ -109,6 +142,9 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
             setPlayer(event.target);
             setPlayerReady(true);
             setDuration(event.target.getDuration() || 0);
+            if (playbackRate !== 1) {
+              try { event.target.setPlaybackRate(playbackRate); } catch (e) {}
+            }
             if (!bgAudioMode) event.target.playVideo();
           },
           onStateChange: (event) => {
@@ -322,14 +358,25 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     }
   };
 
-  // 10. Change Playback Speed
+  // 10. Change Playback Speed (Min 0.60x, 0.05 step)
   const handleRateChange = (rate) => {
+    const clampedRate = Math.min(2.0, Math.max(0.6, Math.round(rate * 100) / 100));
     if (bgAudioMode && audioRef.current) {
-      audioRef.current.playbackRate = rate;
+      audioRef.current.playbackRate = clampedRate;
     } else if (player && typeof player.setPlaybackRate === 'function') {
-      player.setPlaybackRate(rate);
+      try {
+        player.setPlaybackRate(clampedRate);
+      } catch (e) {}
     }
-    setPlaybackRate(rate);
+    setPlaybackRate(clampedRate);
+    try {
+      localStorage.setItem('ytkw_playback_rate', clampedRate.toString());
+    } catch (e) {}
+  };
+
+  const handleStepRate = (delta) => {
+    const nextRate = Math.round((playbackRate + delta) * 100) / 100;
+    handleRateChange(nextRate);
   };
 
   // 11. Word click dictionary popup
@@ -424,7 +471,11 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
 
   return (
     <div className="lr-modal-backdrop" onClick={onClose}>
-      <div className={`lr-studio-container ${compactVideo ? 'compact-video-mode' : ''} ${bgAudioMode ? 'bg-audio-active' : ''}`} onClick={e => e.stopPropagation()}>
+      <div
+        className={`lr-studio-container ${compactVideo ? 'compact-video-mode' : ''} ${bgAudioMode ? 'bg-audio-active' : ''}`}
+        style={{ '--sub-font-scale': fontScale }}
+        onClick={e => e.stopPropagation()}
+      >
         
         {/* Hidden HTML5 Audio Element for Background Lockscreen Playback */}
         <audio
@@ -443,6 +494,15 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
           </div>
 
           <div className="lr-header-actions">
+            {/* FONT SCALE QUICK CYCLE BUTTON (1.0x -> 1.5x -> 2.0x -> 2.5x -> 3.0x) */}
+            <button
+              className={`lr-icon-btn lr-font-btn ${fontScale > 1.0 ? 'active' : ''}`}
+              onClick={handleFontScaleCycle}
+              title={`글자 크기 조절 (현재: ${fontScale.toFixed(1)}x / 최대 3.0배) - 클릭 시 순환 변경`}
+            >
+              🔠 {fontScale.toFixed(1)}x
+            </button>
+
             {/* BACKGROUND AUDIO LOCKSCREEN PLAYBACK TOGGLE BUTTON */}
             <button
               className={`lr-icon-btn ${bgAudioMode ? 'bg-active' : ''}`}
@@ -467,9 +527,9 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
             <button
               className={`lr-icon-btn ${showSettings ? 'active' : ''}`}
               onClick={() => setShowSettings(!showSettings)}
-              title="자막 모드 & 배속 설정"
+              title="자막 모드, 글자크기 & 세밀배속 설정"
             >
-              ⚙️ {getDisplayModeLabel()}
+              ⚙️ {getDisplayModeLabel()} ({playbackRate.toFixed(2)}x)
             </button>
 
             <button
@@ -493,41 +553,118 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
               <div className="settings-btn-grid">
                 <button
                   className={`set-choice-btn ${displayMode === 'dual' ? 'active' : ''}`}
-                  onClick={() => { setDisplayMode('dual'); setShowSettings(false); }}
+                  onClick={() => { setDisplayMode('dual'); }}
                 >
                   🔤 영문 + 한글 듀얼
                 </button>
                 <button
                   className={`set-choice-btn ${displayMode === 'en_only' ? 'active' : ''}`}
-                  onClick={() => { setDisplayMode('en_only'); setShowSettings(false); }}
+                  onClick={() => { setDisplayMode('en_only'); }}
                 >
                   🇺🇸 영문 자막만
                 </button>
                 <button
                   className={`set-choice-btn ${displayMode === 'ko_only' ? 'active' : ''}`}
-                  onClick={() => { setDisplayMode('ko_only'); setShowSettings(false); }}
+                  onClick={() => { setDisplayMode('ko_only'); }}
                 >
                   🇰🇷 한글 번역만
                 </button>
                 <button
                   className={`set-choice-btn ${displayMode === 'blind' ? 'active' : ''}`}
-                  onClick={() => { setDisplayMode('blind'); setShowSettings(false); }}
+                  onClick={() => { setDisplayMode('blind'); }}
                 >
                   🙈 블라인드 (가리기)
                 </button>
               </div>
             </div>
 
+            {/* FONT SCALE CONTROL (최대 3배까지 키우기) */}
             <div className="settings-section">
-              <span className="section-title">⚡ 재생 속도</span>
-              <div className="settings-rate-row">
-                {[0.75, 0.9, 1.0, 1.1, 1.25].map(rate => (
+              <div className="section-title-row">
+                <span className="section-title">🔠 글자 크기 (최대 3.0배)</span>
+                <span className="section-val-badge">{fontScale.toFixed(1)}x</span>
+              </div>
+              <div className="font-scale-controls">
+                <button
+                  className="step-btn"
+                  onClick={() => handleFontScaleChange(fontScale - 0.2)}
+                  disabled={fontScale <= 1.0}
+                  title="글자 크기 축소 (-0.2x)"
+                >
+                  ➖
+                </button>
+                <input
+                  type="range"
+                  className="settings-slider"
+                  min="1.0"
+                  max="3.0"
+                  step="0.1"
+                  value={fontScale}
+                  onChange={(e) => handleFontScaleChange(parseFloat(e.target.value))}
+                />
+                <button
+                  className="step-btn"
+                  onClick={() => handleFontScaleChange(fontScale + 0.2)}
+                  disabled={fontScale >= 3.0}
+                  title="글자 크기 확대 (+0.2x)"
+                >
+                  ➕
+                </button>
+              </div>
+              <div className="settings-preset-row">
+                {[1.0, 1.5, 2.0, 2.5, 3.0].map(scale => (
+                  <button
+                    key={scale}
+                    className={`rate-pill ${Math.abs(fontScale - scale) < 0.05 ? 'active' : ''}`}
+                    onClick={() => handleFontScaleChange(scale)}
+                  >
+                    {scale.toFixed(1)}x
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* PLAYBACK SPEED (최저 0.60x ~ 0.05단위) */}
+            <div className="settings-section">
+              <div className="section-title-row">
+                <span className="section-title">⚡ 재생/읽기 속도 (최저 0.60x ~ 0.05 단위)</span>
+                <span className="section-val-badge">{playbackRate.toFixed(2)}x</span>
+              </div>
+              <div className="rate-fine-controls">
+                <button
+                  className="step-btn"
+                  onClick={() => handleStepRate(-0.05)}
+                  disabled={playbackRate <= 0.60}
+                  title="속도 -0.05x 느리게"
+                >
+                  ➖ 0.05
+                </button>
+                <input
+                  type="range"
+                  className="settings-slider"
+                  min="0.60"
+                  max="1.50"
+                  step="0.05"
+                  value={playbackRate}
+                  onChange={(e) => handleRateChange(parseFloat(e.target.value))}
+                />
+                <button
+                  className="step-btn"
+                  onClick={() => handleStepRate(0.05)}
+                  disabled={playbackRate >= 2.0}
+                  title="속도 +0.05x 빠르게"
+                >
+                  ➕ 0.05
+                </button>
+              </div>
+              <div className="settings-preset-row">
+                {[0.60, 0.70, 0.80, 0.90, 1.00, 1.10, 1.25].map(rate => (
                   <button
                     key={rate}
-                    className={`rate-pill ${playbackRate === rate ? 'active' : ''}`}
+                    className={`rate-pill ${Math.abs(playbackRate - rate) < 0.02 ? 'active' : ''}`}
                     onClick={() => handleRateChange(rate)}
                   >
-                    {rate}x
+                    {rate.toFixed(rate === 0.6 || rate === 0.7 || rate === 0.8 || rate === 0.9 || rate === 1.0 || rate === 1.1 ? 1 : 2)}x
                   </button>
                 ))}
               </div>
@@ -537,7 +674,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
               <span className="section-title">🎧 백그라운드 / 취침 모드</span>
               <button
                 className={`set-toggle-btn ${bgAudioMode ? 'active' : ''}`}
-                onClick={() => { handleToggleBgAudio(); setShowSettings(false); }}
+                onClick={() => { handleToggleBgAudio(); }}
               >
                 {bgAudioMode ? '🌙 백그라운드 취침 모드 활성화됨 (화면꺼짐 재생)' : '🎧 백그라운드 모드 켜기 (화면꺼짐 재생)'}
               </button>
