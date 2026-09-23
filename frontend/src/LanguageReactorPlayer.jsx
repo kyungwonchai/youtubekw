@@ -53,27 +53,40 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     }
   };
   
-  // Video Layout Mode: 'compact' (콤팩트 20%), 'expanded' (영상확대 50%), 'text_only' (영상없이 100% 텍스트만)
-  const [videoLayout, setVideoLayout] = useState(() => {
+  // Video Compact Mode (영상 20% 축소 vs 50% 확대)
+  const [compactVideo, setCompactVideo] = useState(() => {
     try {
-      const saved = localStorage.getItem('ytkw_video_layout');
-      return saved || 'compact'; // 'compact', 'expanded', 'text_only'
+      const saved = localStorage.getItem('ytkw_compact_video');
+      return saved !== null ? saved === 'true' : true;
     } catch (e) {
-      return 'compact';
+      return true;
     }
   });
 
-  const handleVideoLayoutChange = (mode) => {
-    setVideoLayout(mode);
+  const handleToggleCompactVideo = () => {
+    const next = !compactVideo;
+    setCompactVideo(next);
     try {
-      localStorage.setItem('ytkw_video_layout', mode);
+      localStorage.setItem('ytkw_compact_video', String(next));
     } catch (e) {}
   };
 
-  const handleCycleVideoLayout = () => {
-    if (videoLayout === 'compact') handleVideoLayoutChange('text_only');
-    else if (videoLayout === 'text_only') handleVideoLayoutChange('expanded');
-    else handleVideoLayoutChange('compact');
+  // Video Hide Mode: 영상 숨기고 글자만 화면 전체 점유 (체크박스/토글)
+  const [hideVideo, setHideVideo] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ytkw_hide_video');
+      return saved === 'true';
+    } catch (e) {
+      return false;
+    }
+  });
+
+  const handleToggleHideVideo = () => {
+    const next = !hideVideo;
+    setHideVideo(next);
+    try {
+      localStorage.setItem('ytkw_hide_video', String(next));
+    } catch (e) {}
   };
 
   // Background Audio Mode (화면 꺼짐 / 잠금화면 1~2시간 연속 재생 모드)
@@ -809,7 +822,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
   return (
     <div className="lr-modal-backdrop" onClick={onClose}>
       <div
-        className={`lr-studio-container layout-${videoLayout} ${bgAudioMode ? 'bg-audio-active' : ''} ${posHighlight ? 'pos-highlight-enabled' : ''} border-theme-${activeBorderColor}`}
+        className={`lr-studio-container ${hideVideo ? 'layout-text_only' : compactVideo ? 'compact-video-mode layout-compact' : 'layout-expanded'} ${bgAudioMode ? 'bg-audio-active' : ''} ${posHighlight ? 'pos-highlight-enabled' : ''} border-theme-${activeBorderColor}`}
         style={{ '--sub-font-scale': fontScale }}
         onClick={e => e.stopPropagation()}
       >
@@ -831,7 +844,38 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
           </div>
 
           <div className="lr-header-actions">
-            {/* POS COLOR HIGHLIGHT TOGGLE */}
+            {/* 1. 영상 숨김 & 글자만 전체점유 체크박스 버튼 */}
+            {!bgAudioMode && (
+              <button
+                className={`lr-icon-btn ${hideVideo ? 'active text-only-active' : ''}`}
+                onClick={handleToggleHideVideo}
+                title={hideVideo ? "영상 숨김 해제 (영상 다시 보기)" : "영상 없이 글자(자막)만 화면 전체 점유 모드"}
+              >
+                {hideVideo ? '☑️ 영상숨김 (글자전체)' : '🔲 영상숨김'}
+              </button>
+            )}
+
+            {/* 2. 기존 영상 확대 / 20% 축소 토글 버튼 */}
+            {!bgAudioMode && !hideVideo && (
+              <button
+                className={`lr-icon-btn ${compactVideo ? 'active' : ''}`}
+                onClick={handleToggleCompactVideo}
+                title={compactVideo ? '영상 50% 기본 크기로 확대' : '영상 상단 20% 최소화 (자막 공간 극대화)'}
+              >
+                {compactVideo ? '📱 20% 콤팩트' : '🗖 영상확대'}
+              </button>
+            )}
+
+            {/* 3. 자막 표시 모드 (듀얼 -> 영문 -> 한글 -> 블라인드) */}
+            <button
+              className={`lr-icon-btn lr-submode-btn ${displayMode !== 'dual' ? 'active' : ''}`}
+              onClick={handleCycleDisplayMode}
+              title={`자막 표시 모드 즉시 변경 (현재: ${getDisplayModeLabel()})\n• 클릭 시: 🔤듀얼 ➔ 🇺🇸영문만 ➔ 🇰🇷한글만 ➔ 🙈블라인드 순환`}
+            >
+              {getDisplayModeLabel()}
+            </button>
+
+            {/* 4. 품사색 토글 */}
             <button
               className={`lr-icon-btn ${posHighlight ? 'active pos-active' : ''}`}
               onClick={handleTogglePosHighlight}
@@ -840,7 +884,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
               {posHighlight ? '🎨 품사색 ON' : '🎨 품사색 OFF'}
             </button>
 
-            {/* SAVED SENTENCES DRAWER BUTTON */}
+            {/* 5. 문장 보관함 */}
             <button
               className={`lr-icon-btn ${savedSentences.length > 0 ? 'active' : ''}`}
               onClick={() => setShowSentencesDrawer(true)}
@@ -849,7 +893,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
               🔖 문장함 ({savedSentences.length})
             </button>
 
-            {/* FONT SCALE QUICK BUTTON (1.0x ~ 2.0x, Click to cycle or Mouse Wheel to adjust in 0.1 steps) */}
+            {/* 6. 글자 크기 */}
             <button
               className={`lr-icon-btn lr-font-btn ${fontScale > 1.0 ? 'active' : ''}`}
               onClick={handleFontScaleCycle}
@@ -859,7 +903,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
               🔠 {fontScale.toFixed(1)}x
             </button>
 
-            {/* BACKGROUND AUDIO LOCKSCREEN PLAYBACK TOGGLE BUTTON */}
+            {/* 7. 백그라운드 오디오 */}
             <button
               className={`lr-icon-btn ${bgAudioMode ? 'bg-active' : ''}`}
               onClick={handleToggleBgAudio}
@@ -868,27 +912,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
               {loadingAudio ? '⏳ 오디오 준비...' : bgAudioMode ? '🌙 취침모드 ON' : '🎧 백그라운드'}
             </button>
 
-            {/* SUBTITLE DISPLAY MODE QUICK TOGGLE (설정 안 들어가고 1클릭 즉시 전환: 듀얼 -> 영문 -> 한글 -> 블라인드) */}
-            <button
-              className={`lr-icon-btn lr-submode-btn ${displayMode !== 'dual' ? 'active' : ''}`}
-              onClick={handleCycleDisplayMode}
-              title={`자막 표시 모드 즉시 변경 (현재: ${getDisplayModeLabel()})\n• 클릭 시: 🔤듀얼 ➔ 🇺🇸영문만 ➔ 🇰🇷한글만 ➔ 🙈블라인드 순환`}
-            >
-              {getDisplayModeLabel()}
-            </button>
-
-            {/* VIDEO LAYOUT MODE (설정 안 들어가고 1클릭 즉시 전환: 20% 콤팩트 -> 100% 텍스트전용 -> 50% 영상확대) */}
-            {!bgAudioMode && (
-              <button
-                className={`lr-icon-btn ${videoLayout === 'text_only' ? 'active text-only-active' : ''}`}
-                onClick={handleCycleVideoLayout}
-                title={`화면 레이아웃 즉시 변경\n• 클릭 시: 📱20%콤팩트 ➔ 📖100%텍스트전용 ➔ 🗖50%영상확대 순환`}
-              >
-                {videoLayout === 'text_only' ? '📖 텍스트전용' : videoLayout === 'compact' ? '📱 20% 콤팩트' : '🗖 영상확대'}
-              </button>
-            )}
-
-            {/* SETTINGS GEAR ICON BUTTON */}
+            {/* 8. 설정창 */}
             <button
               className={`lr-icon-btn ${showSettings ? 'active' : ''}`}
               onClick={() => setShowSettings(!showSettings)}
@@ -950,27 +974,29 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
 
             {/* VIDEO & SCREEN LAYOUT (화면 레이아웃 모드) */}
             <div className="settings-section">
-              <span className="section-title">🖥️ 화면 구성 및 영상 모드</span>
-              <div className="settings-btn-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
-                <button
-                  className={`set-choice-btn ${videoLayout === 'compact' ? 'active' : ''}`}
-                  onClick={() => handleVideoLayoutChange('compact')}
-                >
-                  📱 20% 콤팩트
-                </button>
-                <button
-                  className={`set-choice-btn ${videoLayout === 'expanded' ? 'active' : ''}`}
-                  onClick={() => handleVideoLayoutChange('expanded')}
-                >
-                  🗖 50% 영상확대
-                </button>
-                <button
-                  className={`set-choice-btn ${videoLayout === 'text_only' ? 'active' : ''}`}
-                  onClick={() => handleVideoLayoutChange('text_only')}
-                >
-                  📖 100% 텍스트전용
-                </button>
-              </div>
+              <span className="section-title">🖥️ 화면 구성 및 영상 숨김</span>
+              <button
+                className={`set-toggle-btn ${hideVideo ? 'active' : ''}`}
+                onClick={handleToggleHideVideo}
+              >
+                {hideVideo ? '✅ 영상 숨김 ON (100% 자막 텍스트만 전체 점유)' : '❌ 영상 표시 중 (클릭 시 영상 숨기기)'}
+              </button>
+              {!hideVideo && (
+                <div className="settings-btn-grid" style={{ marginTop: '4px' }}>
+                  <button
+                    className={`set-choice-btn ${compactVideo ? 'active' : ''}`}
+                    onClick={() => setCompactVideo(true)}
+                  >
+                    📱 20% 콤팩트 축소
+                  </button>
+                  <button
+                    className={`set-choice-btn ${!compactVideo ? 'active' : ''}`}
+                    onClick={() => setCompactVideo(false)}
+                  >
+                    🗖 50% 영상 확대
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="settings-section">
