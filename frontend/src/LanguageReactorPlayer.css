@@ -528,12 +528,67 @@
   transform: translateX(2px);
 }
 
-/* Active Highlight Line */
+/* Active Highlight Line (Themeable Border Colors) */
 .lr-sub-line.active {
   background: linear-gradient(135deg, rgba(0, 242, 254, 0.15), rgba(59, 130, 246, 0.1));
-  border: 1px solid #00f2fe;
-  box-shadow: 0 4px 18px rgba(0, 242, 254, 0.18), inset 0 0 10px rgba(0, 242, 254, 0.05);
+  border: 1.5px solid #00f2fe;
+  box-shadow: 0 4px 18px rgba(0, 242, 254, 0.22), inset 0 0 10px rgba(0, 242, 254, 0.08);
   transform: scale(1.01);
+}
+
+/* Border Color Themes */
+.border-theme-sky .lr-sub-line.active {
+  border-color: #00f2fe !important;
+  background: linear-gradient(135deg, rgba(0, 242, 254, 0.15), rgba(59, 130, 246, 0.1)) !important;
+  box-shadow: 0 4px 18px rgba(0, 242, 254, 0.25) !important;
+}
+.border-theme-sky .lr-sub-line.active .line-time {
+  color: #00f2fe !important;
+}
+
+.border-theme-green .lr-sub-line.active {
+  border-color: #10b981 !important;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(5, 150, 105, 0.1)) !important;
+  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.25) !important;
+}
+.border-theme-green .lr-sub-line.active .line-time {
+  color: #10b981 !important;
+}
+
+.border-theme-purple .lr-sub-line.active {
+  border-color: #a855f7 !important;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.18), rgba(126, 34, 206, 0.1)) !important;
+  box-shadow: 0 4px 18px rgba(168, 85, 247, 0.25) !important;
+}
+.border-theme-purple .lr-sub-line.active .line-time {
+  color: #c084fc !important;
+}
+
+.border-theme-gold .lr-sub-line.active {
+  border-color: #fbbf24 !important;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.18), rgba(217, 119, 6, 0.1)) !important;
+  box-shadow: 0 4px 18px rgba(251, 191, 36, 0.25) !important;
+}
+.border-theme-gold .lr-sub-line.active .line-time {
+  color: #fbbf24 !important;
+}
+
+.border-theme-coral .lr-sub-line.active {
+  border-color: #f87171 !important;
+  background: linear-gradient(135deg, rgba(248, 113, 113, 0.18), rgba(220, 38, 38, 0.1)) !important;
+  box-shadow: 0 4px 18px rgba(248, 113, 113, 0.25) !important;
+}
+.border-theme-coral .lr-sub-line.active .line-time {
+  color: #f87171 !important;
+}
+
+.border-theme-pink .lr-sub-line.active {
+  border-color: #f472b6 !important;
+  background: linear-gradient(135deg, rgba(244, 114, 182, 0.18), rgba(219, 39, 119, 0.1)) !important;
+  box-shadow: 0 4px 18px rgba(244, 114, 182, 0.25) !important;
+}
+.border-theme-pink .lr-sub-line.active .line-time {
+  color: #f472b6 !important;
 }
 
 .lr-sub-line.looping {
@@ -636,25 +691,93 @@
   padding: 2px 0;
 }
 
-/* POS Highlighting (Language Reactor Style) */
+/* POS Highlighting (Language Reactor Style: 글자 자체의 색상 변경) */
 .pos-highlight-enabled .clickable-word.pos-verb {
   color: #4ade80 !important; /* 초록색: 동사 */
+  font-weight: 700;
 }
 .pos-highlight-enabled .clickable-word.pos-noun {
   color: #38bdf8 !important; /* 하늘색: 명사 */
+  font-weight: 600;
 }
 .pos-highlight-enabled .clickable-word.pos-adj {
   color: #fbbf24 !important; /* 노란색: 형용사 */
+  font-weight: 600;
 }
 .pos-highlight-enabled .clickable-word.pos-adv {
   color: #c084fc !important; /* 보라색: 부사 */
+  font-weight: 600;
 }
 .pos-highlight-enabled .clickable-word.pos-pron {
   color: #f472b6 !important; /* 핑크색: 대명사 */
+  font-weight: 600;
 }
 .pos-highlight-enabled .clickable-word.pos-prep {
   color: #94a3b8 !important; /* 회색: 전치사/접속사 */
 }
+
+/* Settings UI: Border Color Palette & POS Legend */
+.border-color-palette {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.border-theme-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #cbd5e1;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.border-theme-chip:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.border-theme-chip.active {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--chip-color, #00f2fe);
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
+  color: #fff;
+}
+
+.chip-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+.pos-color-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 6px;
+}
+
+.pos-legend-pill {
+  font-size: 0.72rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  font-weight: 600;
+}
+
+.pos-legend-pill.pos-verb { color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.3); }
+.pos-legend-pill.pos-noun { color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+.pos-legend-pill.pos-adj { color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
+.pos-legend-pill.pos-adv { color: #c084fc; border: 1px solid rgba(192, 132, 252, 0.3); }
+.pos-legend-pill.pos-pron { color: #f472b6; border: 1px solid rgba(244, 114, 182, 0.3); }
 
 /* Word Dictionary Popup */
 .lr-dict-popup {

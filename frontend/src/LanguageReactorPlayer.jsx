@@ -74,6 +74,23 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     }
   });
 
+  // Active Subtitle Line Border Theme Color ('sky', 'green', 'purple', 'gold', 'coral', 'pink')
+  const [activeBorderColor, setActiveBorderColor] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ytkw_active_border_color');
+      return saved || 'sky';
+    } catch (e) {
+      return 'sky';
+    }
+  });
+
+  const handleBorderColorChange = (colorKey) => {
+    setActiveBorderColor(colorKey);
+    try {
+      localStorage.setItem('ytkw_active_border_color', colorKey);
+    } catch (e) {}
+  };
+
   // Saved Sentences Drawer State (좋은 명문장 별도 저장함)
   const [savedSentences, setSavedSentences] = useState([]);
   const [showSentencesDrawer, setShowSentencesDrawer] = useState(false);
@@ -441,6 +458,28 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
   };
 
   // ── POS Classifier (Language Reactor Style) ──
+  const POS_PRONOUNS = useMemo(() => new Set([
+    'i', 'you', 'he', 'she', 'it', 'we', 'they', 'me', 'him', 'her', 'us', 'them',
+    'my', 'your', 'his', 'its', 'our', 'their', 'mine', 'yours', 'hers', 'ours', 'theirs',
+    'myself', 'yourself', 'himself', 'herself', 'itself', 'ourselves', 'themselves',
+    'this', 'that', 'these', 'those', 'who', 'whom', 'whose', 'which', 'what', 'whatever', 'whoever'
+  ]), []);
+
+  const POS_PREPOSITIONS = useMemo(() => new Set([
+    'in', 'on', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through',
+    'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'of', 'off',
+    'over', 'under', 'and', 'but', 'or', 'nor', 'so', 'yet', 'because', 'although', 'since',
+    'unless', 'while', 'where', 'when', 'if', 'than', 'as', 'out', 'into'
+  ]), []);
+
+  const POS_ADJECTIVES = useMemo(() => new Set([
+    'good', 'great', 'new', 'first', 'last', 'long', 'great', 'little', 'own', 'other',
+    'old', 'right', 'big', 'high', 'different', 'small', 'large', 'next', 'early', 'young',
+    'important', 'few', 'public', 'bad', 'same', 'able', 'best', 'better', 'hard', 'real',
+    'simple', 'true', 'strong', 'free', 'special', 'clear', 'full', 'easy', 'deep', 'sure',
+    'human', 'local', 'general', 'specific', 'major', 'economic', 'happy', 'ready', 'open'
+  ]), []);
+
   const POS_VERBS = useMemo(() => new Set([
     'be', 'is', 'are', 'was', 'were', 'been', 'being', 'have', 'has', 'had', 'having',
     'do', 'does', 'did', 'done', 'doing', 'can', 'could', 'will', 'would', 'shall', 'should',
@@ -470,20 +509,6 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     'cut', 'cuts', 'reach', 'reaches', 'reached', 'kill', 'kills', 'killed', 'remain', 'remains', 'remained'
   ]), []);
 
-  const POS_PRONOUNS = useMemo(() => new Set([
-    'i', 'you', 'he', 'she', 'it', 'we', 'they', 'me', 'him', 'her', 'us', 'them',
-    'my', 'your', 'his', 'its', 'our', 'their', 'mine', 'yours', 'hers', 'ours', 'theirs',
-    'myself', 'yourself', 'himself', 'herself', 'itself', 'ourselves', 'themselves',
-    'this', 'that', 'these', 'those', 'who', 'whom', 'whose', 'which', 'what', 'whatever', 'whoever'
-  ]), []);
-
-  const POS_PREPOSITIONS = useMemo(() => new Set([
-    'in', 'on', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through',
-    'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'of', 'off',
-    'over', 'under', 'and', 'but', 'or', 'nor', 'so', 'yet', 'because', 'although', 'since',
-    'unless', 'while', 'where', 'when', 'if', 'than', 'as'
-  ]), []);
-
   const POS_ADVERBS = useMemo(() => new Set([
     'very', 'really', 'always', 'never', 'often', 'sometimes', 'usually', 'quite', 'too',
     'also', 'just', 'even', 'already', 'still', 'again', 'actually', 'especially', 'well',
@@ -497,6 +522,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     if (POS_PRONOUNS.has(w)) return 'pos-pron';
     if (POS_PREPOSITIONS.has(w)) return 'pos-prep';
     if (POS_VERBS.has(w)) return 'pos-verb';
+    if (POS_ADJECTIVES.has(w)) return 'pos-adj';
     if (POS_ADVERBS.has(w) || (w.endsWith('ly') && w.length > 3)) return 'pos-adv';
     if (w.endsWith('ful') || w.endsWith('less') || w.endsWith('ous') || w.endsWith('able') ||
         w.endsWith('ible') || w.endsWith('ive') || w.endsWith('ic') || w.endsWith('al') ||
@@ -703,7 +729,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
   return (
     <div className="lr-modal-backdrop" onClick={onClose}>
       <div
-        className={`lr-studio-container ${compactVideo ? 'compact-video-mode' : ''} ${bgAudioMode ? 'bg-audio-active' : ''}`}
+        className={`lr-studio-container ${compactVideo ? 'compact-video-mode' : ''} ${bgAudioMode ? 'bg-audio-active' : ''} ${posHighlight ? 'pos-highlight-enabled' : ''} border-theme-${activeBorderColor}`}
         style={{ '--sub-font-scale': fontScale }}
         onClick={e => e.stopPropagation()}
       >
@@ -805,6 +831,34 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
         {/* SETTINGS FLOATING DROPDOWN MENU */}
         {showSettings && (
           <div className="lr-settings-dropdown" onClick={e => e.stopPropagation()}>
+            {/* ACTIVE LINE BORDER COLOR THEME (하늘색 테두리 색상 커스텀) */}
+            <div className="settings-section">
+              <div className="section-title-row">
+                <span className="section-title">✨ 재생중 자막 테두리 색상</span>
+              </div>
+              <div className="border-color-palette">
+                {[
+                  { key: 'sky', label: '하늘', hex: '#00f2fe' },
+                  { key: 'green', label: '라임초록', hex: '#10b981' },
+                  { key: 'purple', label: '네온보라', hex: '#a855f7' },
+                  { key: 'gold', label: '골드노랑', hex: '#fbbf24' },
+                  { key: 'coral', label: '코랄레드', hex: '#f87171' },
+                  { key: 'pink', label: '로즈핑크', hex: '#f472b6' }
+                ].map(c => (
+                  <button
+                    key={c.key}
+                    className={`border-theme-chip ${activeBorderColor === c.key ? 'active' : ''}`}
+                    style={{ '--chip-color': c.hex }}
+                    onClick={() => handleBorderColorChange(c.key)}
+                    title={`${c.label} 테두리 선택`}
+                  >
+                    <span className="chip-dot" style={{ backgroundColor: c.hex }}></span>
+                    <span className="chip-label">{c.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className="settings-section">
               <span className="section-title">🔤 자막 표시 모드</span>
               <div className="settings-btn-grid">
@@ -837,13 +891,20 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
 
             {/* POS COLOR HIGHLIGHT SETTING */}
             <div className="settings-section">
-              <span className="section-title">🎨 품사별 색상 하이라이트</span>
+              <span className="section-title">🎨 품사별 색상 하이라이트 (동사/명사/형용사/부사)</span>
               <button
                 className={`set-toggle-btn ${posHighlight ? 'active' : ''}`}
                 onClick={handleTogglePosHighlight}
               >
                 {posHighlight ? '✅ 품사별 단어 컬러링 ON (동사/명사/형용사/부사)' : '❌ 일반 단어 색상 OFF'}
               </button>
+              <div className="pos-color-legend">
+                <span className="pos-legend-pill pos-verb">동사(초록)</span>
+                <span className="pos-legend-pill pos-noun">명사(하늘)</span>
+                <span className="pos-legend-pill pos-adj">형용사(노랑)</span>
+                <span className="pos-legend-pill pos-adv">부사(보라)</span>
+                <span className="pos-legend-pill pos-pron">대명사(핑크)</span>
+              </div>
             </div>
 
             {/* FONT SCALE CONTROL (1.0x ~ 2.0x, 0.1단위 제어) */}
