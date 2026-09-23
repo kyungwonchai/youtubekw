@@ -135,8 +135,29 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
   const [activeIndex, setActiveIndex] = useState(-1);
   const [autoScroll, setAutoScroll] = useState(true);
 
-  // Language Reactor Modes
-  const [displayMode, setDisplayMode] = useState('dual'); // 'dual', 'en_only', 'ko_only', 'blind'
+  // Language Reactor Modes (자막 표시 모드: 듀얼, 영문만, 한글만, 블라인드)
+  const [displayMode, setDisplayMode] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ytkw_display_mode');
+      return saved || 'dual';
+    } catch (e) {
+      return 'dual';
+    }
+  });
+
+  const handleDisplayModeChange = (mode) => {
+    setDisplayMode(mode);
+    try {
+      localStorage.setItem('ytkw_display_mode', mode);
+    } catch (e) {}
+  };
+
+  const handleCycleDisplayMode = () => {
+    const modes = ['dual', 'en_only', 'ko_only', 'blind'];
+    const nextIdx = (modes.indexOf(displayMode) + 1) % modes.length;
+    handleDisplayModeChange(modes[nextIdx]);
+  };
+
   const [loopMode, setLoopMode] = useState('none'); // 'none', 'single_loop', 'pause_after_sentence'
   const [loopingIndex, setLoopingIndex] = useState(null);
 
@@ -847,18 +868,21 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
               {loadingAudio ? '⏳ 오디오 준비...' : bgAudioMode ? '🌙 취침모드 ON' : '🎧 백그라운드'}
             </button>
 
-            {/* VIDEO LAYOUT MODE (콤팩트 / 텍스트전용 / 영상확대) */}
+            {/* SUBTITLE DISPLAY MODE QUICK TOGGLE (설정 안 들어가고 1클릭 즉시 전환: 듀얼 -> 영문 -> 한글 -> 블라인드) */}
+            <button
+              className={`lr-icon-btn lr-submode-btn ${displayMode !== 'dual' ? 'active' : ''}`}
+              onClick={handleCycleDisplayMode}
+              title={`자막 표시 모드 즉시 변경 (현재: ${getDisplayModeLabel()})\n• 클릭 시: 🔤듀얼 ➔ 🇺🇸영문만 ➔ 🇰🇷한글만 ➔ 🙈블라인드 순환`}
+            >
+              {getDisplayModeLabel()}
+            </button>
+
+            {/* VIDEO LAYOUT MODE (설정 안 들어가고 1클릭 즉시 전환: 20% 콤팩트 -> 100% 텍스트전용 -> 50% 영상확대) */}
             {!bgAudioMode && (
               <button
-                className={`lr-icon-btn ${videoLayout === 'text_only' ? 'active' : ''}`}
+                className={`lr-icon-btn ${videoLayout === 'text_only' ? 'active text-only-active' : ''}`}
                 onClick={handleCycleVideoLayout}
-                title={
-                  videoLayout === 'text_only'
-                    ? '현재: 📖 100% 텍스트 전용 (영상 숨김) -> 클릭 시 🗖 영상 확대'
-                    : videoLayout === 'compact'
-                    ? '현재: 📱 20% 콤팩트 영상 -> 클릭 시 📖 100% 텍스트 전용'
-                    : '현재: 🗖 50% 영상 확대 -> 클릭 시 📱 20% 콤팩트'
-                }
+                title={`화면 레이아웃 즉시 변경\n• 클릭 시: 📱20%콤팩트 ➔ 📖100%텍스트전용 ➔ 🗖50%영상확대 순환`}
               >
                 {videoLayout === 'text_only' ? '📖 텍스트전용' : videoLayout === 'compact' ? '📱 20% 콤팩트' : '🗖 영상확대'}
               </button>
@@ -868,9 +892,9 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
             <button
               className={`lr-icon-btn ${showSettings ? 'active' : ''}`}
               onClick={() => setShowSettings(!showSettings)}
-              title="자막 모드, 글자크기 & 세밀배속 설정"
+              title="테두리 색상, 글자크기 & 세밀배속 상세설정"
             >
-              ⚙️ {getDisplayModeLabel()} ({playbackRate.toFixed(2)}x)
+              ⚙️ {playbackRate.toFixed(2)}x
             </button>
 
             <button
