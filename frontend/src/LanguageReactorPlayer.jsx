@@ -397,18 +397,30 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     }
   };
 
-  // 7. Auto scroll active subtitle into center
+  // 7. Auto scroll active subtitle into center stably
+  const lastScrolledIndex = useRef(-1);
+
   useEffect(() => {
-    if (autoScroll && activeLineRef.current && subtitleListRef.current) {
+    if (!autoScroll || activeIndex === -1) return;
+    if (lastScrolledIndex.current === activeIndex) return;
+
+    if (activeLineRef.current && subtitleListRef.current) {
+      lastScrolledIndex.current = activeIndex;
       activeLineRef.current.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
+        inline: 'nearest'
       });
     }
   }, [activeIndex, autoScroll]);
 
   // 8. Jump to subtitle timestamp
   const handleSeekTo = (startTime, index = null) => {
+    if (index !== null) {
+      setActiveIndex(index);
+      lastScrolledIndex.current = -1; // Force immediate scroll centering on click
+      if (loopMode === 'single_loop') setLoopingIndex(index);
+    }
     if (bgAudioMode && audioRef.current) {
       audioRef.current.currentTime = startTime;
       audioRef.current.play();
@@ -416,10 +428,6 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     } else if (player && typeof player.seekTo === 'function') {
       player.seekTo(startTime, true);
       player.playVideo();
-    }
-    if (index !== null) {
-      setActiveIndex(index);
-      if (loopMode === 'single_loop') setLoopingIndex(index);
     }
   };
 

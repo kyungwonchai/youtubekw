@@ -511,36 +511,38 @@
 }
 
 /* Individual Subtitle Line */
+/* Individual Subtitle Line (No jitter, stationary layout) */
 .lr-sub-line {
   display: flex;
   gap: 10px;
   padding: 12px 14px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.025);
-  border: 1px solid transparent;
+  border: 1.5px solid transparent;
   cursor: pointer;
-  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background 0.12s ease, border-color 0.12s ease;
+  transform: none !important; /* 흔들림/점프 방지 */
 }
 
 .lr-sub-line:hover {
   background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.1);
-  transform: translateX(2px);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: none !important; /* 마우스 오버 시 흔들림 방지 */
 }
 
-/* Active Highlight Line (Themeable Border Colors) */
+/* Active Highlight Line (Clean Borders Only, No Aura/Glow, No Scale Jitter) */
 .lr-sub-line.active {
-  background: linear-gradient(135deg, rgba(0, 242, 254, 0.15), rgba(59, 130, 246, 0.1));
+  background: rgba(255, 255, 255, 0.05);
   border: 1.5px solid #00f2fe;
-  box-shadow: 0 4px 18px rgba(0, 242, 254, 0.22), inset 0 0 10px rgba(0, 242, 254, 0.08);
-  transform: scale(1.01);
+  box-shadow: none;
+  transform: none !important; /* 확대 흔들림 방지 */
 }
 
-/* Border Color Themes */
+/* Border Color Themes (깔끔한 테두리만) */
 .border-theme-sky .lr-sub-line.active {
   border-color: #00f2fe !important;
-  background: linear-gradient(135deg, rgba(0, 242, 254, 0.15), rgba(59, 130, 246, 0.1)) !important;
-  box-shadow: 0 4px 18px rgba(0, 242, 254, 0.25) !important;
+  background: rgba(0, 242, 254, 0.08) !important;
+  box-shadow: none !important;
 }
 .border-theme-sky .lr-sub-line.active .line-time {
   color: #00f2fe !important;
@@ -548,8 +550,8 @@
 
 .border-theme-green .lr-sub-line.active {
   border-color: #10b981 !important;
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(5, 150, 105, 0.1)) !important;
-  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.25) !important;
+  background: rgba(16, 185, 129, 0.08) !important;
+  box-shadow: none !important;
 }
 .border-theme-green .lr-sub-line.active .line-time {
   color: #10b981 !important;
@@ -557,8 +559,8 @@
 
 .border-theme-purple .lr-sub-line.active {
   border-color: #a855f7 !important;
-  background: linear-gradient(135deg, rgba(168, 85, 247, 0.18), rgba(126, 34, 206, 0.1)) !important;
-  box-shadow: 0 4px 18px rgba(168, 85, 247, 0.25) !important;
+  background: rgba(168, 85, 247, 0.08) !important;
+  box-shadow: none !important;
 }
 .border-theme-purple .lr-sub-line.active .line-time {
   color: #c084fc !important;
@@ -566,8 +568,8 @@
 
 .border-theme-gold .lr-sub-line.active {
   border-color: #fbbf24 !important;
-  background: linear-gradient(135deg, rgba(251, 191, 36, 0.18), rgba(217, 119, 6, 0.1)) !important;
-  box-shadow: 0 4px 18px rgba(251, 191, 36, 0.25) !important;
+  background: rgba(251, 191, 36, 0.08) !important;
+  box-shadow: none !important;
 }
 .border-theme-gold .lr-sub-line.active .line-time {
   color: #fbbf24 !important;
@@ -575,8 +577,8 @@
 
 .border-theme-coral .lr-sub-line.active {
   border-color: #f87171 !important;
-  background: linear-gradient(135deg, rgba(248, 113, 113, 0.18), rgba(220, 38, 38, 0.1)) !important;
-  box-shadow: 0 4px 18px rgba(248, 113, 113, 0.25) !important;
+  background: rgba(248, 113, 113, 0.08) !important;
+  box-shadow: none !important;
 }
 .border-theme-coral .lr-sub-line.active .line-time {
   color: #f87171 !important;
@@ -584,8 +586,8 @@
 
 .border-theme-pink .lr-sub-line.active {
   border-color: #f472b6 !important;
-  background: linear-gradient(135deg, rgba(244, 114, 182, 0.18), rgba(219, 39, 119, 0.1)) !important;
-  box-shadow: 0 4px 18px rgba(244, 114, 182, 0.25) !important;
+  background: rgba(244, 114, 182, 0.08) !important;
+  box-shadow: none !important;
 }
 .border-theme-pink .lr-sub-line.active .line-time {
   color: #f472b6 !important;
@@ -593,7 +595,7 @@
 
 .lr-sub-line.looping {
   border-color: #a855f7 !important;
-  box-shadow: 0 0 15px rgba(168, 85, 247, 0.35) !important;
+  box-shadow: none !important;
 }
 
 .line-meta {
@@ -621,7 +623,7 @@
   font-size: 0.8rem;
   opacity: 0.35;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: opacity 0.15s;
   padding: 2px;
 }
 
@@ -631,7 +633,6 @@
 
 .line-loop-btn.active {
   opacity: 1;
-  filter: drop-shadow(0 0 6px #a855f7);
 }
 
 .line-content {
@@ -641,10 +642,10 @@
   gap: 5px;
 }
 
-/* English Text & Word Interaction (Dynamic Font Scale up to 3x) */
+/* English Text & Word Interaction (No text-shadow glow / No aura) */
 .line-en {
   font-size: calc(1.12rem * var(--sub-font-scale, 1));
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.5;
   color: #e2e8f0;
   word-break: break-word;
@@ -652,8 +653,8 @@
 
 .lr-sub-line.active .line-en {
   color: #ffffff;
-  font-weight: 700;
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  font-weight: 600;
+  text-shadow: none !important; /* 글자 아우라/번짐 완전 제거 */
 }
 
 .clickable-word {
