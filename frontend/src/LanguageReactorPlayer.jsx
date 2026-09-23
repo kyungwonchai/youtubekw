@@ -64,6 +64,33 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
   // Settings dropdown popup toggle
   const [showSettings, setShowSettings] = useState(false);
 
+  // Language Reactor POS (품사별) Color Highlight Mode
+  const [posHighlight, setPosHighlight] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ytkw_pos_highlight');
+      return saved !== null ? saved === 'true' : true;
+    } catch (e) {
+      return true;
+    }
+  });
+
+  // Saved Sentences Drawer State (좋은 명문장 별도 저장함)
+  const [savedSentences, setSavedSentences] = useState([]);
+  const [showSentencesDrawer, setShowSentencesDrawer] = useState(false);
+  const [savingSentence, setSavingSentence] = useState(false);
+
+  // Word Frequencies in Vocab-Hub Map
+  const [wordFrequencies, setWordFrequencies] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ytkw_word_freq');
+      return saved ? JSON.parse(saved) : {};
+    } catch (e) {
+      return {};
+    }
+  });
+  const [addingToVocab, setAddingToVocab] = useState(false);
+  const [vocabToast, setVocabToast] = useState(null);
+
   // Subtitles state
   const [transcript, setTranscript] = useState([]);
   const [loadingTranscript, setLoadingTranscript] = useState(true);
@@ -84,6 +111,31 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
   const subtitleListRef = useRef(null);
   const timeUpdateInterval = useRef(null);
   const audioRef = useRef(null);
+
+  const showVocabToast = (msg, type = 'info') => {
+    setVocabToast({ msg, type });
+    setTimeout(() => setVocabToast(null), 3000);
+  };
+
+  // Fetch saved sentences on mount
+  useEffect(() => {
+    fetch(`${API_BASE}/sentences`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.ok && Array.isArray(data.sentences)) {
+          setSavedSentences(data.sentences);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleTogglePosHighlight = () => {
+    const next = !posHighlight;
+    setPosHighlight(next);
+    try {
+      localStorage.setItem('ytkw_pos_highlight', String(next));
+    } catch (e) {}
+  };
 
   // 1. Fetch transcript from backend
   useEffect(() => {
@@ -388,7 +440,74 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     handleRateChange(nextRate);
   };
 
-  // 11. Word click dictionary popup
+  // ── POS Classifier (Language Reactor Style) ──
+  const POS_VERBS = useMemo(() => new Set([
+    'be', 'is', 'are', 'was', 'were', 'been', 'being', 'have', 'has', 'had', 'having',
+    'do', 'does', 'did', 'done', 'doing', 'can', 'could', 'will', 'would', 'shall', 'should',
+    'may', 'might', 'must', 'make', 'makes', 'made', 'take', 'takes', 'took', 'taken',
+    'get', 'gets', 'got', 'gotten', 'go', 'goes', 'went', 'gone', 'come', 'comes', 'came',
+    'know', 'knows', 'knew', 'known', 'see', 'sees', 'saw', 'seen', 'think', 'thinks', 'thought',
+    'say', 'says', 'said', 'tell', 'tells', 'told', 'look', 'looks', 'looked', 'find', 'finds', 'found',
+    'give', 'gives', 'gave', 'given', 'work', 'works', 'worked', 'call', 'calls', 'called',
+    'try', 'tries', 'tried', 'ask', 'asks', 'asked', 'feel', 'feels', 'felt', 'become', 'becomes', 'became',
+    'leave', 'leaves', 'left', 'put', 'puts', 'mean', 'means', 'meant', 'keep', 'keeps', 'kept',
+    'let', 'lets', 'begin', 'begins', 'began', 'begun', 'seem', 'seems', 'seemed', 'help', 'helps', 'helped',
+    'talk', 'talks', 'talked', 'turn', 'turns', 'turned', 'start', 'starts', 'started', 'show', 'shows', 'showed', 'shown',
+    'hear', 'hears', 'heard', 'play', 'plays', 'played', 'run', 'runs', 'ran', 'move', 'moves', 'moved',
+    'like', 'likes', 'liked', 'live', 'lives', 'lived', 'believe', 'believes', 'believed', 'hold', 'holds', 'held',
+    'bring', 'brings', 'brought', 'happen', 'happens', 'happened', 'write', 'writes', 'wrote', 'written',
+    'provide', 'provides', 'provided', 'sit', 'sits', 'sat', 'stand', 'stands', 'stood', 'lose', 'loses', 'lost',
+    'pay', 'pays', 'paid', 'meet', 'meets', 'met', 'include', 'includes', 'included', 'continue', 'continues',
+    'set', 'sets', 'learn', 'learns', 'learned', 'change', 'changes', 'changed', 'lead', 'leads', 'led',
+    'understand', 'understands', 'understood', 'watch', 'watches', 'watched', 'follow', 'follows', 'followed',
+    'stop', 'stops', 'stopped', 'create', 'creates', 'created', 'speak', 'speaks', 'spoke', 'spoken',
+    'read', 'reads', 'allow', 'allows', 'allowed', 'add', 'adds', 'added', 'spend', 'spends', 'spent',
+    'grow', 'grows', 'grew', 'grown', 'open', 'opens', 'opened', 'walk', 'walks', 'walked', 'win', 'wins', 'won',
+    'offer', 'offers', 'offered', 'remember', 'remembers', 'remembered', 'love', 'loves', 'loved',
+    'consider', 'considers', 'considered', 'appear', 'appears', 'appeared', 'buy', 'buys', 'bought',
+    'wait', 'waits', 'waited', 'serve', 'serves', 'served', 'die', 'dies', 'died', 'send', 'sends', 'sent',
+    'expect', 'expects', 'expected', 'build', 'builds', 'built', 'stay', 'stays', 'stayed', 'fall', 'falls', 'fell',
+    'cut', 'cuts', 'reach', 'reaches', 'reached', 'kill', 'kills', 'killed', 'remain', 'remains', 'remained'
+  ]), []);
+
+  const POS_PRONOUNS = useMemo(() => new Set([
+    'i', 'you', 'he', 'she', 'it', 'we', 'they', 'me', 'him', 'her', 'us', 'them',
+    'my', 'your', 'his', 'its', 'our', 'their', 'mine', 'yours', 'hers', 'ours', 'theirs',
+    'myself', 'yourself', 'himself', 'herself', 'itself', 'ourselves', 'themselves',
+    'this', 'that', 'these', 'those', 'who', 'whom', 'whose', 'which', 'what', 'whatever', 'whoever'
+  ]), []);
+
+  const POS_PREPOSITIONS = useMemo(() => new Set([
+    'in', 'on', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through',
+    'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'of', 'off',
+    'over', 'under', 'and', 'but', 'or', 'nor', 'so', 'yet', 'because', 'although', 'since',
+    'unless', 'while', 'where', 'when', 'if', 'than', 'as'
+  ]), []);
+
+  const POS_ADVERBS = useMemo(() => new Set([
+    'very', 'really', 'always', 'never', 'often', 'sometimes', 'usually', 'quite', 'too',
+    'also', 'just', 'even', 'already', 'still', 'again', 'actually', 'especially', 'well',
+    'almost', 'enough', 'now', 'then', 'here', 'there', 'today', 'tonight', 'tomorrow', 'yesterday'
+  ]), []);
+
+  const getWordPosClass = (rawWord) => {
+    if (!posHighlight) return '';
+    const w = (rawWord || '').toLowerCase().replace(/[^a-z]/g, '');
+    if (!w) return '';
+    if (POS_PRONOUNS.has(w)) return 'pos-pron';
+    if (POS_PREPOSITIONS.has(w)) return 'pos-prep';
+    if (POS_VERBS.has(w)) return 'pos-verb';
+    if (POS_ADVERBS.has(w) || (w.endsWith('ly') && w.length > 3)) return 'pos-adv';
+    if (w.endsWith('ful') || w.endsWith('less') || w.endsWith('ous') || w.endsWith('able') ||
+        w.endsWith('ible') || w.endsWith('ive') || w.endsWith('ic') || w.endsWith('al') ||
+        w.endsWith('ish') || w.endsWith('ent') || w.endsWith('ant')) return 'pos-adj';
+    if (w.endsWith('ing') || w.endsWith('ed') || w.endsWith('ize') || w.endsWith('ise') || w.endsWith('ate')) return 'pos-verb';
+    if (w.endsWith('tion') || w.endsWith('sion') || w.endsWith('ment') || w.endsWith('ness') ||
+        w.endsWith('ity') || w.endsWith('ship') || w.endsWith('er') || w.endsWith('or') || w.endsWith('ist')) return 'pos-noun';
+    return 'pos-noun';
+  };
+
+  // 11. Word click dictionary popup (Instant & Rich)
   const handleWordClick = async (word, e) => {
     if (e) e.stopPropagation();
     const cleanWord = word.replace(/[^a-zA-Z'-]/g, '').trim();
@@ -396,11 +515,12 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
 
     const rect = e.target.getBoundingClientRect();
     setDictPos({
-      x: Math.min(window.innerWidth - 320, Math.max(20, rect.left - 40)),
-      y: rect.bottom + 10,
+      x: Math.min(window.innerWidth - 340, Math.max(16, rect.left - 40)),
+      y: Math.min(window.innerHeight - 280, rect.bottom + 10),
     });
 
-    setDictWord({ word: cleanWord, loading: true });
+    const existingFreq = wordFrequencies[cleanWord.toLowerCase()] || 0;
+    setDictWord({ word: cleanWord, loading: true, saveCount: existingFreq });
 
     try {
       const res = await fetch(`${API_BASE}/dictionary/lookup?word=${encodeURIComponent(cleanWord)}`);
@@ -409,7 +529,11 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
         word: cleanWord,
         phonetic: data.phonetic || '',
         translation: data.koTranslation || data.translation || '뜻을 불러올 수 없습니다.',
+        pos: data.pos || '단어',
+        exampleEn: data.exampleEn || '',
+        exampleKo: data.exampleKo || '',
         meanings: data.meanings || [],
+        saveCount: existingFreq,
         loading: false,
       });
     } catch (err) {
@@ -417,9 +541,107 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
         word: cleanWord,
         translation: '조회 실패',
         meanings: [],
+        saveCount: existingFreq,
         loading: false,
       });
     }
+  };
+
+  // 11-1. Native TTS Pronunciation Audio Playback
+  const handleSpeakWord = (text, e) => {
+    if (e) e.stopPropagation();
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.rate = 0.9;
+    window.speechSynthesis.speak(utterance);
+  };
+
+  // 11-2. Add Word to Vocab-Hub (만능단어장 연동 및 횟수 누적)
+  const handleAddToVocabHub = async (item) => {
+    if (!item || !item.word || addingToVocab) return;
+    setAddingToVocab(true);
+    try {
+      const res = await fetch(`${API_BASE}/vocab/add`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          word: item.word,
+          meaning: item.translation || item.koTranslation || '',
+          pos: item.pos || '단어',
+          phonetic: item.phonetic || '',
+          exampleEn: item.exampleEn || '',
+          exampleKo: item.exampleKo || '',
+          videoTitle: video.title || ''
+        })
+      });
+
+      const data = await res.json();
+      const cleanKey = item.word.toLowerCase();
+      const newCount = (wordFrequencies[cleanKey] || 0) + 1;
+      const updatedFreqs = { ...wordFrequencies, [cleanKey]: newCount };
+      setWordFrequencies(updatedFreqs);
+      try {
+        localStorage.setItem('ytkw_word_freq', JSON.stringify(updatedFreqs));
+      } catch (e) {}
+
+      if (dictWord && dictWord.word.toLowerCase() === cleanKey) {
+        setDictWord(prev => ({ ...prev, saveCount: newCount }));
+      }
+
+      showVocabToast(`⭐ "${item.word}" 단어가 만능단어장에 저장되었습니다! (누적 ${newCount}회)`, 'success');
+    } catch (e) {
+      showVocabToast('단어장 저장에 실패했습니다.', 'error');
+    } finally {
+      setAddingToVocab(false);
+    }
+  };
+
+  // 11-3. Bookmark Sentence (좋은 문장 별도 저장)
+  const handleToggleSaveSentence = async (line, e) => {
+    if (e) e.stopPropagation();
+    const existing = savedSentences.find(s => s.text === line.text && s.videoId === video.videoId);
+
+    if (existing) {
+      // Remove sentence
+      handleDeleteSavedSentence(existing.id);
+    } else {
+      // Add sentence
+      setSavingSentence(true);
+      try {
+        const res = await fetch(`${API_BASE}/sentences`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            videoId: video.videoId,
+            videoTitle: video.title,
+            start: line.start,
+            end: line.end,
+            text: line.text,
+            translation: line.translation
+          })
+        });
+        const data = await res.json();
+        if (data.ok && data.sentence) {
+          setSavedSentences(prev => [data.sentence, ...prev]);
+          showVocabToast('🔖 명문장이 [저장한 문장함]에 추가되었습니다!', 'success');
+        }
+      } catch (err) {
+        showVocabToast('문장 저장에 실패했습니다.', 'error');
+      } finally {
+        setSavingSentence(false);
+      }
+    }
+  };
+
+  const handleDeleteSavedSentence = async (id, e) => {
+    if (e) e.stopPropagation();
+    try {
+      await fetch(`${API_BASE}/sentences/${id}`, { method: 'DELETE' });
+      setSavedSentences(prev => prev.filter(s => s.id !== id));
+      showVocabToast('🗑️ 저장된 문장이 삭제되었습니다.', 'info');
+    } catch (err) {}
   };
 
   // 12. Keyboard shortcuts handler
@@ -503,6 +725,24 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
           </div>
 
           <div className="lr-header-actions">
+            {/* POS COLOR HIGHLIGHT TOGGLE */}
+            <button
+              className={`lr-icon-btn ${posHighlight ? 'active pos-active' : ''}`}
+              onClick={handleTogglePosHighlight}
+              title={posHighlight ? '품사별 색상 하이라이트 끄기' : '🎨 품사별 색상 하이라이트 켜기 (동사/명사/형용사/부사)'}
+            >
+              {posHighlight ? '🎨 품사색 ON' : '🎨 품사색 OFF'}
+            </button>
+
+            {/* SAVED SENTENCES DRAWER BUTTON */}
+            <button
+              className={`lr-icon-btn ${savedSentences.length > 0 ? 'active' : ''}`}
+              onClick={() => setShowSentencesDrawer(true)}
+              title="좋은 명문장 보관함 열기"
+            >
+              🔖 문장함 ({savedSentences.length})
+            </button>
+
             {/* FONT SCALE QUICK BUTTON (1.0x ~ 2.0x, Click to cycle or Mouse Wheel to adjust in 0.1 steps) */}
             <button
               className={`lr-icon-btn lr-font-btn ${fontScale > 1.0 ? 'active' : ''}`}
@@ -555,6 +795,13 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
           </div>
         </div>
 
+        {/* TOAST FEEDBACK NOTIFICATION */}
+        {vocabToast && (
+          <div className={`lr-floating-toast ${vocabToast.type}`}>
+            {vocabToast.msg}
+          </div>
+        )}
+
         {/* SETTINGS FLOATING DROPDOWN MENU */}
         {showSettings && (
           <div className="lr-settings-dropdown" onClick={e => e.stopPropagation()}>
@@ -586,6 +833,17 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                   🙈 블라인드 (가리기)
                 </button>
               </div>
+            </div>
+
+            {/* POS COLOR HIGHLIGHT SETTING */}
+            <div className="settings-section">
+              <span className="section-title">🎨 품사별 색상 하이라이트</span>
+              <button
+                className={`set-toggle-btn ${posHighlight ? 'active' : ''}`}
+                onClick={handleTogglePosHighlight}
+              >
+                {posHighlight ? '✅ 품사별 단어 컬러링 ON (동사/명사/형용사/부사)' : '❌ 일반 단어 색상 OFF'}
+              </button>
             </div>
 
             {/* FONT SCALE CONTROL (1.0x ~ 2.0x, 0.1단위 제어) */}
@@ -699,6 +957,72 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
               >
                 {autoScroll ? '✅ 실시간 자동 스크롤 ON' : '❌ 자동 스크롤 OFF'}
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* SAVED SENTENCES DRAWER / MODAL */}
+        {showSentencesDrawer && (
+          <div className="lr-drawer-backdrop" onClick={() => setShowSentencesDrawer(false)}>
+            <div className="lr-sentences-drawer" onClick={e => e.stopPropagation()}>
+              <div className="drawer-header">
+                <div className="drawer-title-row">
+                  <h3>🔖 저장한 명문장 보관함 ({savedSentences.length})</h3>
+                  <button className="drawer-close-btn" onClick={() => setShowSentencesDrawer(false)}>✕</button>
+                </div>
+                <p className="drawer-desc">좋은 표현을 언제든 다시 듣고 쉐도잉하며 복습하세요.</p>
+              </div>
+
+              <div className="drawer-body">
+                {savedSentences.length === 0 ? (
+                  <div className="drawer-empty">
+                    <span className="empty-icon">🔖</span>
+                    <p>아직 저장된 문장이 없습니다.<br />자막 옆의 🔖 버튼을 눌러 명문장을 보관해보세요!</p>
+                  </div>
+                ) : (
+                  <div className="saved-sent-list">
+                    {savedSentences.map(sent => (
+                      <div key={sent.id} className="saved-sent-card">
+                        <div className="sent-head">
+                          <span className="sent-vid-title">🎬 {sent.videoTitle || '쉐도잉 명문장'}</span>
+                          <span className="sent-time">{formatTime(sent.start)}</span>
+                        </div>
+                        <p className="sent-en-text">{sent.text}</p>
+                        {sent.translation && <p className="sent-ko-text">{sent.translation}</p>}
+                        <div className="sent-actions">
+                          {sent.videoId === video.videoId ? (
+                            <button
+                              className="btn-sent-play"
+                              onClick={() => {
+                                handleSeekTo(sent.start);
+                                setShowSentencesDrawer(false);
+                              }}
+                            >
+                              ⚡ 이 구간 재생
+                            </button>
+                          ) : (
+                            <span className="sent-other-vid-tag">다른 영상 문장</span>
+                          )}
+                          <button
+                            className="btn-sent-tts"
+                            onClick={(e) => handleSpeakWord(sent.text, e)}
+                            title="음성 듣기"
+                          >
+                            🔊 음성 듣기
+                          </button>
+                          <button
+                            className="btn-sent-del"
+                            onClick={(e) => handleDeleteSavedSentence(sent.id, e)}
+                            title="삭제"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -836,6 +1160,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                   {transcript.map((line, idx) => {
                     const isActive = activeIndex === idx;
                     const isLooping = loopMode === 'single_loop' && loopingIndex === idx;
+                    const isSaved = savedSentences.some(s => s.text === line.text && s.videoId === video.videoId);
 
                     return (
                       <div
@@ -844,33 +1169,45 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                         className={`lr-sub-line ${isActive ? 'active' : ''} ${isLooping ? 'looping' : ''}`}
                         onClick={() => handleSeekTo(line.start, idx)}
                       >
-                        {/* TIMESTAMP & QUICK LOOP ICON */}
+                        {/* TIMESTAMP, QUICK LOOP & SENTENCE BOOKMARK ICONS */}
                         <div className="line-meta">
                           <span className="line-time">{formatTime(line.start)}</span>
-                          <button
-                            className={`line-loop-btn ${isLooping ? 'active' : ''}`}
-                            onClick={(e) => handleToggleLineLoop(idx, e)}
-                            title="이 문장 무한 반복"
-                          >
-                            🔁
-                          </button>
+                          <div className="line-btn-group">
+                            <button
+                              className={`line-loop-btn ${isLooping ? 'active' : ''}`}
+                              onClick={(e) => handleToggleLineLoop(idx, e)}
+                              title="이 문장 무한 반복"
+                            >
+                              🔁
+                            </button>
+                            <button
+                              className={`line-save-btn ${isSaved ? 'active' : ''}`}
+                              onClick={(e) => handleToggleSaveSentence(line, e)}
+                              title={isSaved ? "문장 저장 해제" : "명문장 보관함에 저장"}
+                            >
+                              {isSaved ? '🔖' : '☆'}
+                            </button>
+                          </div>
                         </div>
 
                         {/* SUBTITLE TEXT */}
                         <div className="line-content">
-                          {/* ENGLISH TEXT */}
+                          {/* ENGLISH TEXT WITH POS HIGHLIGHTING */}
                           {(displayMode === 'dual' || displayMode === 'en_only') && (
                             <div className="line-en">
-                              {line.text.split(' ').map((word, wIdx) => (
-                                <span
-                                  key={wIdx}
-                                  className="clickable-word"
-                                  onClick={(e) => handleWordClick(word, e)}
-                                  title="단어 사전"
-                                >
-                                  {word}{' '}
-                                </span>
-                              ))}
+                              {line.text.split(' ').map((word, wIdx) => {
+                                const posClass = getWordPosClass(word);
+                                return (
+                                  <span
+                                    key={wIdx}
+                                    className={`clickable-word ${posClass}`}
+                                    onClick={(e) => handleWordClick(word, e)}
+                                    title="단어 사전 & 발음 듣기"
+                                  >
+                                    {word}{' '}
+                                  </span>
+                                );
+                              })}
                             </div>
                           )}
 
@@ -905,8 +1242,17 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
             onClick={e => e.stopPropagation()}
           >
             <div className="dict-header">
-              <span className="dict-word-title">{dictWord.word}</span>
-              {dictWord.phonetic && <span className="dict-phonetic">/{dictWord.phonetic}/</span>}
+              <div className="dict-word-group">
+                <span className="dict-word-title">{dictWord.word}</span>
+                {dictWord.phonetic && <span className="dict-phonetic">/{dictWord.phonetic}/</span>}
+                <button
+                  className="dict-tts-btn"
+                  onClick={(e) => handleSpeakWord(dictWord.word, e)}
+                  title="원어민 발음 듣기 (TTS)"
+                >
+                  🔊 발음 듣기
+                </button>
+              </div>
               <button className="dict-close" onClick={() => setDictWord(null)}>✕</button>
             </div>
             
@@ -915,13 +1261,38 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
             ) : (
               <div className="dict-body">
                 <div className="dict-korean-meaning">
-                  <strong>🇰🇷 뜻:</strong> {dictWord.translation}
+                  <span className="dict-pos-tag">{dictWord.pos || '단어'}</span>
+                  <strong>{dictWord.translation}</strong>
                 </div>
+
+                {/* VOCAB-HUB INTEGRATION & FREQUENCY BADGE */}
+                <div className="dict-action-row">
+                  <button
+                    className="btn-add-vocab-hub"
+                    disabled={addingToVocab}
+                    onClick={() => handleAddToVocabHub(dictWord)}
+                  >
+                    {addingToVocab ? '저장 중...' : '⭐ 만능단어장에 추가'}
+                  </button>
+                  {dictWord.saveCount > 0 && (
+                    <span className="dict-freq-badge" title="내가 단어장에 추가한 누적 횟수">
+                      🔥 {dictWord.saveCount}회 저장됨
+                    </span>
+                  )}
+                </div>
+
+                {dictWord.exampleEn && (
+                  <div className="dict-example-box">
+                    <p className="dict-ex-en">"{dictWord.exampleEn}"</p>
+                    {dictWord.exampleKo && <p className="dict-ex-ko">{dictWord.exampleKo}</p>}
+                  </div>
+                )}
+
                 {dictWord.meanings && dictWord.meanings.length > 0 && (
                   <div className="dict-en-meanings">
                     {dictWord.meanings.map((m, mIdx) => (
                       <div key={mIdx} className="meaning-item">
-                        <span className="pos-badge">{m.partOfSpeech}</span>
+                        {m.partOfSpeech && <span className="pos-badge">{m.partOfSpeech}</span>}
                         <p className="def-text">{m.definition}</p>
                         {m.example && <p className="eg-text"><em>"{m.example}"</em></p>}
                       </div>

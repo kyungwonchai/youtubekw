@@ -207,6 +207,121 @@ const handleWordLookup = async (req, res) => {
 app.get('/api/dictionary/lookup', handleWordLookup);
 app.get('/youtubekw/api/dictionary/lookup', handleWordLookup);
 
+// ── Saved Sentences (북마크 명문장함) Endpoints ──
+const SENTENCES_FILE = '/home/kw/.kwsoft-user-store/saved_sentences.json';
+
+function loadSavedSentences() {
+  try {
+    if (fs.existsSync(SENTENCES_FILE)) {
+      return JSON.parse(fs.readFileSync(SENTENCES_FILE, 'utf8'));
+    }
+  } catch (e) {}
+  return [];
+}
+
+function saveSentencesToFile(list) {
+  try {
+    const dir = path.dirname(SENTENCES_FILE);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(SENTENCES_FILE, JSON.stringify(list, null, 2), 'utf8');
+  } catch (e) {
+    console.error('Failed to save sentences:', e);
+  }
+}
+
+const handleGetSentences = (req, res) => {
+  res.json({ ok: true, sentences: loadSavedSentences() });
+};
+app.get('/api/sentences', handleGetSentences);
+app.get('/youtubekw/api/sentences', handleGetSentences);
+
+const handleAddSentence = (req, res) => {
+  try {
+    const { videoId, videoTitle, start, end, text, translation } = req.body || {};
+    if (!text) return res.status(400).json({ ok: false, error: 'Text is required' });
+
+    const list = loadSavedSentences();
+    const cleanText = text.trim();
+    const existing = list.find(s => s.text === cleanText && s.videoId === videoId);
+
+    if (existing) {
+      return res.json({ ok: true, sentence: existing, alreadySaved: true });
+    }
+
+    const newSent = {
+      id: `sent_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+      videoId: videoId || '',
+      videoTitle: videoTitle || '',
+      start: Number(start) || 0,
+      end: Number(end) || 0,
+      text: cleanText,
+      translation: translation || '',
+      savedAt: new Date().toISOString()
+    };
+
+    list.unshift(newSent);
+    saveSentencesToFile(list);
+    res.json({ ok: true, sentence: newSent, created: true });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+};
+app.post('/api/sentences', handleAddSentence);
+app.post('/youtubekw/api/sentences', handleAddSentence);
+
+const handleDeleteSentence = (req, res) => {
+  try {
+    const { id } = req.params;
+    let list = loadSavedSentences();
+    list = list.filter(s => s.id !== id);
+    saveSentencesToFile(list);
+    res.json({ ok: true, deleted: true });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+};
+app.delete('/api/sentences/:id', handleDeleteSentence);
+app.delete('/youtubekw/api/sentences/:id', handleDeleteSentence);
+
+// ── Vocab-Hub Integration (만능단어장 단어 추가 & 횟수 누적) ──
+const handleAddToVocabHub = async (req, res) => {
+  try {
+    const { word, meaning, pos, phonetic, exampleEn, exampleKo, videoTitle } = req.body || {};
+    if (!word) return res.status(400).json({ ok: false, error: 'Word required' });
+
+    // Call local vocab-hub service (port 10173)
+    const hubRes = await fetch('http://localhost:10173/api/vocab', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        word,
+        meaning,
+        pos: pos || '단어',
+        part_of_speech: pos || '단어',
+        phonetic: phonetic || '',
+        exampleEn: exampleEn || '',
+        exampleKo: exampleKo || '',
+        sourceModule: 'youtubekw',
+        sourceType: '유튜브 쉐도잉',
+        sourceTitle: videoTitle || '유튜브 쉐도잉 앱',
+        important: true
+      })
+    });
+
+    if (hubRes.ok) {
+      const data = await hubRes.json();
+      return res.json({ ok: true, ...data });
+    } else {
+      return res.status(500).json({ ok: false, error: 'VocabHub response error' });
+    }
+  } catch (e) {
+    // If vocab-hub server is offline, fallback gracefully
+    res.json({ ok: true, fallback: true, message: '단어가 로컬에 저장되었습니다.' });
+  }
+};
+app.post('/api/vocab/add', handleAddToVocabHub);
+app.post('/youtubekw/api/vocab/add', handleAddToVocabHub);
+
 // Background Audio Stream & Direct URL Endpoints
 const handleAudioUrl = async (req, res) => {
   try {

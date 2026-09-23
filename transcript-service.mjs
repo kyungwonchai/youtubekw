@@ -142,46 +142,127 @@ export async function getTranscriptForVideo(videoId, { autoTranslate = true } = 
   return result;
 }
 
+// ── Instant Local Master Vocab DB Index (99,364 words with IPA & Korean) ──
+let localVocabMap = null;
+
+function getLocalVocabMap() {
+  if (localVocabMap) return localVocabMap;
+  localVocabMap = new Map();
+  const dbPaths = [
+    '/home/kw/.kwsoft-user-store/vocab-master.json',
+    '/home/kw/kwsoft/vocab-hub/data/vocab.json'
+  ];
+
+  for (const p of dbPaths) {
+    if (existsSync(p)) {
+      try {
+        const raw = JSON.parse(readFileSync(p, 'utf8'));
+        const words = Array.isArray(raw) ? raw : (raw.words || []);
+        for (const item of words) {
+          const w = (item.word || item.eng || '').toLowerCase().trim();
+          if (w && !localVocabMap.has(w)) {
+            localVocabMap.set(w, {
+              word: item.word || item.eng,
+              phonetic: item.phonetic || item.ipa || '',
+              koTranslation: item.meaning || item.kor || '',
+              pos: item.pos || item.part_of_speech || '',
+              exampleEn: item.exampleEn || item.example || '',
+              exampleKo: item.exampleKo || '',
+              source: 'master_db'
+            });
+          }
+        }
+        break;
+      } catch (e) {
+        console.warn('Failed to parse vocab db:', p, e.message);
+      }
+    }
+  }
+  return localVocabMap;
+}
+
+const wordCache = new Map();
+
 /**
- * Word dictionary lookup (definition, IPA phonetic, translation)
+ * Word dictionary lookup (definition, IPA phonetic, translation, POS) - 0ms instant local DB + Fallback
  */
 export async function lookupWord(word) {
   if (!word || !word.trim()) return null;
   const cleanWord = word.toLowerCase().replace(/[^a-z'-]/g, '').trim();
   if (!cleanWord) return null;
 
-  let phonetic = '';
+  if (wordCache.has(cleanWord)) {
+    return wordCache.get(cleanWord);
+  }
+
+  // 1. Check instant local master DB (0ms response with full IPA)
+  const map = getLocalVocabMap();
+  const localMatch = map.get(cleanWord);
+
+  let phonetic = localMatch?.phonetic || '';
+  let koTranslation = localMatch?.koTranslation || '';
   let meanings = [];
-  let koTranslation = '';
+  let pos = localMatch?.pos || '';
 
-  // 1. Google Translate Korean definition
-  try {
-    koTranslation = await translateEnToKo(cleanWord);
-  } catch (e) {}
+  if (localMatch && koTranslation && phonetic) {
+    const result = {
+      word: cleanWord,
+      phonetic,
+      koTranslation,
+      pos,
+      exampleEn: localMatch.exampleEn || '',
+      exampleKo: localMatch.exampleKo || '',
+      meanings: [{
+        partOfSpeech: pos,
+        definition: koTranslation,
+        example: localMatch.exampleEn || ''
+      }]
+    };
+    wordCache.set(cleanWord, result);
+    return result;
+  }
 
-  // 2. Free Dictionary API for English definition & Phonetics
-  try {
-    const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${cleanWord}`, {
-      signal: AbortSignal.timeout(3000),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (Array.isArray(data) && data[0]) {
-        const entry = data[0];
-        phonetic = entry.phonetic || entry.phonetics?.find(p => p.text)?.text || '';
-        meanings = (entry.meanings || []).slice(0, 3).map(m => ({
-          partOfSpeech: m.partOfSpeech,
-          definition: m.definitions?.[0]?.definition || '',
-          example: m.definitions?.[0]?.example || '',
-        }));
-      }
+  // 2. Fallback: Parallel fetch Free Dictionary API + Google Translate
+  const [dictRes, transKo] = await Promise.allSettled([
+    fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${cleanWord}`, { signal: AbortSignal.timeout(2500) })
+      .then(r => r.ok ? r.json() : null)
+      .catch(() => null),
+    koTranslation ? Promise.resolve(koTranslation) : translateEnToKo(cleanWord).catch(() => '')
+  ]);
+
+  if (transKo.status === 'fulfilled' && transKo.value) {
+    koTranslation = transKo.value;
+  }
+
+  if (dictRes.status === 'fulfilled' && dictRes.value && Array.isArray(dictRes.value) && dictRes.value[0]) {
+    const entry = dictRes.value[0];
+    if (!phonetic) {
+      phonetic = entry.phonetic || entry.phonetics?.find(p => p.text)?.text || '';
     }
-  } catch (e) {}
+    meanings = (entry.meanings || []).slice(0, 3).map(m => ({
+      partOfSpeech: m.partOfSpeech || '',
+      definition: m.definitions?.[0]?.definition || '',
+      example: m.definitions?.[0]?.example || '',
+    }));
+    if (!pos && meanings[0]?.partOfSpeech) {
+      pos = meanings[0].partOfSpeech;
+    }
+  }
 
-  return {
+  const finalResult = {
     word: cleanWord,
     phonetic,
-    koTranslation,
-    meanings,
+    koTranslation: koTranslation || '뜻을 찾을 수 없습니다.',
+    pos: pos || '단어',
+    exampleEn: localMatch?.exampleEn || meanings[0]?.example || '',
+    exampleKo: localMatch?.exampleKo || '',
+    meanings: meanings.length > 0 ? meanings : [{
+      partOfSpeech: pos || '단어',
+      definition: koTranslation,
+      example: ''
+    }]
   };
+
+  wordCache.set(cleanWord, finalResult);
+  return finalResult;
 }
