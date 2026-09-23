@@ -27,9 +27,18 @@ const PORT = 10149;
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
-// Static files for both root / and /youtubekw/
-app.use('/', express.static(path.join(__dirname, 'public')));
-app.use('/youtubekw', express.static(path.join(__dirname, 'public')));
+// Static files for both root / and /youtubekw/ with no-cache for html
+const staticOptions = {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
+  }
+};
+app.use('/', express.static(path.join(__dirname, 'public'), staticOptions));
+app.use('/youtubekw', express.static(path.join(__dirname, 'public'), staticOptions));
 
 // Blacklist (절대비추 영구차단) Handlers
 const handleGetBlacklist = (req, res) => {
