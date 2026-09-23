@@ -613,26 +613,53 @@
   font-variant-numeric: tabular-nums;
 }
 
-.lr-sub-line.active .line-time {
-  color: #00f2fe;
+.line-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 3px;
 }
 
-.line-loop-btn {
+.line-play-btn,
+.line-loop-btn,
+.line-save-btn {
   background: transparent;
   border: none;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   opacity: 0.35;
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s, transform 0.12s;
   padding: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.lr-sub-line:hover .line-loop-btn {
+.lr-sub-line:hover .line-play-btn,
+.lr-sub-line:hover .line-loop-btn,
+.lr-sub-line:hover .line-save-btn {
   opacity: 0.85;
+}
+
+.line-play-btn:hover,
+.line-loop-btn:hover,
+.line-save-btn:hover {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+.line-play-btn.playing {
+  opacity: 1;
+  color: #38bdf8;
 }
 
 .line-loop-btn.active {
   opacity: 1;
+  color: #a855f7;
+}
+
+.line-save-btn.active {
+  opacity: 1;
+  color: #fbbf24;
 }
 
 .line-content {

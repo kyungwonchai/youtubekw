@@ -414,33 +414,64 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     }
   }, [activeIndex, autoScroll]);
 
-  // 8. Jump to subtitle timestamp
-  const handleSeekTo = (startTime, index = null) => {
+  // 8. Jump to subtitle timestamp & play
+  const handleSeekTo = (startTime, index = null, shouldPlay = true) => {
     if (index !== null) {
       setActiveIndex(index);
       lastScrolledIndex.current = -1; // Force immediate scroll centering on click
-      if (loopMode === 'single_loop') setLoopingIndex(index);
+      if (loopMode === 'single_loop' && loopingIndex !== index) {
+        setLoopingIndex(index);
+      }
     }
     if (bgAudioMode && audioRef.current) {
       audioRef.current.currentTime = startTime;
-      audioRef.current.play();
-      setIsPlaying(true);
+      if (shouldPlay) {
+        audioRef.current.play();
+        setIsPlaying(true);
+      } else {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      }
     } else if (player && typeof player.seekTo === 'function') {
       player.seekTo(startTime, true);
-      player.playVideo();
+      if (shouldPlay) {
+        player.playVideo();
+        setIsPlaying(true);
+      } else {
+        player.pauseVideo();
+        setIsPlaying(false);
+      }
     }
   };
 
-  // 9. Sentence Loop Toggle
+  // 8-1. Toggle Play/Pause on specific sentence (재생 중이면 일시정지, 멈춰있으면 해당 문장 재생)
+  const handleLinePlayPause = (line, index, e) => {
+    if (e) e.stopPropagation();
+    if (activeIndex === index && isPlaying) {
+      // Pause
+      if (bgAudioMode && audioRef.current) audioRef.current.pause();
+      else if (player && typeof player.pauseVideo === 'function') player.pauseVideo();
+      setIsPlaying(false);
+    } else {
+      // Play
+      handleSeekTo(line.start, index, true);
+    }
+  };
+
+  // 9. Sentence Loop Toggle (그 문장만 무한 반복하거나 풀기)
   const handleToggleLineLoop = (index, e) => {
     if (e) e.stopPropagation();
     if (loopMode === 'single_loop' && loopingIndex === index) {
+      // Loop OFF: 해제하고 일반 연속 재생 모드로 복귀
       setLoopMode('none');
       setLoopingIndex(null);
+      showVocabToast('반복 재생이 해제되었습니다 (연속 재생)', 'info');
     } else {
+      // Loop ON: 해당 문장만 무한 반복
       setLoopMode('single_loop');
       setLoopingIndex(index);
-      handleSeekTo(transcript[index].start, index);
+      handleSeekTo(transcript[index].start, index, true);
+      showVocabToast('🔁 이 문장 무한반복 재생 켜짐', 'success');
     }
   };
 
@@ -1238,17 +1269,27 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                         className={`lr-sub-line ${isActive ? 'active' : ''} ${isLooping ? 'looping' : ''}`}
                         onClick={() => handleSeekTo(line.start, idx)}
                       >
-                        {/* TIMESTAMP, QUICK LOOP & SENTENCE BOOKMARK ICONS */}
+                        {/* TIMESTAMP, PLAY/PAUSE, QUICK LOOP & SENTENCE BOOKMARK ICONS */}
                         <div className="line-meta">
                           <span className="line-time">{formatTime(line.start)}</span>
                           <div className="line-btn-group">
+                            {/* INSTANT PLAY / PAUSE THIS SENTENCE */}
+                            <button
+                              className={`line-play-btn ${isActive && isPlaying ? 'playing' : ''}`}
+                              onClick={(e) => handleLinePlayPause(line, idx, e)}
+                              title={isActive && isPlaying ? "이 문장 일시정지" : "이 문장 재생"}
+                            >
+                              {isActive && isPlaying ? '⏸️' : '▶️'}
+                            </button>
+                            {/* SINGLE SENTENCE LOOP / RELEASE */}
                             <button
                               className={`line-loop-btn ${isLooping ? 'active' : ''}`}
                               onClick={(e) => handleToggleLineLoop(idx, e)}
-                              title="이 문장 무한 반복"
+                              title={isLooping ? "이 문장 무한반복 해제 (풀기)" : "이 문장만 무한반복"}
                             >
                               🔁
                             </button>
+                            {/* BOOKMARK */}
                             <button
                               className={`line-save-btn ${isSaved ? 'active' : ''}`}
                               onClick={(e) => handleToggleSaveSentence(line, e)}
