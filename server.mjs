@@ -139,6 +139,51 @@ const handleGetTranscript = async (req, res) => {
 app.get('/api/transcript/:videoId', handleGetTranscript);
 app.get('/youtubekw/api/transcript/:videoId', handleGetTranscript);
 
+// Realtime / Pre-computed Face Tracking Timeline Endpoint
+import fs from 'fs';
+import { spawn } from 'child_process';
+
+const activeTrackJobs = new Set();
+
+const handleGetFaceTrack = async (req, res) => {
+  const { videoId } = req.params;
+  if (!videoId) return res.status(400).json({ ok: false, error: 'Video ID required' });
+
+  const cacheDir = path.join(__dirname, 'data', 'face_tracks');
+  const cacheFile = path.join(cacheDir, `${videoId}.json`);
+
+  if (fs.existsSync(cacheFile)) {
+    try {
+      const data = JSON.parse(fs.readFileSync(cacheFile, 'utf8'));
+      return res.json(data);
+    } catch (e) {}
+  }
+
+  // If already tracking in background, inform client to poll or use fallback
+  if (activeTrackJobs.has(videoId)) {
+    return res.json({ ok: true, status: 'processing', videoId, tracks: [] });
+  }
+
+  // Trigger background face tracking script
+  activeTrackJobs.add(videoId);
+  const pyPath = '/home/kw/kwsoft/aivod/venv/bin/python';
+  const scriptPath = path.join(__dirname, 'scripts', 'track_face.py');
+
+  const proc = spawn(pyPath, [scriptPath, videoId], {
+    detached: true,
+    stdio: 'ignore'
+  });
+  proc.unref();
+
+  proc.on('close', () => {
+    activeTrackJobs.delete(videoId);
+  });
+
+  return res.json({ ok: true, status: 'started', videoId, tracks: [] });
+};
+app.get('/api/face-track/:videoId', handleGetFaceTrack);
+app.get('/youtubekw/api/face-track/:videoId', handleGetFaceTrack);
+
 // Word Dictionary & Translation Lookup Endpoint
 const handleWordLookup = async (req, res) => {
   try {

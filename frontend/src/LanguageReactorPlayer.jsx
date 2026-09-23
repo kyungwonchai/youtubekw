@@ -53,11 +53,15 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     }
   };
   
-  // Face & Lip Focus Cam Mode (얼굴 2배 원형 집중 모드)
+  // Face & Lip Focus Cam Mode (실시간 얼굴 자동추적 2배 원형 집중 모드)
   const [faceFocusMode, setFaceFocusMode] = useState(false);
   const [faceZoom, setFaceZoom] = useState(2.2);
   const [facePos, setFacePos] = useState({ x: 50, y: 35 }); // default focus on speaker face / upper center
+  const [faceTracks, setFaceTracks] = useState([]);
+  const [faceTrackingLoading, setFaceTrackingLoading] = useState(false);
+  const [faceTrackingReady, setFaceTrackingReady] = useState(false);
   const [showFaceControls, setShowFaceControls] = useState(false);
+  const currentFacePosRef = useRef({ x: 50, y: 35 });
 
   // Compact Video Mode (화면 상단 20%만 차지하여 자막 공간 극대화)
   const [compactVideo, setCompactVideo] = useState(true);
@@ -116,6 +120,37 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
 
     return () => { isMounted = false; };
   }, [video.videoId]);
+
+  // 1-1. Fetch AI Face Tracking Timeline on Face Focus Mode
+  useEffect(() => {
+    if (!faceFocusMode) return;
+    let isMounted = true;
+    setFaceTrackingLoading(true);
+
+    const fetchFaceTrack = () => {
+      fetch(`${API_BASE}/face-track/${video.videoId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (!isMounted) return;
+          if (data.ok && Array.isArray(data.tracks) && data.tracks.length > 0) {
+            setFaceTracks(data.tracks);
+            setFaceTrackingReady(true);
+            setFaceTrackingLoading(false);
+          } else if (data.status === 'started' || data.status === 'processing') {
+            // Poll after 3s
+            setTimeout(() => { if (isMounted) fetchFaceTrack(); }, 3000);
+          } else {
+            setFaceTrackingLoading(false);
+          }
+        })
+        .catch(() => {
+          if (isMounted) setFaceTrackingLoading(false);
+        });
+    };
+
+    fetchFaceTrack();
+    return () => { isMounted = false; };
+  }, [faceFocusMode, video.videoId]);
 
   // 2. Fetch direct audio URL for background playback
   const fetchAudioUrl = async () => {
@@ -189,7 +224,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     };
   }, [video.videoId]);
 
-  // 4. Time polling loop (100ms) for high-precision subtitle sync & loop handling
+  // 4. Time polling loop (100ms) for high-precision subtitle sync & realtime auto face tracking
   useEffect(() => {
     timeUpdateInterval.current = setInterval(() => {
       try {
@@ -202,6 +237,23 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
 
         if (typeof t === 'number') {
           setCurrentTime(t);
+
+          // Realtime Auto Face Tracking Follow (스피커 얼굴 움직임 자동 추적)
+          if (faceFocusMode && faceTracks.length > 0) {
+            // Find closest tracked face coordinate for current playback second
+            const closest = faceTracks.reduce((prev, curr) => {
+              return (Math.abs(curr.t - t) < Math.abs(prev.t - t) ? curr : prev);
+            }, faceTracks[0]);
+
+            if (closest) {
+              const cur = currentFacePosRef.current;
+              // Smooth lerp (Damping)
+              const nextX = cur.x + (closest.x - cur.x) * 0.35;
+              const nextY = cur.y + (closest.y - cur.y) * 0.35;
+              currentFacePosRef.current = { x: nextX, y: nextY };
+              setFacePos({ x: Math.round(nextX * 10) / 10, y: Math.round(nextY * 10) / 10 });
+            }
+          }
 
           if (transcript.length > 0) {
             const idx = transcript.findIndex(line => t >= line.start && t < line.end + 0.3);
@@ -229,7 +281,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     return () => {
       if (timeUpdateInterval.current) clearInterval(timeUpdateInterval.current);
     };
-  }, [playerReady, player, bgAudioMode, transcript, activeIndex, loopMode, loopingIndex]);
+  }, [playerReady, player, bgAudioMode, transcript, activeIndex, loopMode, loopingIndex, faceFocusMode, faceTracks]);
 
   // 5. MediaSession API integration (Galaxy Lockscreen & AOD & Notifications Control)
   useEffect(() => {
@@ -761,30 +813,32 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                   <div className="face-focus-hud">
                     <div className="face-focus-circle-ring"></div>
                     <div className="face-hud-pill">
-                      <span>🎯 입모양 2x 집중</span>
+                      <span>
+                        {faceTracks.length > 0 ? '🤖 AI 얼굴 자동추적 (Lock-on 🎯)' : faceTrackingLoading ? '⏳ AI 얼굴 분석 중...' : '🎯 입모양 2x 포커스'}
+                      </span>
                       <button
                         className="hud-cfg-btn"
                         onClick={() => setShowFaceControls(!showFaceControls)}
-                        title="얼굴 위치 미세조정"
+                        title="얼굴 위치 미세조정 / 줌"
                       >
-                        {showFaceControls ? '✕' : '⚙️ 위치'}
+                        {showFaceControls ? '✕' : '⚙️'}
                       </button>
                     </div>
 
                     {showFaceControls && (
                       <div className="face-pos-popup" onClick={e => e.stopPropagation()}>
-                        <span className="pos-title">얼굴 위치 미세조정</span>
+                        <span className="pos-title">얼굴 위치 / 줌 미세조정</span>
                         <div className="pos-dpad">
-                          <button className="dpad-btn up" onClick={() => setFacePos(p => ({ ...p, y: Math.max(10, p.y - 7) }))}>▲</button>
+                          <button className="dpad-btn up" onClick={() => { setFaceTracks([]); setFacePos(p => ({ ...p, y: Math.max(10, p.y - 7) })); }}>▲</button>
                           <div className="dpad-mid">
-                            <button className="dpad-btn left" onClick={() => setFacePos(p => ({ ...p, x: Math.max(10, p.x - 7) }))}>◀</button>
+                            <button className="dpad-btn left" onClick={() => { setFaceTracks([]); setFacePos(p => ({ ...p, x: Math.max(10, p.x - 7) })); }}>◀</button>
                             <button className="dpad-btn center" onClick={() => setFacePos({ x: 50, y: 35 })}>🎯</button>
-                            <button className="dpad-btn right" onClick={() => setFacePos(p => ({ ...p, x: Math.min(90, p.x + 7) }))}>▶</button>
+                            <button className="dpad-btn right" onClick={() => { setFaceTracks([]); setFacePos(p => ({ ...p, x: Math.min(90, p.x + 7) })); }}>▶</button>
                           </div>
-                          <button className="dpad-btn down" onClick={() => setFacePos(p => ({ ...p, y: Math.min(90, p.y + 7) }))}>▼</button>
+                          <button className="dpad-btn down" onClick={() => { setFaceTracks([]); setFacePos(p => ({ ...p, y: Math.min(90, p.y + 7) })); }}>▼</button>
                         </div>
                         <div className="zoom-row">
-                          <span>줌:</span>
+                          <span>배율:</span>
                           <button className="zoom-btn" onClick={() => setFaceZoom(z => Math.max(1.5, Math.round((z - 0.2) * 10) / 10))}>➖</button>
                           <span>{faceZoom.toFixed(1)}x</span>
                           <button className="zoom-btn" onClick={() => setFaceZoom(z => Math.min(3.5, Math.round((z + 0.2) * 10) / 10))}>➕</button>
