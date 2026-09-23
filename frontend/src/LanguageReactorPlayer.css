@@ -387,11 +387,33 @@
   display: grid;
   grid-template-columns: 50% 50%;
   overflow: hidden;
+  transition: all 0.2s ease;
 }
 
-/* Compact Video Mode (Desktop) */
+/* 1. Compact Video Mode (Desktop: 32% Video / 68% Subtitles) */
+.layout-compact .lr-main-grid,
 .compact-video-mode .lr-main-grid {
-  grid-template-columns: 36% 64%;
+  grid-template-columns: 32% 68%;
+}
+
+/* 2. Expanded Video Mode (Desktop: 50% Video / 50% Subtitles) */
+.layout-expanded .lr-main-grid {
+  grid-template-columns: 50% 50%;
+}
+
+/* 3. Text Only Mode (Desktop & Mobile: 0% Video / 100% Full Subtitles Stream) */
+.layout-text_only .lr-main-grid {
+  grid-template-columns: 1fr !important;
+}
+
+.layout-text_only .lr-player-panel {
+  display: none !important;
+}
+
+.layout-text_only .lr-subtitles-panel {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 /* Player Panel */
@@ -1239,15 +1261,30 @@
     height: calc(100vh - 50px);
   }
 
-  /* 20% Compact Video Mode on Mobile */
+  /* Layout Modes on Mobile */
+  .layout-compact .lr-player-panel,
   .compact-video-mode .lr-player-panel {
     max-height: 22vh;
     flex-shrink: 0;
   }
 
+  .layout-compact .lr-video-wrapper,
   .compact-video-mode .lr-video-wrapper {
     aspect-ratio: auto;
     height: 16vh;
+  }
+
+  .layout-expanded .lr-player-panel {
+    max-height: 38vh;
+    flex-shrink: 0;
+  }
+
+  .layout-text_only .lr-main-grid {
+    grid-template-rows: 1fr !important;
+  }
+
+  .layout-text_only .lr-player-panel {
+    display: none !important;
   }
 
   .compact-video-mode .lr-control-deck {

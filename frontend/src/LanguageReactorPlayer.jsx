@@ -53,8 +53,28 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     }
   };
   
-  // Compact Video Mode (화면 상단 20%만 차지하여 자막 공간 극대화)
-  const [compactVideo, setCompactVideo] = useState(true);
+  // Video Layout Mode: 'compact' (콤팩트 20%), 'expanded' (영상확대 50%), 'text_only' (영상없이 100% 텍스트만)
+  const [videoLayout, setVideoLayout] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ytkw_video_layout');
+      return saved || 'compact'; // 'compact', 'expanded', 'text_only'
+    } catch (e) {
+      return 'compact';
+    }
+  });
+
+  const handleVideoLayoutChange = (mode) => {
+    setVideoLayout(mode);
+    try {
+      localStorage.setItem('ytkw_video_layout', mode);
+    } catch (e) {}
+  };
+
+  const handleCycleVideoLayout = () => {
+    if (videoLayout === 'compact') handleVideoLayoutChange('text_only');
+    else if (videoLayout === 'text_only') handleVideoLayoutChange('expanded');
+    else handleVideoLayoutChange('compact');
+  };
 
   // Background Audio Mode (화면 꺼짐 / 잠금화면 1~2시간 연속 재생 모드)
   const [bgAudioMode, setBgAudioMode] = useState(false);
@@ -768,7 +788,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
   return (
     <div className="lr-modal-backdrop" onClick={onClose}>
       <div
-        className={`lr-studio-container ${compactVideo ? 'compact-video-mode' : ''} ${bgAudioMode ? 'bg-audio-active' : ''} ${posHighlight ? 'pos-highlight-enabled' : ''} border-theme-${activeBorderColor}`}
+        className={`lr-studio-container layout-${videoLayout} ${bgAudioMode ? 'bg-audio-active' : ''} ${posHighlight ? 'pos-highlight-enabled' : ''} border-theme-${activeBorderColor}`}
         style={{ '--sub-font-scale': fontScale }}
         onClick={e => e.stopPropagation()}
       >
@@ -827,14 +847,20 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
               {loadingAudio ? '⏳ 오디오 준비...' : bgAudioMode ? '🌙 취침모드 ON' : '🎧 백그라운드'}
             </button>
 
-            {/* COMPACT VIDEO TOGGLE ICON (상단 20% 미니 영상 모드) */}
+            {/* VIDEO LAYOUT MODE (콤팩트 / 텍스트전용 / 영상확대) */}
             {!bgAudioMode && (
               <button
-                className={`lr-icon-btn ${compactVideo ? 'active' : ''}`}
-                onClick={() => setCompactVideo(!compactVideo)}
-                title={compactVideo ? '영상 기본 크기로 확대' : '영상 상단 20% 최소화 (자막 공간 극대화)'}
+                className={`lr-icon-btn ${videoLayout === 'text_only' ? 'active' : ''}`}
+                onClick={handleCycleVideoLayout}
+                title={
+                  videoLayout === 'text_only'
+                    ? '현재: 📖 100% 텍스트 전용 (영상 숨김) -> 클릭 시 🗖 영상 확대'
+                    : videoLayout === 'compact'
+                    ? '현재: 📱 20% 콤팩트 영상 -> 클릭 시 📖 100% 텍스트 전용'
+                    : '현재: 🗖 50% 영상 확대 -> 클릭 시 📱 20% 콤팩트'
+                }
               >
-                {compactVideo ? '🗖 영상확대' : '📱 20% 콤팩트'}
+                {videoLayout === 'text_only' ? '📖 텍스트전용' : videoLayout === 'compact' ? '📱 20% 콤팩트' : '🗖 영상확대'}
               </button>
             )}
 
@@ -895,6 +921,31 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                     <span className="chip-label">{c.label}</span>
                   </button>
                 ))}
+              </div>
+            </div>
+
+            {/* VIDEO & SCREEN LAYOUT (화면 레이아웃 모드) */}
+            <div className="settings-section">
+              <span className="section-title">🖥️ 화면 구성 및 영상 모드</span>
+              <div className="settings-btn-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+                <button
+                  className={`set-choice-btn ${videoLayout === 'compact' ? 'active' : ''}`}
+                  onClick={() => handleVideoLayoutChange('compact')}
+                >
+                  📱 20% 콤팩트
+                </button>
+                <button
+                  className={`set-choice-btn ${videoLayout === 'expanded' ? 'active' : ''}`}
+                  onClick={() => handleVideoLayoutChange('expanded')}
+                >
+                  🗖 50% 영상확대
+                </button>
+                <button
+                  className={`set-choice-btn ${videoLayout === 'text_only' ? 'active' : ''}`}
+                  onClick={() => handleVideoLayoutChange('text_only')}
+                >
+                  📖 100% 텍스트전용
+                </button>
               </div>
             </div>
 
