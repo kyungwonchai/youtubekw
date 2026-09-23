@@ -394,6 +394,14 @@
   grid-template-columns: 36% 64%;
 }
 
+.lr-icon-btn.face-active {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.25), rgba(168, 85, 247, 0.3));
+  border-color: #ec4899;
+  color: #f472b6;
+  box-shadow: 0 0 12px rgba(236, 72, 153, 0.35);
+  font-weight: 700;
+}
+
 /* Player Panel */
 .lr-player-panel {
   display: flex;
@@ -408,12 +416,153 @@
   aspect-ratio: 16 / 9;
   background: #000;
   position: relative;
+  overflow: hidden;
 }
 
-.lr-video-wrapper iframe {
+.lr-yt-scaler {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), transform-origin 0.25s ease-out;
+}
+
+.lr-video-wrapper iframe, .lr-yt-scaler iframe {
   width: 100%;
   height: 100%;
   border: none;
+}
+
+/* Face Focus 2x Circle Mode Styles */
+.lr-video-wrapper.face-focus-active {
+  background: radial-gradient(circle at center, transparent 45%, rgba(0, 0, 0, 0.85) 75%);
+}
+
+.face-focus-hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  z-index: 10;
+}
+
+.face-focus-circle-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(85%, 260px);
+  aspect-ratio: 1 / 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 2px dashed rgba(236, 72, 153, 0.7);
+  box-shadow: 0 0 25px rgba(236, 72, 153, 0.4), inset 0 0 20px rgba(236, 72, 153, 0.15);
+  animation: faceRingPulse 3s infinite ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes faceRingPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); border-color: rgba(236, 72, 153, 0.75); }
+  50% { transform: translate(-50%, -50%) scale(1.03); border-color: rgba(0, 242, 254, 0.85); box-shadow: 0 0 30px rgba(0, 242, 254, 0.45); }
+}
+
+.face-hud-pill {
+  pointer-events: auto;
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(236, 72, 153, 0.4);
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #f472b6;
+  backdrop-filter: blur(8px);
+}
+
+.hud-cfg-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  cursor: pointer;
+}
+
+.face-pos-popup {
+  pointer-events: auto;
+  position: absolute;
+  top: 36px;
+  left: 8px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(236, 72, 153, 0.5);
+  border-radius: 12px;
+  padding: 8px 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  z-index: 20;
+}
+
+.pos-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #cbd5e1;
+}
+
+.pos-dpad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.dpad-mid {
+  display: flex;
+  gap: 4px;
+}
+
+.dpad-btn {
+  width: 26px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  color: #f1f5f9;
+  font-size: 0.72rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dpad-btn.center-btn {
+  background: rgba(236, 72, 153, 0.3);
+  border-color: #ec4899;
+}
+
+.zoom-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+.zoom-btn {
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  color: #fff;
+  font-size: 0.7rem;
+  cursor: pointer;
 }
 
 /* Slim Icon-Only Control Deck */

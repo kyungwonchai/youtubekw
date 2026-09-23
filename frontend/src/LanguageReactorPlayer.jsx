@@ -53,6 +53,12 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     }
   };
   
+  // Face & Lip Focus Cam Mode (얼굴 2배 원형 집중 모드)
+  const [faceFocusMode, setFaceFocusMode] = useState(false);
+  const [faceZoom, setFaceZoom] = useState(2.2);
+  const [facePos, setFacePos] = useState({ x: 50, y: 35 }); // default focus on speaker face / upper center
+  const [showFaceControls, setShowFaceControls] = useState(false);
+
   // Compact Video Mode (화면 상단 20%만 차지하여 자막 공간 극대화)
   const [compactVideo, setCompactVideo] = useState(true);
 
@@ -503,6 +509,17 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
           </div>
 
           <div className="lr-header-actions">
+            {/* FACE FOCUS 2X CIRCLE MODE TOGGLE */}
+            {!bgAudioMode && (
+              <button
+                className={`lr-icon-btn ${faceFocusMode ? 'active face-active' : ''}`}
+                onClick={() => setFaceFocusMode(!faceFocusMode)}
+                title={faceFocusMode ? '얼굴 2배 원형 집중 모드 끄기 (전체 화면으로 복귀)' : '👤 강사 얼굴/입모양 2배 원형 집중 쉐도잉 켜기'}
+              >
+                {faceFocusMode ? '🎯 입모양 2x ON' : '👤 입모양 2x'}
+              </button>
+            )}
+
             {/* FONT SCALE QUICK BUTTON (1.0x ~ 2.0x, Click to cycle or Mouse Wheel to adjust in 0.1 steps) */}
             <button
               className={`lr-icon-btn lr-font-btn ${fontScale > 1.0 ? 'active' : ''}`}
@@ -586,6 +603,17 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                   🙈 블라인드 (가리기)
                 </button>
               </div>
+            </div>
+
+            {/* FACE FOCUS CAM TOGGLE */}
+            <div className="settings-section">
+              <span className="section-title">👤 입모양·얼굴 2배 원형 집중 모드</span>
+              <button
+                className={`set-toggle-btn ${faceFocusMode ? 'active' : ''}`}
+                onClick={() => setFaceFocusMode(!faceFocusMode)}
+              >
+                {faceFocusMode ? '🎯 입모양 2배 원형 집중 모드 켜짐' : '👤 입모양 2배 원형 집중 모드 켜기'}
+              </button>
             </div>
 
             {/* FONT SCALE CONTROL (1.0x ~ 2.0x, 0.1단위 제어) */}
@@ -717,8 +745,54 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                 </div>
               </div>
             ) : (
-              <div className="lr-video-wrapper">
-                <div id="lr-yt-embed"></div>
+              <div className={`lr-video-wrapper ${faceFocusMode ? 'face-focus-active' : ''}`}>
+                <div
+                  className="lr-yt-scaler"
+                  style={faceFocusMode ? {
+                    transform: `scale(${faceZoom})`,
+                    transformOrigin: `${facePos.x}% ${facePos.y}%`,
+                  } : undefined}
+                >
+                  <div id="lr-yt-embed"></div>
+                </div>
+
+                {/* Face Focus Cam HUD & Adjuster */}
+                {faceFocusMode && (
+                  <div className="face-focus-hud">
+                    <div className="face-focus-circle-ring"></div>
+                    <div className="face-hud-pill">
+                      <span>🎯 입모양 2x 집중</span>
+                      <button
+                        className="hud-cfg-btn"
+                        onClick={() => setShowFaceControls(!showFaceControls)}
+                        title="얼굴 위치 미세조정"
+                      >
+                        {showFaceControls ? '✕' : '⚙️ 위치'}
+                      </button>
+                    </div>
+
+                    {showFaceControls && (
+                      <div className="face-pos-popup" onClick={e => e.stopPropagation()}>
+                        <span className="pos-title">얼굴 위치 미세조정</span>
+                        <div className="pos-dpad">
+                          <button className="dpad-btn up" onClick={() => setFacePos(p => ({ ...p, y: Math.max(10, p.y - 7) }))}>▲</button>
+                          <div className="dpad-mid">
+                            <button className="dpad-btn left" onClick={() => setFacePos(p => ({ ...p, x: Math.max(10, p.x - 7) }))}>◀</button>
+                            <button className="dpad-btn center" onClick={() => setFacePos({ x: 50, y: 35 })}>🎯</button>
+                            <button className="dpad-btn right" onClick={() => setFacePos(p => ({ ...p, x: Math.min(90, p.x + 7) }))}>▶</button>
+                          </div>
+                          <button className="dpad-btn down" onClick={() => setFacePos(p => ({ ...p, y: Math.min(90, p.y + 7) }))}>▼</button>
+                        </div>
+                        <div className="zoom-row">
+                          <span>줌:</span>
+                          <button className="zoom-btn" onClick={() => setFaceZoom(z => Math.max(1.5, Math.round((z - 0.2) * 10) / 10))}>➖</button>
+                          <span>{faceZoom.toFixed(1)}x</span>
+                          <button className="zoom-btn" onClick={() => setFaceZoom(z => Math.min(3.5, Math.round((z + 0.2) * 10) / 10))}>➕</button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
