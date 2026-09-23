@@ -304,6 +304,14 @@
   padding-bottom: 2px;
 }
 
+.font-phone-hint {
+  font-size: 0.72rem;
+  color: #38bdf8;
+  opacity: 0.85;
+  line-height: 1.35;
+  padding-top: 2px;
+}
+
 .settings-btn-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -752,11 +760,15 @@
   }
 
   .line-en {
-    font-size: calc(1.18rem * var(--sub-font-scale, 1));
+    font-size: calc(1.18rem * min(var(--sub-font-scale, 1), 1.5));
     line-height: 1.5;
   }
 
   .line-ko {
-    font-size: calc(0.96rem * var(--sub-font-scale, 1));
+    font-size: calc(0.96rem * min(var(--sub-font-scale, 1), 1.5));
+  }
+
+  .line-blind-placeholder {
+    font-size: calc(0.85rem * min(var(--sub-font-scale, 1), 1.5));
   }
 }

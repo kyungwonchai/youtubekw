@@ -10,11 +10,11 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   
-  // Font scale mode (1.0x ~ 3.0x) for PC / large screen reading
+  // Font scale mode (1.0x ~ 2.0x in 0.1 steps)
   const [fontScale, setFontScale] = useState(() => {
     try {
       const saved = localStorage.getItem('ytkw_font_scale');
-      return saved ? Math.min(3.0, Math.max(1.0, parseFloat(saved))) : 1.0;
+      return saved ? Math.min(2.0, Math.max(1.0, Math.round(parseFloat(saved) * 10) / 10)) : 1.0;
     } catch (e) {
       return 1.0;
     }
@@ -31,7 +31,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
   });
 
   const handleFontScaleChange = (scale) => {
-    const clamped = Math.min(3.0, Math.max(1.0, Math.round(scale * 10) / 10));
+    const clamped = Math.min(2.0, Math.max(1.0, Math.round(scale * 10) / 10));
     setFontScale(clamped);
     try {
       localStorage.setItem('ytkw_font_scale', clamped.toString());
@@ -39,9 +39,18 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
   };
 
   const handleFontScaleCycle = () => {
-    const scales = [1.0, 1.5, 2.0, 2.5, 3.0];
-    const nextIdx = (scales.findIndex(s => Math.abs(s - fontScale) < 0.1) + 1) % scales.length;
+    const scales = [1.0, 1.2, 1.4, 1.6, 1.8, 2.0];
+    const nextIdx = (scales.findIndex(s => Math.abs(s - fontScale) < 0.05) + 1) % scales.length;
     handleFontScaleChange(scales[nextIdx]);
+  };
+
+  const handleFontWheel = (e) => {
+    e.preventDefault();
+    if (e.deltaY < 0) {
+      handleFontScaleChange(fontScale + 0.1);
+    } else if (e.deltaY > 0) {
+      handleFontScaleChange(fontScale - 0.1);
+    }
   };
   
   // Compact Video Mode (화면 상단 20%만 차지하여 자막 공간 극대화)
@@ -494,11 +503,12 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
           </div>
 
           <div className="lr-header-actions">
-            {/* FONT SCALE QUICK CYCLE BUTTON (1.0x -> 1.5x -> 2.0x -> 2.5x -> 3.0x) */}
+            {/* FONT SCALE QUICK BUTTON (1.0x ~ 2.0x, Click to cycle or Mouse Wheel to adjust in 0.1 steps) */}
             <button
               className={`lr-icon-btn lr-font-btn ${fontScale > 1.0 ? 'active' : ''}`}
               onClick={handleFontScaleCycle}
-              title={`글자 크기 조절 (현재: ${fontScale.toFixed(1)}x / 최대 3.0배) - 클릭 시 순환 변경`}
+              onWheel={handleFontWheel}
+              title={`글자 크기 조절 (현재: ${fontScale.toFixed(1)}x / 최대 2.0배)\n• 클릭: 0.2x씩 순환\n• 마우스 휠: 0.1x씩 미세조절`}
             >
               🔠 {fontScale.toFixed(1)}x
             </button>
@@ -578,41 +588,41 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
               </div>
             </div>
 
-            {/* FONT SCALE CONTROL (최대 3배까지 키우기) */}
+            {/* FONT SCALE CONTROL (1.0x ~ 2.0x, 0.1단위 제어) */}
             <div className="settings-section">
               <div className="section-title-row">
-                <span className="section-title">🔠 글자 크기 (최대 3.0배)</span>
+                <span className="section-title">🔠 글자 크기 (1.0x ~ 2.0x, 0.1단위)</span>
                 <span className="section-val-badge">{fontScale.toFixed(1)}x</span>
               </div>
               <div className="font-scale-controls">
                 <button
                   className="step-btn"
-                  onClick={() => handleFontScaleChange(fontScale - 0.2)}
+                  onClick={() => handleFontScaleChange(fontScale - 0.1)}
                   disabled={fontScale <= 1.0}
-                  title="글자 크기 축소 (-0.2x)"
+                  title="글자 크기 축소 (-0.1x)"
                 >
-                  ➖
+                  ➖ 0.1
                 </button>
                 <input
                   type="range"
                   className="settings-slider"
                   min="1.0"
-                  max="3.0"
+                  max="2.0"
                   step="0.1"
                   value={fontScale}
                   onChange={(e) => handleFontScaleChange(parseFloat(e.target.value))}
                 />
                 <button
                   className="step-btn"
-                  onClick={() => handleFontScaleChange(fontScale + 0.2)}
-                  disabled={fontScale >= 3.0}
-                  title="글자 크기 확대 (+0.2x)"
+                  onClick={() => handleFontScaleChange(fontScale + 0.1)}
+                  disabled={fontScale >= 2.0}
+                  title="글자 크기 확대 (+0.1x)"
                 >
-                  ➕
+                  ➕ 0.1
                 </button>
               </div>
               <div className="settings-preset-row">
-                {[1.0, 1.5, 2.0, 2.5, 3.0].map(scale => (
+                {[1.0, 1.2, 1.4, 1.6, 1.8, 2.0].map(scale => (
                   <button
                     key={scale}
                     className={`rate-pill ${Math.abs(fontScale - scale) < 0.05 ? 'active' : ''}`}
@@ -622,6 +632,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                   </button>
                 ))}
               </div>
+              <span className="font-phone-hint">📱 폰(모바일)은 화면에 최적화되어 최대 1.5배(+50%)까지만 자동 제한됩니다.</span>
             </div>
 
             {/* PLAYBACK SPEED (최저 0.60x ~ 0.05단위) */}
@@ -795,7 +806,17 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
 
           {/* RIGHT / BOTTOM: MAXIMIZED REAL-TIME SUBTITLES STREAM */}
           <div className="lr-subtitles-panel">
-            <div className="lr-sub-list-container" ref={subtitleListRef}>
+            <div
+              className="lr-sub-list-container"
+              ref={subtitleListRef}
+              onWheel={(e) => {
+                if (e.ctrlKey) {
+                  e.preventDefault();
+                  if (e.deltaY < 0) handleFontScaleChange(fontScale + 0.1);
+                  else if (e.deltaY > 0) handleFontScaleChange(fontScale - 0.1);
+                }
+              }}
+            >
               {loadingTranscript ? (
                 <div className="lr-sub-loading">
                   <div className="spinner large"></div>
