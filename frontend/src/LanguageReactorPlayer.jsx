@@ -148,26 +148,28 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
   const [activeIndex, setActiveIndex] = useState(-1);
   const [autoScroll, setAutoScroll] = useState(true);
 
-  // Language Reactor Modes (자막 표시 모드: 듀얼, 영문만, 한글만, 블라인드)
+  // Language Reactor Modes (자막 표시 모드: 듀얼, 영문만, 한글만)
   const [displayMode, setDisplayMode] = useState(() => {
     try {
       const saved = localStorage.getItem('ytkw_display_mode');
-      return saved || 'dual';
+      return (saved && saved !== 'blind') ? saved : 'dual';
     } catch (e) {
       return 'dual';
     }
   });
 
   const handleDisplayModeChange = (mode) => {
-    setDisplayMode(mode);
+    const cleanMode = mode === 'blind' ? 'dual' : mode;
+    setDisplayMode(cleanMode);
     try {
-      localStorage.setItem('ytkw_display_mode', mode);
+      localStorage.setItem('ytkw_display_mode', cleanMode);
     } catch (e) {}
   };
 
   const handleCycleDisplayMode = () => {
-    const modes = ['dual', 'en_only', 'ko_only', 'blind'];
-    const nextIdx = (modes.indexOf(displayMode) + 1) % modes.length;
+    const modes = ['dual', 'en_only', 'ko_only'];
+    const curIdx = modes.indexOf(displayMode);
+    const nextIdx = (curIdx === -1 ? 0 : (curIdx + 1) % modes.length);
     handleDisplayModeChange(modes[nextIdx]);
   };
 
@@ -818,10 +820,9 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
   };
 
   const getDisplayModeLabel = () => {
-    if (displayMode === 'dual') return '🔤 듀얼';
-    if (displayMode === 'en_only') return '🇺🇸 영문';
-    if (displayMode === 'ko_only') return '🇰🇷 한글';
-    return '🙈 블라인드';
+    if (displayMode === 'en_only') return '🇺🇸 영문만';
+    if (displayMode === 'ko_only') return '🇰🇷 한글만';
+    return '🔤 듀얼(영한)';
   };
 
   return (
@@ -871,11 +872,11 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
               </button>
             )}
 
-            {/* 3. 자막 표시 모드 (듀얼 -> 영문 -> 한글 -> 블라인드) */}
+            {/* 3. 자막 표시 모드 (듀얼 -> 영문만 -> 한글만) */}
             <button
               className={`lr-icon-btn lr-submode-btn ${displayMode !== 'dual' ? 'active' : ''}`}
               onClick={handleCycleDisplayMode}
-              title={`자막 표시 모드 즉시 변경 (현재: ${getDisplayModeLabel()})\n• 클릭 시: 🔤듀얼 ➔ 🇺🇸영문만 ➔ 🇰🇷한글만 ➔ 🙈블라인드 순환`}
+              title={`자막 표시 모드 즉시 변경 (현재: ${getDisplayModeLabel()})\n• 클릭 시: 🔤 듀얼 ➔ 🇺🇸 영문만 ➔ 🇰🇷 한글만 순환`}
             >
               {getDisplayModeLabel()}
             </button>
@@ -1009,27 +1010,21 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
               <div className="settings-btn-grid">
                 <button
                   className={`set-choice-btn ${displayMode === 'dual' ? 'active' : ''}`}
-                  onClick={() => { setDisplayMode('dual'); }}
+                  onClick={() => { handleDisplayModeChange('dual'); }}
                 >
                   🔤 영문 + 한글 듀얼
                 </button>
                 <button
                   className={`set-choice-btn ${displayMode === 'en_only' ? 'active' : ''}`}
-                  onClick={() => { setDisplayMode('en_only'); }}
+                  onClick={() => { handleDisplayModeChange('en_only'); }}
                 >
                   🇺🇸 영문 자막만
                 </button>
                 <button
                   className={`set-choice-btn ${displayMode === 'ko_only' ? 'active' : ''}`}
-                  onClick={() => { setDisplayMode('ko_only'); }}
+                  onClick={() => { handleDisplayModeChange('ko_only'); }}
                 >
                   🇰🇷 한글 번역만
-                </button>
-                <button
-                  className={`set-choice-btn ${displayMode === 'blind' ? 'active' : ''}`}
-                  onClick={() => { setDisplayMode('blind'); }}
-                >
-                  🙈 블라인드 (가리기)
                 </button>
               </div>
             </div>
@@ -1431,13 +1426,6 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                           {(displayMode === 'dual' || displayMode === 'ko_only') && line.translation && (
                             <div className="line-ko">
                               {line.translation}
-                            </div>
-                          )}
-
-                          {/* BLIND MODE */}
-                          {displayMode === 'blind' && (
-                            <div className="line-blind-placeholder">
-                              🔒 [자막 숨김 - 듣기 집중]
                             </div>
                           )}
                         </div>

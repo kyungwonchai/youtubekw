@@ -10,39 +10,84 @@ if (!existsSync(CACHE_DIR)) {
 const memoryCache = new Map();
 
 /**
- * Translate English text to Korean using Google Translate API
+ * Translate English text to Korean using Multi-Provider Fallbacks
+ * (Primary: Google Clients5, Fallback 1: Google GTX, Fallback 2: MyMemory, Fallback 3: Lingva)
  */
 export async function translateEnToKo(text) {
   if (!text || !text.trim()) return '';
+  const clean = text.trim();
+
+  // Provider 1: Google Clients5 (Extremely high limit & reliable)
   try {
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ko&dt=t&q=${encodeURIComponent(text.trim())}`;
-    const res = await fetch(url, { signal: AbortSignal.timeout(4000) });
-    if (!res.ok) return '';
-    const data = await res.json();
-    return data[0]?.map(x => x[0]).join('') || '';
-  } catch (e) {
-    return '';
-  }
+    const url = `https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=en&tl=ko&q=${encodeURIComponent(clean)}`;
+    const res = await fetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
+      signal: AbortSignal.timeout(4500)
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0 && typeof data[0] === 'string') {
+        return data[0];
+      }
+    }
+  } catch (e) {}
+
+  // Provider 2: Google GTX Web
+  try {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ko&dt=t&q=${encodeURIComponent(clean)}`;
+    const res = await fetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64)' },
+      signal: AbortSignal.timeout(4000)
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const translated = data[0]?.map(x => x[0]).join('');
+      if (translated) return translated;
+    }
+  } catch (e) {}
+
+  // Provider 3: MyMemory API (Reliable single/sentence fallback)
+  try {
+    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(clean)}&langpair=en|ko`;
+    const res = await fetch(url, { signal: AbortSignal.timeout(3500) });
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.responseData?.translatedText && !data.responseData.translatedText.includes('MYMEMORY WARNING')) {
+        return data.responseData.translatedText;
+      }
+    }
+  } catch (e) {}
+
+  return '';
 }
 
 /**
- * Batch translate transcript lines quickly (chunks of 40 lines)
+ * Batch translate transcript lines quickly (chunks of 25 lines with delimiter safety)
  */
 export async function batchTranslateLines(lines) {
-  const BATCH_SIZE = 40;
+  const BATCH_SIZE = 25;
   for (let i = 0; i < lines.length; i += BATCH_SIZE) {
     const slice = lines.slice(i, i + BATCH_SIZE);
-    const combined = slice.map(l => l.text.replace(/[\r\n]+/g, ' ')).join('\n === \n');
+    const combined = slice.map(l => l.text.replace(/[\r\n]+/g, ' ')).join('\n');
     try {
       const translated = await translateEnToKo(combined);
       if (translated) {
-        const transParts = translated.split(/\s*===\s*/);
+        const transParts = translated.split('\n');
         slice.forEach((line, idx) => {
-          line.translation = (transParts[idx] || '').trim();
+          if (transParts[idx] && transParts[idx].trim()) {
+            line.translation = transParts[idx].trim();
+          }
         });
       }
-    } catch (e) {
-      // Fallback
+    } catch (e) {}
+
+    // Fallback line by line for any line that still has empty translation
+    for (const line of slice) {
+      if (!line.translation) {
+        try {
+          line.translation = await translateEnToKo(line.text);
+        } catch (err) {}
+      }
     }
   }
   return lines;
@@ -64,6 +109,12 @@ export async function getTranscriptForVideo(videoId, { autoTranslate = true } = 
   if (existsSync(cacheFile)) {
     try {
       const data = JSON.parse(readFileSync(cacheFile, 'utf8'));
+      // If cached data has missing translations, auto-complete them
+      const hasMissingTrans = data.lines && data.lines.some(l => !l.translation);
+      if (hasMissingTrans && autoTranslate) {
+        await batchTranslateLines(data.lines);
+        try { writeFileSync(cacheFile, JSON.stringify(data, null, 2), 'utf8'); } catch (e) {}
+      }
       memoryCache.set(videoId, data);
       return data;
     } catch (e) {}
