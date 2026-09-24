@@ -286,7 +286,7 @@ app.delete('/youtubekw/api/sentences/:id', handleDeleteSentence);
 // ── Vocab-Hub Integration (만능단어장 단어 추가 & 횟수 누적) ──
 const handleAddToVocabHub = async (req, res) => {
   try {
-    const { word, meaning, pos, phonetic, exampleEn, exampleKo, videoTitle } = req.body || {};
+    const { word, meaning, pos, phonetic, exampleEn, exampleKo, videoTitle, videoUrl, videoId } = req.body || {};
     if (!word) return res.status(400).json({ ok: false, error: 'Word required' });
 
     // Call local vocab-hub service (port 10173)
@@ -304,6 +304,7 @@ const handleAddToVocabHub = async (req, res) => {
         sourceModule: 'youtubekw',
         sourceType: '유튜브 쉐도잉',
         sourceTitle: videoTitle || '유튜브 쉐도잉 앱',
+        sourceUrl: videoUrl || (videoId ? `https://www.youtube.com/watch?v=${videoId}` : ''),
         important: true
       })
     });

@@ -627,7 +627,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
   };
 
   // 11. Word click dictionary popup (Instant & Rich)
-  const handleWordClick = async (word, e) => {
+  const handleWordClick = async (word, e, lineContext = null) => {
     if (e) e.stopPropagation();
     const cleanWord = word.replace(/[^a-zA-Z'-]/g, '').trim();
     if (!cleanWord) return;
@@ -649,8 +649,8 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
         phonetic: data.phonetic || '',
         translation: data.koTranslation || data.translation || '뜻을 불러올 수 없습니다.',
         pos: data.pos || '단어',
-        exampleEn: data.exampleEn || '',
-        exampleKo: data.exampleKo || '',
+        exampleEn: lineContext?.text || data.exampleEn || '',
+        exampleKo: lineContext?.translation || data.exampleKo || '',
         meanings: data.meanings || [],
         saveCount: existingFreq,
         loading: false,
@@ -659,6 +659,8 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
       setDictWord({
         word: cleanWord,
         translation: '조회 실패',
+        exampleEn: lineContext?.text || '',
+        exampleKo: lineContext?.translation || '',
         meanings: [],
         saveCount: existingFreq,
         loading: false,
@@ -682,6 +684,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     if (!item || !item.word || addingToVocab) return;
     setAddingToVocab(true);
     try {
+      const vUrl = video.url || (video.videoId ? `https://www.youtube.com/watch?v=${video.videoId}` : '');
       const res = await fetch(`${API_BASE}/vocab/add`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -692,7 +695,9 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
           phonetic: item.phonetic || '',
           exampleEn: item.exampleEn || '',
           exampleKo: item.exampleKo || '',
-          videoTitle: video.title || ''
+          videoTitle: video.title || '',
+          videoUrl: vUrl,
+          videoId: video.videoId || ''
         })
       });
 
@@ -1412,7 +1417,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                                   <span
                                     key={wIdx}
                                     className={`clickable-word ${posClass}`}
-                                    onClick={(e) => handleWordClick(word, e)}
+                                    onClick={(e) => handleWordClick(word, e, line)}
                                     title="단어 사전 & 발음 듣기"
                                   >
                                     {word}{' '}
