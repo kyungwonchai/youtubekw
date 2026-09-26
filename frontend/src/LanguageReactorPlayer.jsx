@@ -3,12 +3,137 @@ import './LanguageReactorPlayer.css';
 
 const API_BASE = window.location.pathname.startsWith('/youtubekw') ? '/youtubekw/api' : '/api';
 
-export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark }) {
+export default function LanguageReactorPlayer({
+  video,
+  playlist = [],
+  initialIndex = 0,
+  onClose,
+  onToggleBookmark
+}) {
+  const effectivePlaylist = useMemo(() => {
+    if (Array.isArray(playlist) && playlist.length > 0) return playlist;
+    if (video) return [video];
+    return [];
+  }, [playlist, video]);
+
+  const [currentIndex, setCurrentIndex] = useState(() => {
+    if (typeof initialIndex === 'number' && initialIndex >= 0 && initialIndex < (playlist?.length || 1)) {
+      return initialIndex;
+    }
+    return 0;
+  });
+
+  // Keep index within bounds if playlist changes
+  useEffect(() => {
+    if (currentIndex >= effectivePlaylist.length) {
+      setCurrentIndex(Math.max(0, effectivePlaylist.length - 1));
+    }
+  }, [effectivePlaylist.length, currentIndex]);
+
+  const currentVideo = effectivePlaylist[currentIndex] || video || {};
+
   const [player, setPlayer] = useState(null);
   const [playerReady, setPlayerReady] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+
+  // Playlist drawer toggle
+  const [showPlaylistDrawer, setShowPlaylistDrawer] = useState(false);
+
+  // Repeat Modes: 'playlist' (전체 순차 무한반복), 'single' (영상 1개 무한반복), 'off' (1회 순차재생 후 멈춤)
+  const [repeatMode, setRepeatMode] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ytkw_repeat_mode');
+      return saved || 'playlist';
+    } catch (e) {
+      return 'playlist';
+    }
+  });
+  const repeatModeRef = useRef(repeatMode);
+  useEffect(() => {
+    repeatModeRef.current = repeatMode;
+  }, [repeatMode]);
+
+  const handleCycleRepeatMode = (e) => {
+    if (e) e.stopPropagation();
+    const modes = ['playlist', 'single', 'off'];
+    const curIdx = modes.indexOf(repeatMode);
+    const nextMode = modes[(curIdx + 1) % modes.length];
+    setRepeatMode(nextMode);
+    repeatModeRef.current = nextMode;
+    try {
+      localStorage.setItem('ytkw_repeat_mode', nextMode);
+    } catch (err) {}
+
+    if (nextMode === 'playlist') {
+      showVocabToast('🔁 전체 목록 순차 무한반복 재생', 'info');
+    } else if (nextMode === 'single') {
+      showVocabToast('🔂 현재 영상 1개 무한반복 재생', 'info');
+    } else {
+      showVocabToast('➡️ 1회 순차재생 (끝나면 정지)', 'info');
+    }
+  };
+
+  const handleNextVideo = () => {
+    if (effectivePlaylist.length <= 1) {
+      handleSeekTo(0, 0, true);
+      return;
+    }
+    const nextIdx = (currentIndex + 1) % effectivePlaylist.length;
+    setCurrentIndex(nextIdx);
+    showVocabToast(`⏭ 다음 영상 (${nextIdx + 1}/${effectivePlaylist.length}): ${effectivePlaylist[nextIdx].title}`, 'info');
+  };
+
+  const handlePrevVideo = () => {
+    if (effectivePlaylist.length <= 1) {
+      handleSeekTo(0, 0, true);
+      return;
+    }
+    const prevIdx = (currentIndex - 1 + effectivePlaylist.length) % effectivePlaylist.length;
+    setCurrentIndex(prevIdx);
+    showVocabToast(`⏮ 이전 영상 (${prevIdx + 1}/${effectivePlaylist.length}): ${effectivePlaylist[prevIdx].title}`, 'info');
+  };
+
+  const handleVideoEnded = (targetPlayer = null) => {
+    const curMode = repeatModeRef.current;
+    if (curMode === 'single') {
+      if (targetPlayer && typeof targetPlayer.seekTo === 'function') {
+        targetPlayer.seekTo(0, true);
+        targetPlayer.playVideo();
+      } else if (bgAudioMode && audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play().catch(() => {});
+      }
+      setActiveIndex(0);
+      setIsPlaying(true);
+      showVocabToast('🔂 영상 반복: 처음부터 다시 시작합니다', 'info');
+    } else if (curMode === 'playlist') {
+      if (effectivePlaylist.length > 1) {
+        const nextIdx = (currentIndex + 1) % effectivePlaylist.length;
+        setCurrentIndex(nextIdx);
+        showVocabToast(`🔀 순차 재생 다음 영상 (${nextIdx + 1}/${effectivePlaylist.length}): ${effectivePlaylist[nextIdx].title}`, 'info');
+      } else {
+        if (targetPlayer && typeof targetPlayer.seekTo === 'function') {
+          targetPlayer.seekTo(0, true);
+          targetPlayer.playVideo();
+        } else if (bgAudioMode && audioRef.current) {
+          audioRef.current.currentTime = 0;
+          audioRef.current.play().catch(() => {});
+        }
+        setActiveIndex(0);
+        setIsPlaying(true);
+      }
+    } else {
+      if (currentIndex + 1 < effectivePlaylist.length) {
+        const nextIdx = currentIndex + 1;
+        setCurrentIndex(nextIdx);
+        showVocabToast(`⏭ 다음 영상 (${nextIdx + 1}/${effectivePlaylist.length}): ${effectivePlaylist[nextIdx].title}`, 'info');
+      } else {
+        setIsPlaying(false);
+      }
+    }
+  };
   
   // Font scale mode (1.0x ~ 2.0x in 0.1 steps)
   const [fontScale, setFontScale] = useState(() => {
@@ -210,13 +335,17 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     } catch (e) {}
   };
 
-  // 1. Fetch transcript from backend
+  // 1. Fetch transcript from backend when currentVideo changes
   useEffect(() => {
+    if (!currentVideo?.videoId) return;
     let isMounted = true;
     setLoadingTranscript(true);
     setTranscriptError(null);
+    setTranscript([]);
+    setActiveIndex(-1);
+    setCurrentTime(0);
 
-    fetch(`${API_BASE}/transcript/${video.videoId}`)
+    fetch(`${API_BASE}/transcript/${currentVideo.videoId}`)
       .then(res => res.json())
       .then(data => {
         if (!isMounted) return;
@@ -234,14 +363,15 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
       });
 
     return () => { isMounted = false; };
-  }, [video.videoId]);
+  }, [currentVideo?.videoId]);
 
   // 2. Fetch direct audio URL for background playback
   const fetchAudioUrl = async () => {
+    if (!currentVideo?.videoId) return null;
     if (audioUrl) return audioUrl;
     setLoadingAudio(true);
     try {
-      const res = await fetch(`${API_BASE}/audio-url/${video.videoId}`);
+      const res = await fetch(`${API_BASE}/audio-url/${currentVideo.videoId}`);
       const data = await res.json();
       if (data.ok && data.audioUrl) {
         setAudioUrl(data.audioUrl);
@@ -255,14 +385,38 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     return null;
   };
 
+  // 2-1. Background Audio Auto-play on Video Change
+  useEffect(() => {
+    if (bgAudioMode && currentVideo?.videoId) {
+      setAudioUrl(null);
+      setLoadingAudio(true);
+      fetch(`${API_BASE}/audio-url/${currentVideo.videoId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.ok && data.audioUrl && audioRef.current) {
+            setAudioUrl(data.audioUrl);
+            audioRef.current.src = data.audioUrl;
+            audioRef.current.currentTime = 0;
+            audioRef.current.playbackRate = playbackRate;
+            audioRef.current.play().then(() => {
+              setIsPlaying(true);
+            }).catch(() => {});
+          }
+        })
+        .catch(e => console.error(e))
+        .finally(() => setLoadingAudio(false));
+    }
+  }, [currentVideo?.videoId, bgAudioMode]);
+
   // 3. Initialize YouTube IFrame API
   useEffect(() => {
+    if (!currentVideo?.videoId) return;
     let ytPlayer = null;
 
     const initPlayer = () => {
       if (!window.YT || !window.YT.Player) return;
       ytPlayer = new window.YT.Player('lr-yt-embed', {
-        videoId: video.videoId,
+        videoId: currentVideo.videoId,
         playerVars: {
           autoplay: 1,
           controls: 1,
@@ -284,6 +438,9 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
           onStateChange: (event) => {
             if (event.data === 1) {
               setIsPlaying(true);
+            } else if (event.data === 0) {
+              // Video Ended -> Sequential Loop / Repeat handling
+              handleVideoEnded(event.target);
             } else {
               setIsPlaying(false);
             }
@@ -306,7 +463,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
         try { ytPlayer.destroy(); } catch (e) {}
       }
     };
-  }, [video.videoId]);
+  }, [currentVideo?.videoId]);
 
   // 4. Time polling loop (100ms) for high-precision subtitle sync & loop handling
   useEffect(() => {
@@ -686,7 +843,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
     if (!item || !item.word || addingToVocab) return;
     setAddingToVocab(true);
     try {
-      const vUrl = video.url || (video.videoId ? `https://www.youtube.com/watch?v=${video.videoId}` : '');
+      const vUrl = currentVideo.url || (currentVideo.videoId ? `https://www.youtube.com/watch?v=${currentVideo.videoId}` : '');
       const res = await fetch(`${API_BASE}/vocab/add`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -697,9 +854,9 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
           phonetic: item.phonetic || '',
           exampleEn: item.exampleEn || '',
           exampleKo: item.exampleKo || '',
-          videoTitle: video.title || '',
+          videoTitle: currentVideo.title || '',
           videoUrl: vUrl,
-          videoId: video.videoId || ''
+          videoId: currentVideo.videoId || ''
         })
       });
 
@@ -727,7 +884,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
   // 11-3. Bookmark Sentence (좋은 문장 별도 저장)
   const handleToggleSaveSentence = async (line, e) => {
     if (e) e.stopPropagation();
-    const existing = savedSentences.find(s => s.text === line.text && s.videoId === video.videoId);
+    const existing = savedSentences.find(s => s.text === line.text && s.videoId === currentVideo.videoId);
 
     if (existing) {
       // Remove sentence
@@ -740,8 +897,8 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            videoId: video.videoId,
-            videoTitle: video.title,
+            videoId: currentVideo.videoId,
+            videoTitle: currentVideo.title,
             start: line.start,
             end: line.end,
             text: line.text,
@@ -797,20 +954,27 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
         e.preventDefault();
         const nextIdx = Math.min(transcript.length - 1, (activeIndex === -1 ? 0 : activeIndex) + 1);
         if (transcript[nextIdx]) handleSeekTo(transcript[nextIdx].start, nextIdx);
+      } else if (e.key === '[' || e.key === 'PageUp') {
+        e.preventDefault();
+        handlePrevVideo();
+      } else if (e.key === ']' || e.key === 'PageDown') {
+        e.preventDefault();
+        handleNextVideo();
       } else if (e.key === 's' || e.key === 'S' || e.key === 'r' || e.key === 'R') {
         e.preventDefault();
         if (activeIndex !== -1 && transcript[activeIndex]) {
           handleSeekTo(transcript[activeIndex].start, activeIndex);
         }
       } else if (e.key === 'Escape') {
-        if (showSettings) setShowSettings(false);
+        if (showPlaylistDrawer) setShowPlaylistDrawer(false);
+        else if (showSettings) setShowSettings(false);
         else onClose();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [player, isPlaying, bgAudioMode, activeIndex, transcript, showSettings, onClose]);
+  }, [player, isPlaying, bgAudioMode, activeIndex, transcript, showSettings, showPlaylistDrawer, onClose, currentIndex, effectivePlaylist]);
 
   // Format seconds to mm:ss
   const formatTime = (secs) => {
@@ -838,7 +1002,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
           ref={audioRef}
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
-          onEnded={() => setIsPlaying(false)}
+          onEnded={() => handleVideoEnded(null)}
           playsInline
         />
 
@@ -846,10 +1010,48 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
         <div className="lr-header">
           <div className="lr-title-info">
             <span className="lr-badge">⚡ 쉐도잉</span>
-            <h2 title={video.title}>{video.title}</h2>
+            <h2 title={currentVideo.title}>{currentVideo.title}</h2>
           </div>
 
           <div className="lr-header-actions">
+            {/* Playlist Drawer Button */}
+            <button
+              className={`lr-icon-btn lr-playlist-btn ${showPlaylistDrawer ? 'active' : ''}`}
+              onClick={() => setShowPlaylistDrawer(!showPlaylistDrawer)}
+              title="순차 재생목록 열기/닫기"
+            >
+              📜 재생목록 ({currentIndex + 1}/{effectivePlaylist.length})
+            </button>
+
+            {/* Video Prev/Next Navigation (if playlist > 1) */}
+            {effectivePlaylist.length > 1 && (
+              <>
+                <button
+                  className="lr-icon-btn"
+                  onClick={handlePrevVideo}
+                  title="이전 영상으로 이동"
+                >
+                  ⏮️ 이전영상
+                </button>
+                <button
+                  className="lr-icon-btn"
+                  onClick={handleNextVideo}
+                  title="다음 영상으로 이동"
+                >
+                  ⏭️ 다음영상
+                </button>
+              </>
+            )}
+
+            {/* Repeat Mode (전체 순차 무한반복 / 1개 반복 / 1회 순차재생) */}
+            <button
+              className={`lr-icon-btn lr-repeat-mode-btn ${repeatMode !== 'off' ? 'active' : ''}`}
+              onClick={handleCycleRepeatMode}
+              title={`재생 반복 모드 순환 (현재: ${repeatMode === 'playlist' ? '전체 순차 무한반복' : repeatMode === 'single' ? '현재 영상 1개 무한반복' : '1회 순차재생'})\n• 클릭 시: 🔁 전체 순차반복 ➔ 🔂 영상 1개 반복 ➔ ➡️ 1회 순차재생`}
+            >
+              {repeatMode === 'playlist' ? '🔁 순차 무한반복' : repeatMode === 'single' ? '🔂 1개 반복' : '➡️ 1회 순차'}
+            </button>
+
             {/* 1. 영상 숨김 & 글자만 전체점유 체크박스 버튼 */}
             {!bgAudioMode && (
               <button
@@ -928,11 +1130,11 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
             </button>
 
             <button
-              className={`lr-star-btn ${video.bookmarked ? 'active' : ''}`}
-              onClick={() => onToggleBookmark && onToggleBookmark(video.id)}
-              title={video.bookmarked ? '찜 해제' : '다시보기 찜'}
+              className={`lr-star-btn ${currentVideo.bookmarked ? 'active' : ''}`}
+              onClick={() => onToggleBookmark && onToggleBookmark(currentVideo.id)}
+              title={currentVideo.bookmarked ? '찜 해제' : '다시보기 찜'}
             >
-              {video.bookmarked ? '⭐' : '☆'}
+              {currentVideo.bookmarked ? '⭐' : '☆'}
             </button>
             <button className="lr-close-btn" onClick={onClose} title="닫기 (ESC)">
               ✕
@@ -950,6 +1152,45 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
         {/* SETTINGS FLOATING DROPDOWN MENU */}
         {showSettings && (
           <div className="lr-settings-dropdown" onClick={e => e.stopPropagation()}>
+            {/* PLAYLIST REPEAT MODE SETTING */}
+            <div className="settings-section">
+              <span className="section-title">🔁 영상 순차 & 반복 재생 모드</span>
+              <div className="settings-btn-grid">
+                <button
+                  className={`set-choice-btn ${repeatMode === 'playlist' ? 'active' : ''}`}
+                  onClick={() => {
+                    setRepeatMode('playlist');
+                    repeatModeRef.current = 'playlist';
+                    try { localStorage.setItem('ytkw_repeat_mode', 'playlist'); } catch(e) {}
+                    showVocabToast('🔁 전체 목록 순차 무한반복 재생 설정', 'info');
+                  }}
+                >
+                  🔁 전체 순차 무한반복
+                </button>
+                <button
+                  className={`set-choice-btn ${repeatMode === 'single' ? 'active' : ''}`}
+                  onClick={() => {
+                    setRepeatMode('single');
+                    repeatModeRef.current = 'single';
+                    try { localStorage.setItem('ytkw_repeat_mode', 'single'); } catch(e) {}
+                    showVocabToast('🔂 현재 영상 1개 무한반복 재생 설정', 'info');
+                  }}
+                >
+                  🔂 영상 1개 무한반복
+                </button>
+                <button
+                  className={`set-choice-btn ${repeatMode === 'off' ? 'active' : ''}`}
+                  onClick={() => {
+                    setRepeatMode('off');
+                    repeatModeRef.current = 'off';
+                    try { localStorage.setItem('ytkw_repeat_mode', 'off'); } catch(e) {}
+                    showVocabToast('➡️ 1회 순차재생 (끝나면 정지) 설정', 'info');
+                  }}
+                >
+                  ➡️ 1회 순차재생
+                </button>
+              </div>
+            </div>
             {/* ACTIVE LINE BORDER COLOR THEME (하늘색 테두리 색상 커스텀) */}
             <div className="settings-section">
               <div className="section-title-row">
@@ -1162,6 +1403,58 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
           </div>
         )}
 
+        {/* PLAYLIST QUEUE DRAWER / MODAL */}
+        {showPlaylistDrawer && (
+          <div className="lr-drawer-backdrop" onClick={() => setShowPlaylistDrawer(false)}>
+            <div className="lr-playlist-drawer" onClick={e => e.stopPropagation()}>
+              <div className="drawer-header">
+                <div className="drawer-title-row">
+                  <h3>📜 순차 재생목록 ({currentIndex + 1} / {effectivePlaylist.length})</h3>
+                  <button className="drawer-close-btn" onClick={() => setShowPlaylistDrawer(false)}>✕</button>
+                </div>
+                <div className="playlist-mode-bar">
+                  <span className="queue-status">반복 설정:</span>
+                  <button
+                    className={`btn-mode-pill ${repeatMode === 'playlist' ? 'active' : ''}`}
+                    onClick={handleCycleRepeatMode}
+                  >
+                    {repeatMode === 'playlist' ? '🔁 전체 순차 무한반복' : repeatMode === 'single' ? '🔂 영상 1개 무한반복' : '➡️ 1회 순차재생'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="drawer-body">
+                <div className="playlist-queue-list">
+                  {effectivePlaylist.map((item, idx) => {
+                    const isCurrent = idx === currentIndex;
+                    return (
+                      <div
+                        key={item.id || idx}
+                        className={`playlist-item-card ${isCurrent ? 'playing-now' : ''}`}
+                        onClick={() => {
+                          setCurrentIndex(idx);
+                          setShowPlaylistDrawer(false);
+                        }}
+                      >
+                        <span className="queue-num">{idx + 1}</span>
+                        <div className="queue-thumb-wrap">
+                          <img src={item.thumbnailUrl} alt={item.title} />
+                          {isCurrent && <span className="playing-badge">▶️ 재생 중</span>}
+                        </div>
+                        <div className="queue-info">
+                          <h4 title={item.title}>{item.title}</h4>
+                          <span className="queue-channel">🎙️ {item.channelTitle || 'YouTube'}</span>
+                        </div>
+                        <span className="queue-duration">{item.duration || ''}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* SAVED SENTENCES DRAWER / MODAL */}
         {showSentencesDrawer && (
           <div className="lr-drawer-backdrop" onClick={() => setShowSentencesDrawer(false)}>
@@ -1191,7 +1484,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                         <p className="sent-en-text">{sent.text}</p>
                         {sent.translation && <p className="sent-ko-text">{sent.translation}</p>}
                         <div className="sent-actions">
-                          {sent.videoId === video.videoId ? (
+                          {sent.videoId === currentVideo.videoId ? (
                             <button
                               className="btn-sent-play"
                               onClick={() => {
@@ -1250,14 +1543,25 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
             {/* SLIM ICON-ONLY CONTROL DECK */}
             <div className="lr-control-deck">
               <div className="lr-icon-controls">
-                {/* PREVIOUS SENTENCE */}
+                {/* PREVIOUS VIDEO (영상 단위) */}
+                {effectivePlaylist.length > 1 && (
+                  <button
+                    className="lr-icon-action-btn"
+                    onClick={handlePrevVideo}
+                    title="이전 영상 ([)"
+                  >
+                    ⏮️⏮️
+                  </button>
+                )}
+
+                {/* PREVIOUS SENTENCE (문장 단위) */}
                 <button
                   className="lr-icon-action-btn"
                   onClick={() => {
                     const prev = Math.max(0, activeIndex - 1);
                     if (transcript[prev]) handleSeekTo(transcript[prev].start, prev);
                   }}
-                  title="이전 문장 (A)"
+                  title="이전 문장 (A / ←)"
                 >
                   ⏮️
                 </button>
@@ -1292,22 +1596,33 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                       handleSeekTo(transcript[activeIndex].start, activeIndex);
                     }
                   }}
-                  title="현재 문장 다시듣기 (S)"
+                  title="현재 문장 다시듣기 (S / R)"
                 >
                   🔄
                 </button>
 
-                {/* NEXT SENTENCE */}
+                {/* NEXT SENTENCE (문장 단위) */}
                 <button
                   className="lr-icon-action-btn"
                   onClick={() => {
                     const next = Math.min(transcript.length - 1, activeIndex + 1);
                     if (transcript[next]) handleSeekTo(transcript[next].start, next);
                   }}
-                  title="다음 문장 (D)"
+                  title="다음 문장 (D / →)"
                 >
                   ⏭️
                 </button>
+
+                {/* NEXT VIDEO (영상 단위) */}
+                {effectivePlaylist.length > 1 && (
+                  <button
+                    className="lr-icon-action-btn"
+                    onClick={handleNextVideo}
+                    title="다음 영상 (])"
+                  >
+                    ⏭️⏭️
+                  </button>
+                )}
 
                 {/* SINGLE SENTENCE LOOP */}
                 <button
@@ -1321,7 +1636,16 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                       setLoopingIndex(activeIndex !== -1 ? activeIndex : 0);
                     }
                   }}
-                  title="현재 문장 무한반복 토글"
+                  title="현재 문장 1개 무한반복 토글"
+                >
+                  🔂
+                </button>
+
+                {/* PLAYLIST REPEAT MODE TOGGLE */}
+                <button
+                  className={`lr-icon-action-btn ${repeatMode !== 'off' ? 'loop-active' : ''}`}
+                  onClick={handleCycleRepeatMode}
+                  title={`재생 반복 모드 토글 (현재: ${repeatMode === 'playlist' ? '전체 순차 무한반복' : repeatMode === 'single' ? '영상 1개 무한반복' : '1회 순차재생'})`}
                 >
                   🔁
                 </button>
@@ -1361,7 +1685,7 @@ export default function LanguageReactorPlayer({ video, onClose, onToggleBookmark
                   {transcript.map((line, idx) => {
                     const isActive = activeIndex === idx;
                     const isLooping = loopMode === 'single_loop' && loopingIndex === idx;
-                    const isSaved = savedSentences.some(s => s.text === line.text && s.videoId === video.videoId);
+                    const isSaved = savedSentences.some(s => s.text === line.text && s.videoId === currentVideo.videoId);
 
                     return (
                       <div

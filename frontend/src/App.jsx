@@ -18,11 +18,27 @@ export default function App() {
   const [toast, setToast] = useState(null);
   const [blockTarget, setBlockTarget] = useState(null); // { item, showModal: boolean }
   const [blocking, setBlocking] = useState(false);
-  const [selectedPlayerVideo, setSelectedPlayerVideo] = useState(null); // Language Reactor Studio Video
+  const [playerPlaylistState, setPlayerPlaylistState] = useState(null); // { playlist: Array, initialIndex: number }
+  const [selectedVideoIds, setSelectedVideoIds] = useState([]); // List of selected IDs for batch repeat playback
 
   const showToast = (message, type = 'info') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3500);
+  };
+
+  const toggleSelectVideo = (id, e) => {
+    if (e) e.stopPropagation();
+    setSelectedVideoIds(prev => {
+      if (prev.includes(id)) {
+        return prev.filter(i => i !== id);
+      } else {
+        return [...prev, id];
+      }
+    });
+  };
+
+  const clearSelection = () => {
+    setSelectedVideoIds([]);
   };
 
   const fetchLinks = async () => {
@@ -363,75 +379,147 @@ export default function App() {
               <p>상단의 주소 입력창으로 쉐도잉할 유튜브 영상을 추가하거나, 주간 AI 회의록에서 영상을 확인해보세요.</p>
             </div>
           ) : (
-            <div className="yt-grid">
-              {filteredItems.map((item, index) => (
-                <div key={item.id} className="video-card" onClick={() => setSelectedPlayerVideo(item)}>
-                  <div className="thumb-wrap">
-                    <img src={item.thumbnailUrl} alt={item.title} loading="lazy" />
-                    <button
-                      className={`star-btn ${item.bookmarked ? 'active' : ''}`}
-                      onClick={(e) => handleToggleBookmark(item.id, e)}
-                      title={item.bookmarked ? "보관 취소" : "다시보기 보관"}
-                    >
-                      {item.bookmarked ? '⭐' : '☆'}
-                    </button>
-                    <span className="duration-tag">{item.duration || '10분+'}</span>
-                    <span className="cat-badge">
-                      {item.category === 'ted_speech' ? '🎤 TED 강연' : item.category === 'sleep_life' ? '🌙 수면&인생 (1h+)' : '📚 에세이·마인드'}
-                    </span>
-                    <span className="index-tag">#{index + 1}</span>
-                  </div>
-                  <div className="card-body">
-                    <h3 title={item.title}>
-                      {item.title}
-                    </h3>
-                    <div className="channel-meta">
-                      <span className="channel-title">🎙️ {item.channelTitle}</span>
-                      {item.publishedText && <span className="pub-text">📅 {item.publishedText}</span>}
-                    </div>
-                    <div className="card-actions">
-                      <button
-                        type="button"
-                        className="btn-play"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedPlayerVideo(item);
-                        }}
-                      >
-                        ⚡ 쉐도잉 스튜디오 (실시간 자막)
-                      </button>
-                      <a
-                        href={item.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn-yt-link"
-                        onClick={(e) => e.stopPropagation()}
-                        title="유튜브 새창으로 열기"
-                      >
-                        ↗️
-                      </a>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setBlockTarget(item);
-                        }}
-                        className="btn-block"
-                        title="해당 영상 비추 (절대안봄 목록에 영구 등록)"
-                      >
-                        🚫 절대안봄
-                      </button>
-                      <button
-                        onClick={(e) => handleDelete(item.id, e)}
-                        className="btn-del"
-                        title="목록에서 삭제"
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                  </div>
+            <>
+              {/* BATCH SELECTION & SEQUENTIAL PLAY TOP BAR */}
+              <div className="yt-batch-bar">
+                <div className="batch-left">
+                  <button
+                    className={`btn-select-all ${selectedVideoIds.length === filteredItems.length && filteredItems.length > 0 ? 'all-active' : ''}`}
+                    onClick={() => {
+                      if (selectedVideoIds.length === filteredItems.length && filteredItems.length > 0) {
+                        clearSelection();
+                      } else {
+                        setSelectedVideoIds(filteredItems.map(i => i.id));
+                      }
+                    }}
+                  >
+                    {selectedVideoIds.length === filteredItems.length && filteredItems.length > 0 ? '☑️ 전체 선택 해제' : '🔲 전체 선택'}
+                  </button>
+                  {selectedVideoIds.length > 0 && (
+                    <span className="batch-count-badge">🎯 {selectedVideoIds.length}개 선택됨</span>
+                  )}
                 </div>
-              ))}
-            </div>
+
+                <div className="batch-actions">
+                  {selectedVideoIds.length > 0 ? (
+                    <>
+                      <button
+                        className="btn-batch-play-primary"
+                        onClick={() => {
+                          const selectedItems = items.filter(i => selectedVideoIds.includes(i.id));
+                          if (selectedItems.length > 0) {
+                            setPlayerPlaylistState({ playlist: selectedItems, initialIndex: 0 });
+                          }
+                        }}
+                      >
+                        ▶️ 선택한 {selectedVideoIds.length}개 순차 무한반복 재생
+                      </button>
+                      <button className="btn-batch-clear" onClick={clearSelection}>
+                        ✕ 선택 취소
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      className="btn-batch-play-all"
+                      onClick={() => {
+                        if (filteredItems.length > 0) {
+                          setPlayerPlaylistState({ playlist: filteredItems, initialIndex: 0 });
+                        }
+                      }}
+                    >
+                      ▶️ {activeTab === 'bookmarked' ? '⭐ 찜한 영상 전체' : '🔥 현재 목록 전체'} 순차 무한반복 재생 ({filteredItems.length}개)
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className="yt-grid">
+                {filteredItems.map((item, index) => {
+                  const isSelected = selectedVideoIds.includes(item.id);
+                  return (
+                    <div
+                      key={item.id}
+                      className={`video-card ${isSelected ? 'card-selected' : ''}`}
+                      onClick={() => setPlayerPlaylistState({ playlist: filteredItems, initialIndex: index })}
+                    >
+                      <div className="thumb-wrap">
+                        <img src={item.thumbnailUrl} alt={item.title} loading="lazy" />
+                        
+                        {/* MULTI-SELECT CHECKBOX BUTTON */}
+                        <button
+                          className={`select-check-btn ${isSelected ? 'selected' : ''}`}
+                          onClick={(e) => toggleSelectVideo(item.id, e)}
+                          title={isSelected ? "선택 해제" : "순차 재생할 영상으로 선택"}
+                        >
+                          {isSelected ? '✅' : '➕'}
+                        </button>
+
+                        <button
+                          className={`star-btn ${item.bookmarked ? 'active' : ''}`}
+                          onClick={(e) => handleToggleBookmark(item.id, e)}
+                          title={item.bookmarked ? "보관 취소" : "다시보기 보관"}
+                        >
+                          {item.bookmarked ? '⭐' : '☆'}
+                        </button>
+                        <span className="duration-tag">{item.duration || '10분+'}</span>
+                        <span className="cat-badge">
+                          {item.category === 'ted_speech' ? '🎤 TED 강연' : item.category === 'sleep_life' ? '🌙 수면&인생 (1h+)' : '📚 에세이·마인드'}
+                        </span>
+                        <span className="index-tag">#{index + 1}</span>
+                      </div>
+                      <div className="card-body">
+                        <h3 title={item.title}>
+                          {item.title}
+                        </h3>
+                        <div className="channel-meta">
+                          <span className="channel-title">🎙️ {item.channelTitle}</span>
+                          {item.publishedText && <span className="pub-text">📅 {item.publishedText}</span>}
+                        </div>
+                        <div className="card-actions">
+                          <button
+                            type="button"
+                            className="btn-play"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setPlayerPlaylistState({ playlist: filteredItems, initialIndex: index });
+                            }}
+                          >
+                            ⚡ 쉐도잉 스튜디오 (실시간 자막)
+                          </button>
+                          <a
+                            href={item.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn-yt-link"
+                            onClick={(e) => e.stopPropagation()}
+                            title="유튜브 새창으로 열기"
+                          >
+                            ↗️
+                          </a>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setBlockTarget(item);
+                            }}
+                            className="btn-block"
+                            title="해당 영상 비추 (절대안봄 목록에 영구 등록)"
+                          >
+                            🚫 절대안봄
+                          </button>
+                          <button
+                            onClick={(e) => handleDelete(item.id, e)}
+                            className="btn-del"
+                            title="목록에서 삭제"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
           )
         )}
 
@@ -588,10 +676,11 @@ export default function App() {
       </main>
 
       {/* Language Reactor Studio Live Player Modal */}
-      {selectedPlayerVideo && (
+      {playerPlaylistState && (
         <LanguageReactorPlayer
-          video={selectedPlayerVideo}
-          onClose={() => setSelectedPlayerVideo(null)}
+          playlist={playerPlaylistState.playlist}
+          initialIndex={playerPlaylistState.initialIndex}
+          onClose={() => setPlayerPlaylistState(null)}
           onToggleBookmark={handleToggleBookmark}
         />
       )}
