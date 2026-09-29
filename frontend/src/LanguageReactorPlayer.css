@@ -1791,3 +1791,190 @@
     font-size: calc(0.85rem * min(var(--sub-font-scale, 1), 1.5));
   }
 }
+
+/* =========================================================
+   🎯 FIXED CENTER CONTENT REPLACEMENT VIEW (고정 센터링 내용 교체 뷰)
+   ========================================================= */
+.lr-focus-replace-view {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  gap: 12px;
+  height: 100%;
+  min-height: 280px;
+  padding: 8px 4px;
+  box-sizing: border-box;
+}
+
+.focus-sub-card {
+  border-radius: 14px;
+  transition: background 0.15s ease, opacity 0.15s ease;
+  box-sizing: border-box;
+}
+
+.focus-sub-card.prev-card,
+.focus-sub-card.next-card {
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  opacity: 0.5;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.focus-sub-card.prev-card:hover,
+.focus-sub-card.next-card:hover {
+  opacity: 0.85;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(56, 189, 248, 0.3);
+}
+
+.focus-sub-card.placeholder {
+  opacity: 0.25;
+  cursor: default;
+  text-align: center;
+  padding: 8px;
+}
+
+.focus-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.focus-tag {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.focus-time {
+  font-size: 0.72rem;
+  color: #64748b;
+  font-family: monospace;
+}
+
+.focus-en-sub {
+  margin: 0;
+  font-size: calc(0.95rem * min(var(--sub-font-scale, 1), 1.4));
+  color: #cbd5e1;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.focus-ko-sub {
+  margin: 2px 0 0 0;
+  font-size: calc(0.82rem * min(var(--sub-font-scale, 1), 1.4));
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* MAIN CURRENT CENTER CARD (FIXED STATIONARY SLOT) */
+.focus-sub-card.current-main-card {
+  flex: 1;
+  min-height: 140px;
+  padding: 16px 18px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 2px solid #00f2fe;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45), 0 0 15px rgba(0, 242, 254, 0.12);
+  transform: none !important;
+}
+
+/* Theme border colors on current main card */
+.border-theme-sky .focus-sub-card.current-main-card { border-color: #00f2fe; }
+.border-theme-green .focus-sub-card.current-main-card { border-color: #10b981; }
+.border-theme-purple .focus-sub-card.current-main-card { border-color: #a855f7; }
+.border-theme-gold .focus-sub-card.current-main-card { border-color: #fbbf24; }
+.border-theme-coral .focus-sub-card.current-main-card { border-color: #f87171; }
+.border-theme-pink .focus-sub-card.current-main-card { border-color: #f472b6; }
+
+/* Highlight Style minimal bar on current main card */
+.highlight-style-minimal_bar .focus-sub-card.current-main-card {
+  border-top-color: transparent !important;
+  border-right-color: transparent !important;
+  border-bottom-color: transparent !important;
+  border-left-width: 5px !important;
+  border-radius: 6px 16px 16px 6px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.highlight-style-text_only .focus-sub-card.current-main-card {
+  border-color: transparent !important;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.focus-main-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+
+.focus-badge-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.focus-main-badge {
+  background: linear-gradient(135deg, #00f2fe, #38bdf8);
+  color: #080c16;
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 999px;
+  letter-spacing: 0.2px;
+}
+
+.focus-time-badge {
+  background: rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-family: monospace;
+}
+
+.focus-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.focus-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 0;
+}
+
+.focus-main-en {
+  font-size: calc(1.26rem * min(var(--sub-font-scale, 1), 1.6));
+  font-weight: 600;
+  line-height: 1.55;
+  color: #ffffff;
+  word-break: break-word;
+}
+
+.focus-main-ko {
+  font-size: calc(1.02rem * min(var(--sub-font-scale, 1), 1.6));
+  font-weight: 400;
+  line-height: 1.45;
+  color: #38bdf8;
+  word-break: keep-all;
+}
+

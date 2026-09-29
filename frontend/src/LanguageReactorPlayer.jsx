@@ -249,13 +249,13 @@ export default function LanguageReactorPlayer({
     } catch (e) {}
   };
 
-  // Subtitle Scroll Mode ('instant': 초고속 즉시, 'smart_page': 스마트 넘김, 'smooth': 부드러운 슬라이딩, 'off': 끔)
+  // Subtitle Scroll Mode ('replace_focus': 고정 센터링 내용교체, 'instant': 초고속 즉시, 'smart_page': 스마트 넘김, 'smooth': 부드러운 슬라이딩, 'off': 끔)
   const [scrollMode, setScrollMode] = useState(() => {
     try {
       const saved = localStorage.getItem('ytkw_scroll_mode');
-      return saved || 'instant';
+      return saved || 'replace_focus'; // Default to fixed center content replacement
     } catch (e) {
-      return 'instant';
+      return 'replace_focus';
     }
   });
 
@@ -264,9 +264,10 @@ export default function LanguageReactorPlayer({
     try {
       localStorage.setItem('ytkw_scroll_mode', mode);
     } catch (e) {}
-    if (mode === 'instant') showVocabToast('⚡ 자막 스크롤: 초고속 즉시 전환 (어지러움 방지)', 'info');
-    else if (mode === 'smart_page') showVocabToast('📖 자막 스크롤: 스마트 넘김 (화면 벗어날 때만)', 'info');
-    else if (mode === 'smooth') showVocabToast('🌊 자막 스크롤: 부드러운 슬라이딩 (기존)', 'info');
+    if (mode === 'replace_focus') showVocabToast('🎯 고정 센터링 내용 교체 모드 (스크롤 0%)', 'info');
+    else if (mode === 'instant') showVocabToast('⚡ 초고속 즉시 리스트 이동 (어지러움 방지)', 'info');
+    else if (mode === 'smart_page') showVocabToast('📖 스마트 넘김 (화면 벗어날 때만)', 'info');
+    else if (mode === 'smooth') showVocabToast('🌊 부드러운 슬라이딩 (기존)', 'info');
     else showVocabToast('⏹️ 자막 자동 스크롤 꺼짐', 'info');
   };
 
@@ -1386,14 +1387,21 @@ export default function LanguageReactorPlayer({
 
                 {/* SCROLL TRANSITION MODE (어지러움 방지 스크롤 제어) */}
                 <div className="settings-section">
-                  <span className="section-title">📜 자막 스크롤 이동 효과 (어지러움 조절)</span>
+                  <span className="section-title">📜 자막 표시 & 스크롤 이동 방식 (어지러움 방지)</span>
                   <div className="settings-btn-grid">
+                    <button
+                      className={`set-choice-btn ${scrollMode === 'replace_focus' ? 'active' : ''}`}
+                      onClick={() => handleScrollModeChange('replace_focus')}
+                      title="화면 스크롤이 전혀 없이(0%), 정중앙 고정 슬롯에서 텍스트 내용만 즉시 교체되는 집중 텔레프롬프터 뷰입니다."
+                    >
+                      🎯 고정 센터링 내용교체 (스크롤 0%)
+                    </button>
                     <button
                       className={`set-choice-btn ${scrollMode === 'instant' ? 'active' : ''}`}
                       onClick={() => handleScrollModeChange('instant')}
-                      title="올라가는 미끄럼 효과 없이 눈 깜빡임처럼 즉시 전환되어 어지러움이 전혀 없습니다."
+                      title="올라가는 미끄럼 효과 없이 눈 깜빡임처럼 즉시 전환되어 어지러움이 없습니다."
                     >
-                      ⚡ 초고속 즉시 (어지럼 방지)
+                      ⚡ 초고속 즉시 리스트
                     </button>
                     <button
                       className={`set-choice-btn ${scrollMode === 'smart_page' ? 'active' : ''}`}
@@ -1946,6 +1954,130 @@ export default function LanguageReactorPlayer({
               ) : transcript.length === 0 ? (
                 <div className="lr-sub-empty">
                   <p>자막이 없는 영상입니다.</p>
+                </div>
+              ) : scrollMode === 'replace_focus' ? (
+                /* 🎯 FIXED CENTER TELEPROMPTER VIEW (CONTENT REPLACEMENT ONLY, ZERO SCROLL) */
+                <div className="lr-focus-replace-view">
+                  {/* PREVIOUS SENTENCE (UP) */}
+                  {activeIndex > 0 && transcript[activeIndex - 1] ? (
+                    <div
+                      className="focus-sub-card prev-card"
+                      onClick={() => handleSeekTo(transcript[activeIndex - 1].start, activeIndex - 1)}
+                      title="이전 문장으로 이동 (클릭)"
+                    >
+                      <div className="focus-card-meta">
+                        <span className="focus-tag">⬆️ 이전 문장 #{activeIndex}</span>
+                        <span className="focus-time">{formatTime(transcript[activeIndex - 1].start)}</span>
+                      </div>
+                      <div className="focus-card-text">
+                        {(displayMode === 'dual' || displayMode === 'en_only') && (
+                          <p className="focus-en-sub">{transcript[activeIndex - 1].text}</p>
+                        )}
+                        {(displayMode === 'dual' || displayMode === 'ko_only') && transcript[activeIndex - 1].translation && (
+                          <p className="focus-ko-sub">{transcript[activeIndex - 1].translation}</p>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="focus-sub-card prev-card placeholder">
+                      <span className="focus-tag">🎬 영상의 첫 번째 문장입니다</span>
+                    </div>
+                  )}
+
+                  {/* CURRENT MAIN CENTER SENTENCE (FIXED STATIONARY SLOT) */}
+                  {(() => {
+                    const curIdx = activeIndex >= 0 ? activeIndex : 0;
+                    const line = transcript[curIdx] || transcript[0];
+                    if (!line) return null;
+                    const isLooping = loopMode === 'single_loop' && loopingIndex === curIdx;
+                    const isSaved = savedSentences.some(s => s.text === line.text && s.videoId === currentVideo.videoId);
+
+                    return (
+                      <div className={`focus-sub-card current-main-card ${isLooping ? 'looping' : ''}`}>
+                        <div className="focus-main-header">
+                          <div className="focus-badge-group">
+                            <span className="focus-main-badge">🎯 #{curIdx + 1} / {transcript.length}</span>
+                            <span className="focus-time-badge">{formatTime(line.start)}</span>
+                          </div>
+                          <div className="focus-btn-group">
+                            <button
+                              className={`line-play-btn ${isPlaying ? 'playing' : ''}`}
+                              onClick={(e) => handleLinePlayPause(line, curIdx, e)}
+                              title={isPlaying ? "이 문장 일시정지 (Space)" : "이 문장 재생 (Space)"}
+                            >
+                              {isPlaying ? '⏸️' : '▶️'}
+                            </button>
+                            <button
+                              className={`line-loop-btn ${isLooping ? 'active' : ''}`}
+                              onClick={(e) => handleToggleLineLoop(curIdx, e)}
+                              title={isLooping ? "이 문장 무한반복 해제" : "이 문장만 무한반복"}
+                            >
+                              🔁
+                            </button>
+                            <button
+                              className={`line-save-btn ${isSaved ? 'active' : ''}`}
+                              onClick={(e) => handleToggleSaveSentence(line, e)}
+                              title={isSaved ? "문장 저장 해제" : "명문장 보관함에 저장"}
+                            >
+                              {isSaved ? '🔖' : '☆'}
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="focus-main-content">
+                          {(displayMode === 'dual' || displayMode === 'en_only') && (
+                            <div className="focus-main-en">
+                              {line.text.split(' ').map((word, wIdx) => {
+                                const posClass = getWordPosClass(word);
+                                return (
+                                  <span
+                                    key={wIdx}
+                                    className={`clickable-word ${posClass}`}
+                                    onClick={(e) => handleWordClick(word, e, line)}
+                                    title="단어 사전 & 발음 듣기"
+                                  >
+                                    {word}{' '}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          )}
+
+                          {(displayMode === 'dual' || displayMode === 'ko_only') && line.translation && (
+                            <div className="focus-main-ko">
+                              {line.translation}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {/* NEXT SENTENCE (DOWN) */}
+                  {activeIndex + 1 < transcript.length && transcript[activeIndex + 1] ? (
+                    <div
+                      className="focus-sub-card next-card"
+                      onClick={() => handleSeekTo(transcript[activeIndex + 1].start, activeIndex + 1)}
+                      title="다음 문장으로 이동 (클릭)"
+                    >
+                      <div className="focus-card-meta">
+                        <span className="focus-tag">⬇️ 다음 문장 #{activeIndex + 2}</span>
+                        <span className="focus-time">{formatTime(transcript[activeIndex + 1].start)}</span>
+                      </div>
+                      <div className="focus-card-text">
+                        {(displayMode === 'dual' || displayMode === 'en_only') && (
+                          <p className="focus-en-sub">{transcript[activeIndex + 1].text}</p>
+                        )}
+                        {(displayMode === 'dual' || displayMode === 'ko_only') && transcript[activeIndex + 1].translation && (
+                          <p className="focus-ko-sub">{transcript[activeIndex + 1].translation}</p>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="focus-sub-card next-card placeholder">
+                      <span className="focus-tag">🏁 영상의 마지막 문장입니다</span>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="lr-sub-lines">
