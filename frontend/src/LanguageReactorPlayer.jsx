@@ -1167,7 +1167,9 @@ export default function LanguageReactorPlayer({
             >
               ⚙️ {playbackRate.toFixed(2)}x
             </button>
+          </div>
 
+          <div className="lr-header-fixed-actions">
             <button
               className={`lr-star-btn ${currentVideo.bookmarked ? 'active' : ''}`}
               onClick={() => onToggleBookmark && onToggleBookmark(currentVideo.id)}

@@ -36,21 +36,26 @@
 
 /* Slim Compact Top Header */
 .lr-header {
-  padding: 10px 16px;
+  padding: 8px 14px;
   background: #0d1322;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   flex-shrink: 0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .lr-title-info {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex: 1;
+  max-width: 280px;
+  min-width: 120px;
+  flex-shrink: 0;
   overflow: hidden;
 }
 
@@ -63,10 +68,11 @@
   border-radius: 999px;
   white-space: nowrap;
   letter-spacing: 0.3px;
+  flex-shrink: 0;
 }
 
 .lr-title-info h2 {
-  font-size: 0.98rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: #f8fafc;
   margin: 0;
@@ -78,7 +84,39 @@
 .lr-header-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  padding: 2px 4px;
+}
+
+.lr-header-actions::-webkit-scrollbar {
+  height: 4px;
+}
+
+.lr-header-actions::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.lr-header-actions::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.lr-header-actions::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 242, 254, 0.5);
+}
+
+.lr-header-fixed-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   flex-shrink: 0;
 }
 
@@ -95,6 +133,9 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  user-select: none;
 }
 
 .lr-icon-btn:hover {
@@ -1488,6 +1529,45 @@
    📱 MOBILE & GALAXY S24 ULTRA PORTRAIT OPTIMIZATION (세로모드 80%+ 자막 극대화)
    ========================================================= */
 @media (max-width: 992px) {
+  .lr-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 6px 8px;
+    padding: 8px 10px;
+    align-items: center;
+  }
+
+  .lr-title-info {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .lr-header-fixed-actions {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+  }
+
+  .lr-header-actions {
+    grid-column: 1 / 3;
+    grid-row: 2 / 3;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding: 3px 2px 5px 2px;
+    gap: 5px;
+  }
+
+  .lr-icon-btn {
+    padding: 5px 8px;
+    font-size: 0.76rem;
+  }
+
   .lr-studio-container {
     width: 100vw;
     height: 100vh;
@@ -1498,7 +1578,7 @@
   .lr-main-grid {
     grid-template-columns: 1fr !important;
     grid-template-rows: auto 1fr !important;
-    height: calc(100vh - 50px);
+    height: calc(100vh - 82px);
   }
 
   /* Layout Modes on Mobile */
