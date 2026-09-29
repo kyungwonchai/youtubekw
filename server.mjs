@@ -283,6 +283,79 @@ const handleDeleteSentence = (req, res) => {
 app.delete('/api/sentences/:id', handleDeleteSentence);
 app.delete('/youtubekw/api/sentences/:id', handleDeleteSentence);
 
+// ── Sentence & Video Listening Counter Stats Endpoints ──
+const STATS_FILE = '/home/kw/.kwsoft-user-store/youtubekw_listen_stats.json';
+
+function loadListenStats() {
+  try {
+    if (fs.existsSync(STATS_FILE)) {
+      return JSON.parse(fs.readFileSync(STATS_FILE, 'utf8'));
+    }
+  } catch (e) {}
+  return { videoStats: {}, totalListensAll: 0, updatedAt: Date.now() };
+}
+
+function saveListenStatsToFile(stats) {
+  try {
+    const dir = path.dirname(STATS_FILE);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(STATS_FILE, JSON.stringify(stats, null, 2), 'utf8');
+  } catch (e) {
+    console.error('Failed to save listen stats:', e);
+  }
+}
+
+const handleGetListenStats = (req, res) => {
+  res.json({ ok: true, stats: loadListenStats() });
+};
+app.get('/api/stats/listen', handleGetListenStats);
+app.get('/youtubekw/api/stats/listen', handleGetListenStats);
+
+const handleSyncListenStats = (req, res) => {
+  try {
+    const incoming = req.body || {};
+    const current = loadListenStats();
+    
+    // Merge incoming incremental or full stats safely
+    const incomingVideos = incoming.videoStats || {};
+    for (const [vid, data] of Object.entries(incomingVideos)) {
+      if (!current.videoStats[vid]) {
+        current.videoStats[vid] = {
+          totalListens: data.totalListens || 0,
+          lastTrainedAt: data.lastTrainedAt || Date.now(),
+          sentenceCounts: data.sentenceCounts || {},
+          masteredCount: data.masteredCount || 0,
+        };
+      } else {
+        const curVid = current.videoStats[vid];
+        curVid.lastTrainedAt = Math.max(curVid.lastTrainedAt || 0, data.lastTrainedAt || Date.now());
+        
+        // Merge sentence counts
+        const incomingSentences = data.sentenceCounts || {};
+        curVid.sentenceCounts = curVid.sentenceCounts || {};
+        for (const [sIdx, count] of Object.entries(incomingSentences)) {
+          curVid.sentenceCounts[sIdx] = Math.max(curVid.sentenceCounts[sIdx] || 0, count || 0);
+        }
+        // Recalculate totalListens & masteredCount
+        const counts = Object.values(curVid.sentenceCounts);
+        curVid.totalListens = counts.reduce((sum, c) => sum + c, 0);
+        curVid.masteredCount = counts.filter(c => c >= 3).length;
+      }
+    }
+    
+    // Recalculate global total
+    current.totalListensAll = Object.values(current.videoStats).reduce((sum, v) => sum + (v.totalListens || 0), 0);
+    current.updatedAt = Date.now();
+    saveListenStatsToFile(current);
+    
+    res.json({ ok: true, stats: current });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+};
+app.post('/api/stats/listen', handleSyncListenStats);
+app.post('/youtubekw/api/stats/listen', handleSyncListenStats);
+
 // ── Vocab-Hub Integration (만능단어장 단어 추가 & 횟수 누적) ──
 const handleAddToVocabHub = async (req, res) => {
   try {

@@ -22,6 +22,16 @@ export default function App() {
   const [playerPlaylistState, setPlayerPlaylistState] = useState(null); // { playlist: Array, initialIndex: number }
   const [selectedVideoIds, setSelectedVideoIds] = useState([]); // List of selected IDs for batch repeat playback
 
+  // Sentence & Video Listening Counter Stats
+  const [listenStats, setListenStats] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ytkw_sentence_stats');
+      return saved ? JSON.parse(saved) : { videoStats: {}, totalListensAll: 0 };
+    } catch (e) {
+      return { videoStats: {}, totalListensAll: 0 };
+    }
+  });
+
   const showToast = (message, type = 'info') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3500);
@@ -77,11 +87,34 @@ export default function App() {
     } catch (err) {}
   };
 
+  const fetchListenStats = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/stats/listen`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.ok && data.stats) {
+          setListenStats(data.stats);
+          try {
+            localStorage.setItem('ytkw_sentence_stats', JSON.stringify(data.stats));
+          } catch (e) {}
+        }
+      }
+    } catch (err) {}
+  };
+
   useEffect(() => {
     fetchLinks();
     fetchWeeklySessions();
     fetchSpeakers();
+    fetchListenStats();
   }, []);
+
+  // Re-fetch stats when player closes
+  useEffect(() => {
+    if (!playerPlaylistState) {
+      fetchListenStats();
+    }
+  }, [playerPlaylistState]);
 
   const handleAddCustomUrl = async (e) => {
     if (e) e.preventDefault();
@@ -192,6 +225,7 @@ export default function App() {
 
   const categories = [
     { id: 'all', label: '✨ 전체 추천 영상' },
+    { id: 'top_trained', label: '🔥 최다 훈련순 (Top Trained)' },
     { id: 'pop_music', label: '🎵 팝송 & 올리비아 (가사 쉐도잉)' },
     { id: 'ted_speech', label: '🎤 TED & 명품 강연' },
     { id: 'essay_deep', label: '📚 에세이 & 마인드셋' },
@@ -199,9 +233,9 @@ export default function App() {
   ];
 
   const filteredItems = useMemo(() => {
-    return items.filter(item => {
+    let result = items.filter(item => {
       if (activeTab === 'bookmarked' && !item.bookmarked) return false;
-      if (selectedCategory !== 'all') {
+      if (selectedCategory !== 'all' && selectedCategory !== 'top_trained') {
         if (selectedCategory === 'sleep_life') {
           const parts = (item.duration || '').split(':').map(Number);
           let secs = 0;
@@ -232,7 +266,17 @@ export default function App() {
       }
       return true;
     });
-  }, [items, activeTab, selectedCategory, popArtistFilter, searchQuery]);
+
+    if (selectedCategory === 'top_trained') {
+      result = [...result].sort((a, b) => {
+        const aStats = listenStats.videoStats?.[a.videoId]?.totalListens || 0;
+        const bStats = listenStats.videoStats?.[b.videoId]?.totalListens || 0;
+        return bStats - aStats;
+      });
+    }
+
+    return result;
+  }, [items, activeTab, selectedCategory, popArtistFilter, searchQuery, listenStats]);
 
   const bookmarkedCount = items.filter(i => i.bookmarked).length;
 
@@ -499,6 +543,22 @@ export default function App() {
                         >
                           {item.bookmarked ? '⭐' : '☆'}
                         </button>
+
+                        {/* 🎧 Live Video Total Training Count Badge */}
+                        {(() => {
+                          const vStats = listenStats.videoStats?.[item.videoId];
+                          const totalL = vStats?.totalListens || 0;
+                          if (totalL <= 0) return null;
+                          return (
+                            <span
+                              className={`training-stats-badge ${totalL >= 50 ? 'stats-gold' : totalL >= 10 ? 'stats-emerald' : 'stats-sky'}`}
+                              title={`이 영상에서 들은 총 문장: ${totalL}회\n(3회 이상 숙달: ${vStats?.masteredCount || 0}문장)`}
+                            >
+                              {totalL >= 50 ? '👑' : totalL >= 10 ? '🌟' : '🎧'} {totalL}회 훈련
+                            </span>
+                          );
+                        })()}
+
                         <span className="duration-tag">{item.duration || '10분+'}</span>
                         <span className={`cat-badge ${item.category === 'pop_music' ? 'pop-badge' : ''}`}>
                           {item.category === 'pop_music'

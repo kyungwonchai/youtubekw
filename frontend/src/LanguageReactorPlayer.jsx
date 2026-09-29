@@ -308,12 +308,113 @@ export default function LanguageReactorPlayer({
   const [addingToVocab, setAddingToVocab] = useState(false);
   const [vocabToast, setVocabToast] = useState(null);
 
+  // ── Sentence & Video Listening Counter Stats (0ms 반응 & 백그라운드 동기화) ──
+  const [listenStats, setListenStats] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ytkw_sentence_stats');
+      return saved ? JSON.parse(saved) : { videoStats: {}, totalListensAll: 0 };
+    } catch (e) {
+      return { videoStats: {}, totalListensAll: 0 };
+    }
+  });
+
+  const syncStatsTimerRef = useRef(null);
+
+  // Sync with backend stats on mount
+  useEffect(() => {
+    fetch(`${API_BASE}/stats/listen`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.ok && data.stats) {
+          setListenStats(prev => {
+            const merged = { ...prev };
+            const backendVideos = data.stats.videoStats || {};
+            merged.videoStats = merged.videoStats || {};
+            for (const [vid, bData] of Object.entries(backendVideos)) {
+              if (!merged.videoStats[vid]) {
+                merged.videoStats[vid] = bData;
+              } else {
+                const cur = merged.videoStats[vid];
+                cur.lastTrainedAt = Math.max(cur.lastTrainedAt || 0, bData.lastTrainedAt || 0);
+                cur.sentenceCounts = cur.sentenceCounts || {};
+                for (const [sIdx, c] of Object.entries(bData.sentenceCounts || {})) {
+                  cur.sentenceCounts[sIdx] = Math.max(cur.sentenceCounts[sIdx] || 0, c || 0);
+                }
+                const counts = Object.values(cur.sentenceCounts);
+                cur.totalListens = counts.reduce((sum, v) => sum + v, 0);
+                cur.masteredCount = counts.filter(v => v >= 3).length;
+              }
+            }
+            merged.totalListensAll = Object.values(merged.videoStats).reduce((sum, v) => sum + (v.totalListens || 0), 0);
+            try {
+              localStorage.setItem('ytkw_sentence_stats', JSON.stringify(merged));
+            } catch (err) {}
+            return merged;
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const saveStatsToBackend = (latestStats) => {
+    if (syncStatsTimerRef.current) clearTimeout(syncStatsTimerRef.current);
+    syncStatsTimerRef.current = setTimeout(() => {
+      fetch(`${API_BASE}/stats/listen`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(latestStats)
+      }).catch(() => {});
+    }, 2500);
+  };
+
+  const recordSentenceListen = (sIdx) => {
+    if (!currentVideo?.videoId || sIdx === null || sIdx === undefined || sIdx < 0) return;
+    const vid = currentVideo.videoId;
+    setListenStats(prev => {
+      const copy = { ...prev, videoStats: { ...prev.videoStats } };
+      const curVid = copy.videoStats[vid]
+        ? { ...copy.videoStats[vid], sentenceCounts: { ...copy.videoStats[vid].sentenceCounts } }
+        : { totalListens: 0, sentenceCounts: {}, masteredCount: 0, lastTrainedAt: Date.now() };
+
+      const prevCount = curVid.sentenceCounts[sIdx] || 0;
+      const nextCount = prevCount + 1;
+      curVid.sentenceCounts[sIdx] = nextCount;
+
+      const counts = Object.values(curVid.sentenceCounts);
+      curVid.totalListens = counts.reduce((sum, v) => sum + v, 0);
+      curVid.masteredCount = counts.filter(v => v >= 3).length;
+      curVid.lastTrainedAt = Date.now();
+      copy.videoStats[vid] = curVid;
+      copy.totalListensAll = Object.values(copy.videoStats).reduce((sum, v) => sum + (v.totalListens || 0), 0);
+
+      try {
+        localStorage.setItem('ytkw_sentence_stats', JSON.stringify(copy));
+      } catch (e) {}
+
+      saveStatsToBackend(copy);
+      return copy;
+    });
+  };
+
+  const lastCountedRef = useRef({ idx: -1, timestamp: 0 });
+
   // Subtitles state
   const [transcript, setTranscript] = useState([]);
   const [loadingTranscript, setLoadingTranscript] = useState(true);
   const [transcriptError, setTranscriptError] = useState(null);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [autoScroll, setAutoScroll] = useState(true);
+
+  // Record sentence listening count automatically when active sentence is played
+  useEffect(() => {
+    if (activeIndex >= 0 && isPlaying && transcript[activeIndex]) {
+      const now = Date.now();
+      if (lastCountedRef.current.idx !== activeIndex || (now - lastCountedRef.current.timestamp > 3500)) {
+        lastCountedRef.current = { idx: activeIndex, timestamp: now };
+        recordSentenceListen(activeIndex);
+      }
+    }
+  }, [activeIndex, isPlaying]);
 
   // Language Reactor Modes (자막 표시 모드: 듀얼, 영문만, 한글만)
   const [displayMode, setDisplayMode] = useState(() => {
@@ -1164,6 +1265,32 @@ export default function LanguageReactorPlayer({
     return '🔤 듀얼(영한)';
   };
 
+  // ── Statistics calculation for current video ──
+  const curVideoStats = listenStats.videoStats?.[currentVideo.videoId] || { totalListens: 0, sentenceCounts: {}, masteredCount: 0 };
+  const totalVideoListens = curVideoStats.totalListens || 0;
+  const masteredSentencesCount = curVideoStats.masteredCount || 0;
+  const totalTranscriptCount = transcript.length;
+  const videoMasteryPct = totalTranscriptCount > 0 ? Math.min(100, Math.round((masteredSentencesCount / totalTranscriptCount) * 100)) : 0;
+
+  const getSentenceCountBadge = (sIdx) => {
+    const count = curVideoStats.sentenceCounts?.[sIdx] || 0;
+    if (count <= 0) return null;
+    let badgeClass = 'sent-count-low';
+    let icon = '👁️';
+    if (count >= 5) {
+      badgeClass = 'sent-count-gold';
+      icon = '👑';
+    } else if (count >= 3) {
+      badgeClass = 'sent-count-emerald';
+      icon = '🔥';
+    }
+    return (
+      <span className={`sentence-count-pill ${badgeClass}`} title={`이 문장 총 ${count}회 청취 (반복 훈련됨)`}>
+        {icon} {count}회
+      </span>
+    );
+  };
+
   return (
     <div className="lr-modal-backdrop" onClick={onClose}>
       <div
@@ -1186,6 +1313,20 @@ export default function LanguageReactorPlayer({
           <div className="lr-title-info">
             <span className="lr-badge">⚡ 쉐도잉</span>
             <h2 title={currentVideo.title}>{currentVideo.title}</h2>
+            {/* 🎧 Live Video Listening Stats Badge */}
+            <div
+              className={`lr-stats-header-pill ${totalVideoListens >= 50 ? 'pill-gold' : totalVideoListens >= 10 ? 'pill-emerald' : 'pill-sky'}`}
+              title={`이 영상 총 청취 문장: ${totalVideoListens}회\n3회 이상 숙달: ${masteredSentencesCount}/${totalTranscriptCount}문장 (${videoMasteryPct}%)`}
+            >
+              <span className="lsh-icon">{totalVideoListens >= 50 ? '👑' : totalVideoListens >= 10 ? '🌟' : '🎧'}</span>
+              <span className="lsh-text">누적 <strong>{totalVideoListens}회</strong> 훈련</span>
+              {totalTranscriptCount > 0 && (
+                <div className="lsh-bar-wrap">
+                  <div className="lsh-bar-fill" style={{ width: `${videoMasteryPct}%` }}></div>
+                  <span className="lsh-bar-num">{videoMasteryPct}%</span>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="lr-header-actions">
@@ -1963,6 +2104,7 @@ export default function LanguageReactorPlayer({
                       <div className="focus-card-meta">
                         <span className="focus-tag focus-tag-prev">⬆️ 이전 문장 #{activeIndex}</span>
                         <span className="focus-time">{formatTime(transcript[activeIndex - 1].start)}</span>
+                        {getSentenceCountBadge(activeIndex - 1)}
                       </div>
                       <div className="focus-card-text">
                         {(displayMode === 'dual' || displayMode === 'en_only') && (
@@ -2010,6 +2152,7 @@ export default function LanguageReactorPlayer({
                           <div className="focus-badge-group">
                             <span className="focus-main-badge">🎯 #{curIdx + 1} / {transcript.length}</span>
                             <span className="focus-time-badge">{formatTime(line.start)}</span>
+                            {getSentenceCountBadge(curIdx)}
                             {isLooping && (
                               <span className="focus-looping-badge">🔁 문장 반복 중</span>
                             )}
@@ -2078,6 +2221,7 @@ export default function LanguageReactorPlayer({
                       <div className="focus-card-meta">
                         <span className="focus-tag focus-tag-next">⬇️ 다음 문장 #{activeIndex + 2}</span>
                         <span className="focus-time">{formatTime(transcript[activeIndex + 1].start)}</span>
+                        {getSentenceCountBadge(activeIndex + 1)}
                       </div>
                       <div className="focus-card-text">
                         {(displayMode === 'dual' || displayMode === 'en_only') && (
@@ -2128,6 +2272,7 @@ export default function LanguageReactorPlayer({
                         {/* TIMESTAMP, PLAY/PAUSE, QUICK LOOP & SENTENCE BOOKMARK ICONS */}
                         <div className="line-meta">
                           <span className="line-time">{formatTime(line.start)}</span>
+                          {getSentenceCountBadge(idx)}
                           <div className="line-btn-group">
                             {/* INSTANT PLAY / PAUSE THIS SENTENCE */}
                             <button
