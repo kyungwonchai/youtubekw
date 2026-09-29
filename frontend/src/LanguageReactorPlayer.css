@@ -830,9 +830,20 @@
   font-weight: 600;
 }
 
+/* LIST VIEW - ACTIVE SENTENCE LOOPING (문장 반복 활성화 시 테두리 시각화) */
 .lr-sub-line.looping {
-  border-color: #a855f7 !important;
-  box-shadow: none !important;
+  border: 2px solid #d946ef !important;
+  background: linear-gradient(135deg, rgba(74, 14, 78, 0.45), rgba(30, 27, 75, 0.5)) !important;
+  box-shadow: 0 0 16px rgba(217, 70, 239, 0.45), inset 0 0 10px rgba(217, 70, 239, 0.2) !important;
+  animation: loopPulseBorder 2s infinite ease-in-out;
+}
+
+.highlight-style-minimal_bar .lr-sub-line.looping {
+  border-top-color: transparent !important;
+  border-right-color: transparent !important;
+  border-bottom-color: transparent !important;
+  border-left: 6px solid #d946ef !important;
+  border-radius: 4px 12px 12px 4px;
 }
 
 .line-meta {
@@ -932,11 +943,13 @@
 }
 
 .line-loop-btn.active {
-  background: rgba(168, 85, 247, 0.38);
-  border-color: #c084fc;
-  color: #f3e8ff;
-  opacity: 1;
-  box-shadow: 0 0 10px rgba(168, 85, 247, 0.45);
+  background: linear-gradient(135deg, #d946ef, #ec4899) !important;
+  border-color: #f472b6 !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
+  box-shadow: 0 0 14px rgba(217, 70, 239, 0.75) !important;
+  transform: scale(1.12);
+  animation: pulseLoopBtn 1.8s infinite ease-in-out;
 }
 
 /* Bookmark Button */
@@ -1939,6 +1952,22 @@
 .border-theme-coral .focus-sub-card.current-main-card { border-color: #f87171; }
 .border-theme-pink .focus-sub-card.current-main-card { border-color: #f472b6; }
 
+/* ACTIVE LOOPING STATE ON CURRENT MAIN CARD (네온 펄스 테두리 & 배경) */
+.focus-sub-card.current-main-card.looping {
+  border: 2.5px solid #d946ef !important;
+  background: linear-gradient(135deg, rgba(46, 16, 101, 0.9), rgba(30, 27, 75, 0.92)) !important;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.65), 0 0 28px rgba(217, 70, 239, 0.55), inset 0 0 20px rgba(217, 70, 239, 0.25) !important;
+  animation: loopPulseBorder 2s infinite ease-in-out;
+}
+
+.highlight-style-minimal_bar .focus-sub-card.current-main-card.looping {
+  border-top-color: transparent !important;
+  border-right-color: transparent !important;
+  border-bottom-color: transparent !important;
+  border-left: 7px solid #d946ef !important;
+  border-radius: 6px 16px 16px 6px;
+}
+
 /* Highlight Style minimal bar on current main card */
 .highlight-style-minimal_bar .focus-sub-card.current-main-card {
   border-top-color: transparent !important;
@@ -1952,6 +1981,39 @@
 .highlight-style-text_only .focus-sub-card.current-main-card {
   border-color: transparent !important;
   background: rgba(255, 255, 255, 0.05);
+}
+
+.focus-looping-badge {
+  background: linear-gradient(135deg, #d946ef, #ec4899);
+  color: #ffffff;
+  font-size: 0.76rem;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 999px;
+  letter-spacing: 0.2px;
+  box-shadow: 0 0 12px rgba(217, 70, 239, 0.7);
+  animation: pulseLoopBadge 1.8s infinite ease-in-out;
+}
+
+@keyframes pulseLoopBadge {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.08); filter: brightness(1.25); box-shadow: 0 0 18px rgba(217, 70, 239, 0.9); }
+}
+
+@keyframes loopPulseBorder {
+  0%, 100% {
+    border-color: #d946ef;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(217, 70, 239, 0.45);
+  }
+  50% {
+    border-color: #f472b6;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 34px rgba(217, 70, 239, 0.75), inset 0 0 20px rgba(217, 70, 239, 0.35);
+  }
+}
+
+@keyframes pulseLoopBtn {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.12); filter: brightness(1.25); box-shadow: 0 0 22px rgba(217, 70, 239, 0.9); }
 }
 
 .focus-main-header {

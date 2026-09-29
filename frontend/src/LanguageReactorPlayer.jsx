@@ -1902,18 +1902,13 @@ export default function LanguageReactorPlayer({
                 {/* SINGLE SENTENCE LOOP */}
                 <button
                   className={`lr-icon-action-btn ${loopMode === 'single_loop' ? 'loop-active' : ''}`}
-                  onClick={() => {
-                    if (loopMode === 'single_loop') {
-                      setLoopMode('none');
-                      setLoopingIndex(null);
-                    } else {
-                      setLoopMode('single_loop');
-                      setLoopingIndex(activeIndex !== -1 ? activeIndex : 0);
-                    }
+                  onClick={(e) => {
+                    const targetIdx = (loopingIndex !== null) ? loopingIndex : (activeIndex !== -1 ? activeIndex : 0);
+                    handleToggleLineLoop(targetIdx, e);
                   }}
-                  title="현재 문장 1개 무한반복 토글"
+                  title={loopMode === 'single_loop' ? "🔁 현재 문장 무한반복 켜짐 (클릭 시 해제)" : "🔂 현재 문장 1개 무한반복 켜기"}
                 >
-                  🔂
+                  {loopMode === 'single_loop' ? '🔁' : '🔂'}
                 </button>
 
                 {/* PLAYLIST REPEAT MODE TOGGLE */}
@@ -2015,6 +2010,9 @@ export default function LanguageReactorPlayer({
                           <div className="focus-badge-group">
                             <span className="focus-main-badge">🎯 #{curIdx + 1} / {transcript.length}</span>
                             <span className="focus-time-badge">{formatTime(line.start)}</span>
+                            {isLooping && (
+                              <span className="focus-looping-badge">🔁 문장 반복 중</span>
+                            )}
                           </div>
                           <div className="focus-btn-group">
                             <button
@@ -2027,7 +2025,7 @@ export default function LanguageReactorPlayer({
                             <button
                               className={`line-loop-btn ${isLooping ? 'active' : ''}`}
                               onClick={(e) => handleToggleLineLoop(curIdx, e)}
-                              title={isLooping ? "이 문장 무한반복 해제" : "이 문장만 무한반복"}
+                              title={isLooping ? "이 문장 무한반복 해제 (클릭 시 풀림)" : "이 문장만 무한반복 재생"}
                             >
                               🔁
                             </button>
