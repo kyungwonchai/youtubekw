@@ -1325,330 +1325,347 @@ export default function LanguageReactorPlayer({
           </div>
         )}
 
-        {/* SETTINGS FLOATING DROPDOWN MENU */}
+        {/* SETTINGS FLOATING MODAL & BACKDROP */}
         {showSettings && (
-          <div className="lr-settings-dropdown" onClick={e => e.stopPropagation()}>
-            {/* PLAYLIST REPEAT MODE SETTING */}
-            <div className="settings-section">
-              <span className="section-title">🔁 영상 순차 & 반복 재생 모드</span>
-              <div className="settings-btn-grid">
+          <div className="lr-drawer-backdrop lr-settings-backdrop" onClick={() => setShowSettings(false)}>
+            <div className="lr-settings-modal" onClick={e => e.stopPropagation()}>
+              <div className="settings-header">
+                <div className="settings-header-title">
+                  <span className="settings-header-icon">⚙️</span>
+                  <h3>쉐도잉 맞춤 상세 설정</h3>
+                </div>
                 <button
-                  className={`set-choice-btn ${repeatMode === 'playlist' ? 'active' : ''}`}
-                  onClick={() => {
-                    setRepeatMode('playlist');
-                    repeatModeRef.current = 'playlist';
-                    try { localStorage.setItem('ytkw_repeat_mode', 'playlist'); } catch(e) {}
-                    showVocabToast('🔁 전체 목록 순차 무한반복 재생 설정', 'info');
-                  }}
+                  className="settings-close-btn"
+                  onClick={() => setShowSettings(false)}
+                  title="설정창 닫기 (ESC)"
                 >
-                  🔁 전체 순차 무한반복
-                </button>
-                <button
-                  className={`set-choice-btn ${repeatMode === 'single' ? 'active' : ''}`}
-                  onClick={() => {
-                    setRepeatMode('single');
-                    repeatModeRef.current = 'single';
-                    try { localStorage.setItem('ytkw_repeat_mode', 'single'); } catch(e) {}
-                    showVocabToast('🔂 현재 영상 1개 무한반복 재생 설정', 'info');
-                  }}
-                >
-                  🔂 영상 1개 무한반복
-                </button>
-                <button
-                  className={`set-choice-btn ${repeatMode === 'off' ? 'active' : ''}`}
-                  onClick={() => {
-                    setRepeatMode('off');
-                    repeatModeRef.current = 'off';
-                    try { localStorage.setItem('ytkw_repeat_mode', 'off'); } catch(e) {}
-                    showVocabToast('➡️ 1회 순차재생 (끝나면 정지) 설정', 'info');
-                  }}
-                >
-                  ➡️ 1회 순차재생
+                  ✕
                 </button>
               </div>
-            </div>
 
-            {/* SCROLL TRANSITION MODE (어지러움 방지 스크롤 제어) */}
-            <div className="settings-section">
-              <span className="section-title">📜 자막 스크롤 이동 효과 (어지러움 조절)</span>
-              <div className="settings-btn-grid">
-                <button
-                  className={`set-choice-btn ${scrollMode === 'instant' ? 'active' : ''}`}
-                  onClick={() => handleScrollModeChange('instant')}
-                  title="올라가는 미끄럼 효과 없이 눈 깜빡임처럼 즉시 전환되어 어지러움이 전혀 없습니다."
-                >
-                  ⚡ 초고속 즉시 (어지럼 방지)
-                </button>
-                <button
-                  className={`set-choice-btn ${scrollMode === 'smart_page' ? 'active' : ''}`}
-                  onClick={() => handleScrollModeChange('smart_page')}
-                  title="문장이 화면 아래로 벗어날 때만 한 번에 전환합니다."
-                >
-                  📖 스마트 넘김 (벗어날 때만)
-                </button>
-                <button
-                  className={`set-choice-btn ${scrollMode === 'smooth' ? 'active' : ''}`}
-                  onClick={() => handleScrollModeChange('smooth')}
-                  title="기존의 부드러운 스크롤 애니메이션"
-                >
-                  🌊 부드러운 슬라이딩
-                </button>
-                <button
-                  className={`set-choice-btn ${scrollMode === 'off' ? 'active' : ''}`}
-                  onClick={() => handleScrollModeChange('off')}
-                  title="자동 스크롤을 끄고 수동으로만 봅니다."
-                >
-                  ⏹️ 자동스크롤 끔
-                </button>
-              </div>
-            </div>
+              <div className="settings-body">
+                {/* PLAYLIST REPEAT MODE SETTING */}
+                <div className="settings-section">
+                  <span className="section-title">🔁 영상 순차 & 반복 재생 모드</span>
+                  <div className="settings-btn-grid">
+                    <button
+                      className={`set-choice-btn ${repeatMode === 'playlist' ? 'active' : ''}`}
+                      onClick={() => {
+                        setRepeatMode('playlist');
+                        repeatModeRef.current = 'playlist';
+                        try { localStorage.setItem('ytkw_repeat_mode', 'playlist'); } catch(e) {}
+                        showVocabToast('🔁 전체 목록 순차 무한반복 재생 설정', 'info');
+                      }}
+                    >
+                      🔁 전체 순차 무한반복
+                    </button>
+                    <button
+                      className={`set-choice-btn ${repeatMode === 'single' ? 'active' : ''}`}
+                      onClick={() => {
+                        setRepeatMode('single');
+                        repeatModeRef.current = 'single';
+                        try { localStorage.setItem('ytkw_repeat_mode', 'single'); } catch(e) {}
+                        showVocabToast('🔂 현재 영상 1개 무한반복 재생 설정', 'info');
+                      }}
+                    >
+                      🔂 영상 1개 무한반복
+                    </button>
+                    <button
+                      className={`set-choice-btn ${repeatMode === 'off' ? 'active' : ''}`}
+                      onClick={() => {
+                        setRepeatMode('off');
+                        repeatModeRef.current = 'off';
+                        try { localStorage.setItem('ytkw_repeat_mode', 'off'); } catch(e) {}
+                        showVocabToast('➡️ 1회 순차재생 (끝나면 정지) 설정', 'info');
+                      }}
+                    >
+                      ➡️ 1회 순차재생
+                    </button>
+                  </div>
+                </div>
 
-            {/* HIGHLIGHT STYLE (현재 문장 강조 스타일) */}
-            <div className="settings-section">
-              <span className="section-title">✨ 현재 문장 강조 스타일</span>
-              <div className="settings-btn-grid">
-                <button
-                  className={`set-choice-btn ${highlightStyle === 'minimal_bar' ? 'active' : ''}`}
-                  onClick={() => handleHighlightStyleChange('minimal_bar')}
-                  title="눈부신 4면 테두리 대신 좌측 포인트 바로 깔끔하게 표시합니다."
-                >
-                  ✨ 좌측 포인트 바 (눈 피로 최소)
-                </button>
-                <button
-                  className={`set-choice-btn ${highlightStyle === 'full_box' ? 'active' : ''}`}
-                  onClick={() => handleHighlightStyleChange('full_box')}
-                  title="사각형 전체를 테두리로 감싸는 스타일"
-                >
-                  🔲 사각형 전체 테두리
-                </button>
-                <button
-                  className={`set-choice-btn ${highlightStyle === 'text_only' ? 'active' : ''}`}
-                  onClick={() => handleHighlightStyleChange('text_only')}
-                  title="테두리 없이 글자만 선명하고 밝게 강조합니다."
-                >
-                  🔤 글자만 밝게 (테두리 제거)
-                </button>
-              </div>
-            </div>
+                {/* SCROLL TRANSITION MODE (어지러움 방지 스크롤 제어) */}
+                <div className="settings-section">
+                  <span className="section-title">📜 자막 스크롤 이동 효과 (어지러움 조절)</span>
+                  <div className="settings-btn-grid">
+                    <button
+                      className={`set-choice-btn ${scrollMode === 'instant' ? 'active' : ''}`}
+                      onClick={() => handleScrollModeChange('instant')}
+                      title="올라가는 미끄럼 효과 없이 눈 깜빡임처럼 즉시 전환되어 어지러움이 전혀 없습니다."
+                    >
+                      ⚡ 초고속 즉시 (어지럼 방지)
+                    </button>
+                    <button
+                      className={`set-choice-btn ${scrollMode === 'smart_page' ? 'active' : ''}`}
+                      onClick={() => handleScrollModeChange('smart_page')}
+                      title="문장이 화면 아래로 벗어날 때만 한 번에 전환합니다."
+                    >
+                      📖 스마트 넘김 (벗어날 때만)
+                    </button>
+                    <button
+                      className={`set-choice-btn ${scrollMode === 'smooth' ? 'active' : ''}`}
+                      onClick={() => handleScrollModeChange('smooth')}
+                      title="기존의 부드러운 스크롤 애니메이션"
+                    >
+                      🌊 부드러운 슬라이딩
+                    </button>
+                    <button
+                      className={`set-choice-btn ${scrollMode === 'off' ? 'active' : ''}`}
+                      onClick={() => handleScrollModeChange('off')}
+                      title="자동 스크롤을 끄고 수동으로만 봅니다."
+                    >
+                      ⏹️ 자동스크롤 끔
+                    </button>
+                  </div>
+                </div>
 
-            {/* ACTIVE LINE BORDER COLOR THEME (하늘색 테두리 색상 커스텀) */}
-            <div className="settings-section">
-              <div className="section-title-row">
-                <span className="section-title">🎨 강조 테두리 / 포인트 바 색상</span>
-              </div>
-              <div className="border-color-palette">
-                {[
-                  { key: 'sky', label: '하늘', hex: '#00f2fe' },
-                  { key: 'green', label: '라임초록', hex: '#10b981' },
-                  { key: 'purple', label: '네온보라', hex: '#a855f7' },
-                  { key: 'gold', label: '골드노랑', hex: '#fbbf24' },
-                  { key: 'coral', label: '코랄레드', hex: '#f87171' },
-                  { key: 'pink', label: '로즈핑크', hex: '#f472b6' }
-                ].map(c => (
+                {/* HIGHLIGHT STYLE (현재 문장 강조 스타일) */}
+                <div className="settings-section">
+                  <span className="section-title">✨ 현재 문장 강조 스타일</span>
+                  <div className="settings-btn-grid">
+                    <button
+                      className={`set-choice-btn ${highlightStyle === 'minimal_bar' ? 'active' : ''}`}
+                      onClick={() => handleHighlightStyleChange('minimal_bar')}
+                      title="눈부신 4면 테두리 대신 좌측 포인트 바로 깔끔하게 표시합니다."
+                    >
+                      ✨ 좌측 포인트 바 (눈 피로 최소)
+                    </button>
+                    <button
+                      className={`set-choice-btn ${highlightStyle === 'full_box' ? 'active' : ''}`}
+                      onClick={() => handleHighlightStyleChange('full_box')}
+                      title="사각형 전체를 테두리로 감싸는 스타일"
+                    >
+                      🔲 사각형 전체 테두리
+                    </button>
+                    <button
+                      className={`set-choice-btn ${highlightStyle === 'text_only' ? 'active' : ''}`}
+                      onClick={() => handleHighlightStyleChange('text_only')}
+                      title="테두리 없이 글자만 선명하고 밝게 강조합니다."
+                    >
+                      🔤 글자만 밝게 (테두리 제거)
+                    </button>
+                  </div>
+                </div>
+
+                {/* ACTIVE LINE BORDER COLOR THEME (하늘색 테두리 색상 커스텀) */}
+                <div className="settings-section">
+                  <div className="section-title-row">
+                    <span className="section-title">🎨 강조 테두리 / 포인트 바 색상</span>
+                  </div>
+                  <div className="border-color-palette">
+                    {[
+                      { key: 'sky', label: '하늘', hex: '#00f2fe' },
+                      { key: 'green', label: '라임초록', hex: '#10b981' },
+                      { key: 'purple', label: '네온보라', hex: '#a855f7' },
+                      { key: 'gold', label: '골드노랑', hex: '#fbbf24' },
+                      { key: 'coral', label: '코랄레드', hex: '#f87171' },
+                      { key: 'pink', label: '로즈핑크', hex: '#f472b6' }
+                    ].map(c => (
+                      <button
+                        key={c.key}
+                        className={`border-theme-chip ${activeBorderColor === c.key ? 'active' : ''}`}
+                        style={{ '--chip-color': c.hex }}
+                        onClick={() => handleBorderColorChange(c.key)}
+                        title={`${c.label} 테두리 선택`}
+                      >
+                        <span className="chip-dot" style={{ backgroundColor: c.hex }}></span>
+                        <span className="chip-label">{c.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* VIDEO & SCREEN LAYOUT (화면 레이아웃 모드) */}
+                <div className="settings-section">
+                  <span className="section-title">🖥️ 화면 구성 및 영상 숨김</span>
                   <button
-                    key={c.key}
-                    className={`border-theme-chip ${activeBorderColor === c.key ? 'active' : ''}`}
-                    style={{ '--chip-color': c.hex }}
-                    onClick={() => handleBorderColorChange(c.key)}
-                    title={`${c.label} 테두리 선택`}
+                    className={`set-toggle-btn ${hideVideo ? 'active' : ''}`}
+                    onClick={handleToggleHideVideo}
                   >
-                    <span className="chip-dot" style={{ backgroundColor: c.hex }}></span>
-                    <span className="chip-label">{c.label}</span>
+                    {hideVideo ? '✅ 영상 숨김 ON (100% 자막 텍스트만 전체 점유)' : '❌ 영상 표시 중 (클릭 시 영상 숨기기)'}
                   </button>
-                ))}
-              </div>
-            </div>
+                  {!hideVideo && (
+                    <div className="settings-btn-grid" style={{ marginTop: '4px' }}>
+                      <button
+                        className={`set-choice-btn ${compactVideo ? 'active' : ''}`}
+                        onClick={() => setCompactVideo(true)}
+                      >
+                        📱 20% 콤팩트 축소
+                      </button>
+                      <button
+                        className={`set-choice-btn ${!compactVideo ? 'active' : ''}`}
+                        onClick={() => setCompactVideo(false)}
+                      >
+                        🗖 50% 영상 확대
+                      </button>
+                    </div>
+                  )}
+                </div>
 
-            {/* VIDEO & SCREEN LAYOUT (화면 레이아웃 모드) */}
-            <div className="settings-section">
-              <span className="section-title">🖥️ 화면 구성 및 영상 숨김</span>
-              <button
-                className={`set-toggle-btn ${hideVideo ? 'active' : ''}`}
-                onClick={handleToggleHideVideo}
-              >
-                {hideVideo ? '✅ 영상 숨김 ON (100% 자막 텍스트만 전체 점유)' : '❌ 영상 표시 중 (클릭 시 영상 숨기기)'}
-              </button>
-              {!hideVideo && (
-                <div className="settings-btn-grid" style={{ marginTop: '4px' }}>
+                <div className="settings-section">
+                  <span className="section-title">⚡ 오프닝 / 인트로 자동 건너뛰기</span>
                   <button
-                    className={`set-choice-btn ${compactVideo ? 'active' : ''}`}
-                    onClick={() => setCompactVideo(true)}
+                    className={`set-toggle-btn ${autoSkipIntro ? 'active' : ''}`}
+                    onClick={handleToggleAutoSkipIntro}
                   >
-                    📱 20% 콤팩트 축소
-                  </button>
-                  <button
-                    className={`set-choice-btn ${!compactVideo ? 'active' : ''}`}
-                    onClick={() => setCompactVideo(false)}
-                  >
-                    🗖 50% 영상 확대
+                    {autoSkipIntro ? '✅ 오프닝/음악 건너뛰고 첫 대사부터 자동 시작 ON' : '❌ 영상 맨 앞(0초)부터 시작 OFF'}
                   </button>
                 </div>
-              )}
-            </div>
 
-            <div className="settings-section">
-              <span className="section-title">⚡ 오프닝 / 인트로 자동 건너뛰기</span>
-              <button
-                className={`set-toggle-btn ${autoSkipIntro ? 'active' : ''}`}
-                onClick={handleToggleAutoSkipIntro}
-              >
-                {autoSkipIntro ? '✅ 오프닝/음악 건너뛰고 첫 대사부터 자동 시작 ON' : '❌ 영상 맨 앞(0초)부터 시작 OFF'}
-              </button>
-            </div>
+                <div className="settings-section">
+                  <span className="section-title">🔤 자막 표시 모드</span>
+                  <div className="settings-btn-grid">
+                    <button
+                      className={`set-choice-btn ${displayMode === 'dual' ? 'active' : ''}`}
+                      onClick={() => { handleDisplayModeChange('dual'); }}
+                    >
+                      🔤 영문 + 한글 듀얼
+                    </button>
+                    <button
+                      className={`set-choice-btn ${displayMode === 'en_only' ? 'active' : ''}`}
+                      onClick={() => { handleDisplayModeChange('en_only'); }}
+                    >
+                      🇺🇸 영문 자막만
+                    </button>
+                    <button
+                      className={`set-choice-btn ${displayMode === 'ko_only' ? 'active' : ''}`}
+                      onClick={() => { handleDisplayModeChange('ko_only'); }}
+                    >
+                      🇰🇷 한글 번역만
+                    </button>
+                  </div>
+                </div>
 
-            <div className="settings-section">
-              <span className="section-title">🔤 자막 표시 모드</span>
-              <div className="settings-btn-grid">
-                <button
-                  className={`set-choice-btn ${displayMode === 'dual' ? 'active' : ''}`}
-                  onClick={() => { handleDisplayModeChange('dual'); }}
-                >
-                  🔤 영문 + 한글 듀얼
-                </button>
-                <button
-                  className={`set-choice-btn ${displayMode === 'en_only' ? 'active' : ''}`}
-                  onClick={() => { handleDisplayModeChange('en_only'); }}
-                >
-                  🇺🇸 영문 자막만
-                </button>
-                <button
-                  className={`set-choice-btn ${displayMode === 'ko_only' ? 'active' : ''}`}
-                  onClick={() => { handleDisplayModeChange('ko_only'); }}
-                >
-                  🇰🇷 한글 번역만
-                </button>
-              </div>
-            </div>
-
-            {/* POS COLOR HIGHLIGHT SETTING */}
-            <div className="settings-section">
-              <span className="section-title">🎨 품사별 색상 하이라이트 (동사/명사/형용사/부사)</span>
-              <button
-                className={`set-toggle-btn ${posHighlight ? 'active' : ''}`}
-                onClick={handleTogglePosHighlight}
-              >
-                {posHighlight ? '✅ 품사별 단어 컬러링 ON (동사/명사/형용사/부사)' : '❌ 일반 단어 색상 OFF'}
-              </button>
-              <div className="pos-color-legend">
-                <span className="pos-legend-pill pos-verb">동사(초록)</span>
-                <span className="pos-legend-pill pos-noun">명사(하늘)</span>
-                <span className="pos-legend-pill pos-adj">형용사(노랑)</span>
-                <span className="pos-legend-pill pos-adv">부사(보라)</span>
-                <span className="pos-legend-pill pos-pron">대명사(핑크)</span>
-              </div>
-            </div>
-
-            {/* FONT SCALE CONTROL (1.0x ~ 2.0x, 0.1단위 제어) */}
-            <div className="settings-section">
-              <div className="section-title-row">
-                <span className="section-title">🔠 글자 크기 (1.0x ~ 2.0x, 0.1단위)</span>
-                <span className="section-val-badge">{fontScale.toFixed(1)}x</span>
-              </div>
-              <div className="font-scale-controls">
-                <button
-                  className="step-btn"
-                  onClick={() => handleFontScaleChange(fontScale - 0.1)}
-                  disabled={fontScale <= 1.0}
-                  title="글자 크기 축소 (-0.1x)"
-                >
-                  ➖ 0.1
-                </button>
-                <input
-                  type="range"
-                  className="settings-slider"
-                  min="1.0"
-                  max="2.0"
-                  step="0.1"
-                  value={fontScale}
-                  onChange={(e) => handleFontScaleChange(parseFloat(e.target.value))}
-                />
-                <button
-                  className="step-btn"
-                  onClick={() => handleFontScaleChange(fontScale + 0.1)}
-                  disabled={fontScale >= 2.0}
-                  title="글자 크기 확대 (+0.1x)"
-                >
-                  ➕ 0.1
-                </button>
-              </div>
-              <div className="settings-preset-row">
-                {[1.0, 1.2, 1.4, 1.6, 1.8, 2.0].map(scale => (
+                {/* POS COLOR HIGHLIGHT SETTING */}
+                <div className="settings-section">
+                  <span className="section-title">🎨 품사별 색상 하이라이트 (동사/명사/형용사/부사)</span>
                   <button
-                    key={scale}
-                    className={`rate-pill ${Math.abs(fontScale - scale) < 0.05 ? 'active' : ''}`}
-                    onClick={() => handleFontScaleChange(scale)}
+                    className={`set-toggle-btn ${posHighlight ? 'active' : ''}`}
+                    onClick={handleTogglePosHighlight}
                   >
-                    {scale.toFixed(1)}x
+                    {posHighlight ? '✅ 품사별 단어 컬러링 ON (동사/명사/형용사/부사)' : '❌ 일반 단어 색상 OFF'}
                   </button>
-                ))}
-              </div>
-              <span className="font-phone-hint">📱 폰(모바일)은 화면에 최적화되어 최대 1.5배(+50%)까지만 자동 제한됩니다.</span>
-            </div>
+                  <div className="pos-color-legend">
+                    <span className="pos-legend-pill pos-verb">동사(초록)</span>
+                    <span className="pos-legend-pill pos-noun">명사(하늘)</span>
+                    <span className="pos-legend-pill pos-adj">형용사(노랑)</span>
+                    <span className="pos-legend-pill pos-adv">부사(보라)</span>
+                    <span className="pos-legend-pill pos-pron">대명사(핑크)</span>
+                  </div>
+                </div>
 
-            {/* PLAYBACK SPEED (최저 0.60x ~ 0.05단위) */}
-            <div className="settings-section">
-              <div className="section-title-row">
-                <span className="section-title">⚡ 재생/읽기 속도 (최저 0.60x ~ 0.05 단위)</span>
-                <span className="section-val-badge">{playbackRate.toFixed(2)}x</span>
-              </div>
-              <div className="rate-fine-controls">
-                <button
-                  className="step-btn"
-                  onClick={() => handleStepRate(-0.05)}
-                  disabled={playbackRate <= 0.60}
-                  title="속도 -0.05x 느리게"
-                >
-                  ➖ 0.05
-                </button>
-                <input
-                  type="range"
-                  className="settings-slider"
-                  min="0.60"
-                  max="1.50"
-                  step="0.05"
-                  value={playbackRate}
-                  onChange={(e) => handleRateChange(parseFloat(e.target.value))}
-                />
-                <button
-                  className="step-btn"
-                  onClick={() => handleStepRate(0.05)}
-                  disabled={playbackRate >= 2.0}
-                  title="속도 +0.05x 빠르게"
-                >
-                  ➕ 0.05
-                </button>
-              </div>
-              <div className="settings-preset-row">
-                {[0.60, 0.70, 0.80, 0.90, 1.00, 1.10, 1.25].map(rate => (
+                {/* FONT SCALE CONTROL (1.0x ~ 2.0x, 0.1단위 제어) */}
+                <div className="settings-section">
+                  <div className="section-title-row">
+                    <span className="section-title">🔠 글자 크기 (1.0x ~ 2.0x, 0.1단위)</span>
+                    <span className="section-val-badge">{fontScale.toFixed(1)}x</span>
+                  </div>
+                  <div className="font-scale-controls">
+                    <button
+                      className="step-btn"
+                      onClick={() => handleFontScaleChange(fontScale - 0.1)}
+                      disabled={fontScale <= 1.0}
+                      title="글자 크기 축소 (-0.1x)"
+                    >
+                      ➖ 0.1
+                    </button>
+                    <input
+                      type="range"
+                      className="settings-slider"
+                      min="1.0"
+                      max="2.0"
+                      step="0.1"
+                      value={fontScale}
+                      onChange={(e) => handleFontScaleChange(parseFloat(e.target.value))}
+                    />
+                    <button
+                      className="step-btn"
+                      onClick={() => handleFontScaleChange(fontScale + 0.1)}
+                      disabled={fontScale >= 2.0}
+                      title="글자 크기 확대 (+0.1x)"
+                    >
+                      ➕ 0.1
+                    </button>
+                  </div>
+                  <div className="settings-preset-row">
+                    {[1.0, 1.2, 1.4, 1.6, 1.8, 2.0].map(scale => (
+                      <button
+                        key={scale}
+                        className={`rate-pill ${Math.abs(fontScale - scale) < 0.05 ? 'active' : ''}`}
+                        onClick={() => handleFontScaleChange(scale)}
+                      >
+                        {scale.toFixed(1)}x
+                      </button>
+                    ))}
+                  </div>
+                  <span className="font-phone-hint">📱 폰(모바일)은 화면에 최적화되어 최대 1.5배(+50%)까지만 자동 제한됩니다.</span>
+                </div>
+
+                {/* PLAYBACK SPEED (최저 0.60x ~ 0.05단위) */}
+                <div className="settings-section">
+                  <div className="section-title-row">
+                    <span className="section-title">⚡ 재생/읽기 속도 (최저 0.60x ~ 0.05 단위)</span>
+                    <span className="section-val-badge">{playbackRate.toFixed(2)}x</span>
+                  </div>
+                  <div className="rate-fine-controls">
+                    <button
+                      className="step-btn"
+                      onClick={() => handleStepRate(-0.05)}
+                      disabled={playbackRate <= 0.60}
+                      title="속도 -0.05x 느리게"
+                    >
+                      ➖ 0.05
+                    </button>
+                    <input
+                      type="range"
+                      className="settings-slider"
+                      min="0.60"
+                      max="1.50"
+                      step="0.05"
+                      value={playbackRate}
+                      onChange={(e) => handleRateChange(parseFloat(e.target.value))}
+                    />
+                    <button
+                      className="step-btn"
+                      onClick={() => handleStepRate(0.05)}
+                      disabled={playbackRate >= 2.0}
+                      title="속도 +0.05x 빠르게"
+                    >
+                      ➕ 0.05
+                    </button>
+                  </div>
+                  <div className="settings-preset-row">
+                    {[0.60, 0.70, 0.80, 0.90, 1.00, 1.10, 1.25].map(rate => (
+                      <button
+                        key={rate}
+                        className={`rate-pill ${Math.abs(playbackRate - rate) < 0.02 ? 'active' : ''}`}
+                        onClick={() => handleRateChange(rate)}
+                      >
+                        {rate.toFixed(rate === 0.6 || rate === 0.7 || rate === 0.8 || rate === 0.9 || rate === 1.0 || rate === 1.1 ? 1 : 2)}x
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="settings-section">
+                  <span className="section-title">🎧 백그라운드 / 취침 모드</span>
                   <button
-                    key={rate}
-                    className={`rate-pill ${Math.abs(playbackRate - rate) < 0.02 ? 'active' : ''}`}
-                    onClick={() => handleRateChange(rate)}
+                    className={`set-toggle-btn ${bgAudioMode ? 'active' : ''}`}
+                    onClick={() => { handleToggleBgAudio(); }}
                   >
-                    {rate.toFixed(rate === 0.6 || rate === 0.7 || rate === 0.8 || rate === 0.9 || rate === 1.0 || rate === 1.1 ? 1 : 2)}x
+                    {bgAudioMode ? '🌙 백그라운드 취침 모드 활성화됨 (화면꺼짐 재생)' : '🎧 백그라운드 모드 켜기 (화면꺼짐 재생)'}
                   </button>
-                ))}
+                </div>
               </div>
-            </div>
 
-            <div className="settings-section">
-              <span className="section-title">🎧 백그라운드 / 취침 모드</span>
-              <button
-                className={`set-toggle-btn ${bgAudioMode ? 'active' : ''}`}
-                onClick={() => { handleToggleBgAudio(); }}
-              >
-                {bgAudioMode ? '🌙 백그라운드 취침 모드 활성화됨 (화면꺼짐 재생)' : '🎧 백그라운드 모드 켜기 (화면꺼짐 재생)'}
-              </button>
-            </div>
-
-            <div className="settings-section">
-              <span className="section-title">📜 자막 제어</span>
-              <button
-                className={`set-toggle-btn ${autoScroll ? 'active' : ''}`}
-                onClick={() => setAutoScroll(!autoScroll)}
-              >
-                {autoScroll ? '✅ 실시간 자동 스크롤 ON' : '❌ 자동 스크롤 OFF'}
-              </button>
+              <div className="settings-footer">
+                <button
+                  className="settings-confirm-btn"
+                  onClick={() => setShowSettings(false)}
+                >
+                  ✓ 설정 완료 및 닫기
+                </button>
+              </div>
             </div>
           </div>
         )}
