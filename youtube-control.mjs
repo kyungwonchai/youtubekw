@@ -527,25 +527,95 @@ export function isWithin5Years(publishedText = '') {
 
 export const isWithin3Years = isWithin5Years;
 
+const MUSIC_FILE = '/home/kw/kwsoft/ytmusic/data/music.json';
+
+/**
+ * Load pop music tracks (Olivia Rodrigo 31곡 & English Pop tracks) from ytmusic
+ */
+export function loadPopMusicTracks() {
+  if (!existsSync(MUSIC_FILE)) return [];
+  try {
+    const raw = readFileSync(MUSIC_FILE, 'utf8');
+    const data = JSON.parse(raw);
+    const playlists = data.playlists || [];
+    const tracks = [];
+    const seen = new Set();
+
+    // Prioritize Olivia Rodrigo (31 tracks), then Billie Eilish (54 tracks)
+    const popPlaylists = [
+      ...playlists.filter(p => p.id === 'artist_olivia_rodrigo'),
+      ...playlists.filter(p => p.id === 'artist_billie_eilish'),
+      ...playlists.filter(p => p.id && p.id.startsWith('artist_') && !['artist_olivia_rodrigo', 'artist_billie_eilish', 'artist_iu', 'artist_taeyeon', 'yang_yoseob_cat'].includes(p.id))
+    ];
+
+    for (const pl of popPlaylists) {
+      for (const t of (pl.tracks || [])) {
+        if (!t.videoId || seen.has(t.videoId)) continue;
+        seen.add(t.videoId);
+        const artist = t.artist || (pl.id === 'artist_olivia_rodrigo' ? 'Olivia Rodrigo' : 'Billie Eilish');
+        tracks.push({
+          id: `pop_${t.id || t.videoId}`,
+          videoId: t.videoId,
+          title: `${artist} - ${t.title || 'Track'}`,
+          channelTitle: artist,
+          description: `${t.album || 'Pop Album'} | 가사 한줄 싱크 쉐도잉 & 팝송 영어 학습`,
+          thumbnailUrl: t.thumbnailUrl || `https://i.ytimg.com/vi/${t.videoId}/hqdefault.jpg`,
+          url: `https://www.youtube.com/watch?v=${t.videoId}`,
+          duration: t.duration || '3:30',
+          category: 'pop_music',
+          artist: artist,
+          album: t.album || '',
+          source: 'ytmusic_pop',
+          bookmarked: false,
+          addedAt: Date.now() - 50000,
+        });
+      }
+    }
+    return tracks;
+  } catch (e) {
+    console.error('[YouTube Control] Error loading music.json pop tracks:', e.message);
+    return [];
+  }
+}
+
 /**
  * Load YouTube links data from local JSON database
  */
 export function loadYouTubeData() {
+  let store;
   if (!existsSync(YOUTUBE_FILE)) {
-    saveYouTubeData({ lastCuratedAt: Date.now(), lastQuery: '', items: [] });
-    return { lastCuratedAt: Date.now(), lastQuery: '', items: [] };
-  }
-  try {
-    const raw = readFileSync(YOUTUBE_FILE, 'utf8');
-    const data = JSON.parse(raw);
-    if (!data || !Array.isArray(data.items)) {
-      return { lastCuratedAt: Date.now(), lastQuery: '', items: [] };
+    store = { lastCuratedAt: Date.now(), lastQuery: '', items: [] };
+  } else {
+    try {
+      const raw = readFileSync(YOUTUBE_FILE, 'utf8');
+      store = JSON.parse(raw);
+      if (!store || !Array.isArray(store.items)) {
+        store = { lastCuratedAt: Date.now(), lastQuery: '', items: [] };
+      }
+    } catch (e) {
+      console.error('[YouTube Control] Error reading file:', e.message);
+      store = { lastCuratedAt: Date.now(), lastQuery: '', items: [] };
     }
-    return data;
-  } catch (e) {
-    console.error('[YouTube Control] Error reading file:', e.message);
-    return { lastCuratedAt: Date.now(), lastQuery: '', items: [] };
   }
+
+  // Ensure Pop Music tracks (Olivia Rodrigo 31곡 & Pop tracks) are merged
+  const popTracks = loadPopMusicTracks();
+  if (popTracks.length > 0) {
+    const existingVideoIds = new Set(store.items.map(i => i.videoId));
+    let modified = false;
+    for (const popTrack of popTracks) {
+      if (!existingVideoIds.has(popTrack.videoId)) {
+        store.items.push(popTrack);
+        existingVideoIds.add(popTrack.videoId);
+        modified = true;
+      }
+    }
+    if (modified) {
+      saveYouTubeData(store);
+    }
+  }
+
+  return store;
 }
 
 /**
@@ -673,6 +743,8 @@ export function getYouTubeLinks({ filter = 'all', category = 'all', search = '' 
         const secs = parseDurationInSeconds(item.duration);
         return item.category === 'sleep_life' || secs >= 3600;
       });
+    } else if (category === 'pop_music') {
+      list = list.filter(item => item.category === 'pop_music' || item.source === 'ytmusic_pop');
     } else {
       list = list.filter(item => item.category === category);
     }
@@ -737,11 +809,11 @@ export function deleteYouTubeLink(id) {
  */
 export function clearUnbookmarkedLinks() {
   const store = loadYouTubeData();
-  const bookmarkedItems = store.items.filter(i => i.bookmarked);
-  const removedCount = store.items.length - bookmarkedItems.length;
-  store.items = bookmarkedItems;
+  const preservedItems = store.items.filter(i => i.bookmarked || i.category === 'pop_music' || i.source === 'user_direct_add' || i.source === 'ytmusic_pop');
+  const removedCount = store.items.length - preservedItems.length;
+  store.items = preservedItems;
   saveYouTubeData(store);
-  return { removedCount, preservedBookmarkedCount: bookmarkedItems.length };
+  return { removedCount, preservedBookmarkedCount: store.items.filter(i => i.bookmarked).length };
 }
 
 /**
@@ -1033,17 +1105,17 @@ export async function curateYouTubeLinksDynamic({
     };
   });
 
-  const preservedBookmarked = store.items.filter(item => item.bookmarked);
-  // Normalize preserved bookmarks categories as well
-  preservedBookmarked.forEach(item => {
-    if (item.category !== 'ted_speech' && item.category !== 'essay_deep') {
+  const preservedItems = store.items.filter(item => item.bookmarked || item.source === 'user_direct_add' || item.category === 'pop_music' || item.source === 'ytmusic_pop');
+  // Normalize preserved bookmarks categories as well (excluding pop_music and sleep_life)
+  preservedItems.forEach(item => {
+    if (item.category !== 'ted_speech' && item.category !== 'essay_deep' && item.category !== 'sleep_life' && item.category !== 'pop_music') {
       item.category = determineCategory(item.title, '');
     }
   });
 
   let finalItems = replaceExisting 
-    ? [...preservedBookmarked, ...curatedItems]
-    : [...preservedBookmarked, ...curatedItems, ...store.items.filter(i => !i.bookmarked)];
+    ? [...preservedItems, ...curatedItems]
+    : [...preservedItems, ...curatedItems, ...store.items.filter(i => !i.bookmarked && i.category !== 'pop_music' && i.source !== 'user_direct_add' && i.source !== 'ytmusic_pop')];
 
   store.items = finalItems;
   store.lastCuratedAt = Date.now();

@@ -11,7 +11,8 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [runningWeekly, setRunningWeekly] = useState(false);
   const [activeTab, setActiveTab] = useState('feed'); // 'feed', 'bookmarked', 'weekly', 'speakers'
-  const [selectedCategory, setSelectedCategory] = useState('all'); // 'all', 'ted_speech', 'essay_deep', 'sleep_life'
+  const [selectedCategory, setSelectedCategory] = useState('all'); // 'all', 'pop_music', 'ted_speech', 'essay_deep', 'sleep_life'
+  const [popArtistFilter, setPopArtistFilter] = useState('all'); // 'all', 'Olivia Rodrigo', 'Billie Eilish'
   const [searchQuery, setSearchQuery] = useState('');
   const [customUrl, setCustomUrl] = useState('');
   const [addingCustom, setAddingCustom] = useState(false);
@@ -191,9 +192,10 @@ export default function App() {
 
   const categories = [
     { id: 'all', label: '✨ 전체 추천 영상' },
+    { id: 'pop_music', label: '🎵 팝송 & 올리비아 (가사 쉐도잉)' },
     { id: 'ted_speech', label: '🎤 TED & 명품 강연' },
     { id: 'essay_deep', label: '📚 에세이 & 마인드셋' },
-    { id: 'sleep_life', label: '🌙 수면 & 인생 딥토크 (1시간+ 미녀 엄선)' },
+    { id: 'sleep_life', label: '🌙 수면 & 인생 딥토크 (1시간+)' },
   ];
 
   const filteredItems = useMemo(() => {
@@ -206,6 +208,17 @@ export default function App() {
           if (parts.length === 3) secs = parts[0] * 3600 + parts[1] * 60 + parts[2];
           else if (parts.length === 2) secs = parts[0] * 60 + parts[1];
           if (item.category !== 'sleep_life' && secs < 3600) return false;
+        } else if (selectedCategory === 'pop_music') {
+          if (item.category !== 'pop_music' && item.source !== 'ytmusic_pop') return false;
+          if (popArtistFilter !== 'all') {
+            if (popArtistFilter === 'Olivia Rodrigo') {
+              const matchO = (item.artist?.toLowerCase().includes('olivia') || item.channelTitle?.toLowerCase().includes('olivia') || item.title?.toLowerCase().includes('olivia'));
+              if (!matchO) return false;
+            } else if (popArtistFilter === 'Billie Eilish') {
+              const matchB = (item.artist?.toLowerCase().includes('billie') || item.channelTitle?.toLowerCase().includes('billie') || item.title?.toLowerCase().includes('billie'));
+              if (!matchB) return false;
+            }
+          }
         } else if (item.category !== selectedCategory) {
           return false;
         }
@@ -214,11 +227,12 @@ export default function App() {
         const q = searchQuery.toLowerCase().trim();
         const matchTitle = item.title?.toLowerCase().includes(q);
         const matchChannel = item.channelTitle?.toLowerCase().includes(q);
-        return matchTitle || matchChannel;
+        const matchArtist = item.artist?.toLowerCase().includes(q);
+        return matchTitle || matchChannel || matchArtist;
       }
       return true;
     });
-  }, [items, activeTab, selectedCategory, searchQuery]);
+  }, [items, activeTab, selectedCategory, popArtistFilter, searchQuery]);
 
   const bookmarkedCount = items.filter(i => i.bookmarked).length;
 
@@ -304,18 +318,42 @@ export default function App() {
         </div>
       </div>
 
-      {/* 2 Main Categories Focus Pills */}
+      {/* Categories Focus Pills */}
       {(activeTab === 'feed' || activeTab === 'bookmarked') && (
         <div className="yt-cat-bar">
           {categories.map(cat => (
             <button
               key={cat.id}
-              className={`cat-pill ${selectedCategory === cat.id ? 'active' : ''}`}
+              className={`cat-pill ${selectedCategory === cat.id ? 'active' : ''} ${cat.id === 'pop_music' ? 'cat-pop-music' : ''}`}
               onClick={() => setSelectedCategory(cat.id)}
             >
               {cat.label}
             </button>
           ))}
+        </div>
+      )}
+
+      {/* Pop Music Artist Sub-filter */}
+      {(activeTab === 'feed' || activeTab === 'bookmarked') && selectedCategory === 'pop_music' && (
+        <div className="pop-artist-filter-bar">
+          <button
+            className={`pop-artist-pill ${popArtistFilter === 'all' ? 'active' : ''}`}
+            onClick={() => setPopArtistFilter('all')}
+          >
+            🎵 전체 팝송 ({items.filter(i => i.category === 'pop_music' || i.source === 'ytmusic_pop').length}곡)
+          </button>
+          <button
+            className={`pop-artist-pill olivia ${popArtistFilter === 'Olivia Rodrigo' ? 'active' : ''}`}
+            onClick={() => setPopArtistFilter('Olivia Rodrigo')}
+          >
+            💜 올리비아 로드리고 (Olivia Rodrigo · {items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('olivia') || i.channelTitle?.toLowerCase().includes('olivia') || i.title?.toLowerCase().includes('olivia'))).length}곡)
+          </button>
+          <button
+            className={`pop-artist-pill billie ${popArtistFilter === 'Billie Eilish' ? 'active' : ''}`}
+            onClick={() => setPopArtistFilter('Billie Eilish')}
+          >
+            💚 빌리 아일리시 (Billie Eilish · {items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('billie') || i.channelTitle?.toLowerCase().includes('billie') || i.title?.toLowerCase().includes('billie'))).length}곡)
+          </button>
         </div>
       )}
 
@@ -462,8 +500,14 @@ export default function App() {
                           {item.bookmarked ? '⭐' : '☆'}
                         </button>
                         <span className="duration-tag">{item.duration || '10분+'}</span>
-                        <span className="cat-badge">
-                          {item.category === 'ted_speech' ? '🎤 TED 강연' : item.category === 'sleep_life' ? '🌙 수면&인생 (1h+)' : '📚 에세이·마인드'}
+                        <span className={`cat-badge ${item.category === 'pop_music' ? 'pop-badge' : ''}`}>
+                          {item.category === 'pop_music'
+                            ? (item.artist?.toLowerCase().includes('olivia') || item.title?.toLowerCase().includes('olivia') ? '💜 Olivia Rodrigo' : item.artist?.toLowerCase().includes('billie') || item.title?.toLowerCase().includes('billie') ? '💚 Billie Eilish' : '🎵 팝송 쉐도잉')
+                            : item.category === 'ted_speech'
+                            ? '🎤 TED 강연'
+                            : item.category === 'sleep_life'
+                            ? '🌙 수면&인생 (1h+)'
+                            : '📚 에세이·마인드'}
                         </span>
                         <span className="index-tag">#{index + 1}</span>
                       </div>
@@ -472,19 +516,22 @@ export default function App() {
                           {item.title}
                         </h3>
                         <div className="channel-meta">
-                          <span className="channel-title">🎙️ {item.channelTitle}</span>
+                          <span className="channel-title">
+                            {item.category === 'pop_music' ? '🎵' : '🎙️'} {item.channelTitle || item.artist}
+                          </span>
+                          {item.album && <span className="album-text">💿 {item.album}</span>}
                           {item.publishedText && <span className="pub-text">📅 {item.publishedText}</span>}
                         </div>
                         <div className="card-actions">
                           <button
                             type="button"
-                            className="btn-play"
+                            className={`btn-play ${item.category === 'pop_music' ? 'btn-play-music' : ''}`}
                             onClick={(e) => {
                               e.stopPropagation();
                               setPlayerPlaylistState({ playlist: filteredItems, initialIndex: index });
                             }}
                           >
-                            ⚡ 쉐도잉 스튜디오 (실시간 자막)
+                            {item.category === 'pop_music' ? '🎵 한 줄 가사 쉐도잉 & 따라부르기' : '⚡ 쉐도잉 스튜디오 (실시간 자막)'}
                           </button>
                           <a
                             href={item.url}
