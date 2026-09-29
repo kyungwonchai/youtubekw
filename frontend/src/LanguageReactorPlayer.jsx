@@ -298,6 +298,26 @@ export default function LanguageReactorPlayer({
     handleDisplayModeChange(modes[nextIdx]);
   };
 
+  // Auto-Skip Intro State (TED 및 영상 오프닝/인트로 자동 건너뛰고 첫 대사부터 시작)
+  const [autoSkipIntro, setAutoSkipIntro] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ytkw_skip_intro');
+      return saved !== null ? saved === 'true' : true; // Default ON
+    } catch (e) {
+      return true;
+    }
+  });
+  const introSkippedRef = useRef('');
+
+  const handleToggleAutoSkipIntro = () => {
+    const next = !autoSkipIntro;
+    setAutoSkipIntro(next);
+    try {
+      localStorage.setItem('ytkw_skip_intro', String(next));
+    } catch (e) {}
+    showVocabToast(next ? '⚡ 첫 자막(인트로 건너뛰기) 자동 시작 ON' : '⏸️ 인트로 건너뛰기 OFF (0초부터 시작)', 'info');
+  };
+
   const [loopMode, setLoopMode] = useState('none'); // 'none', 'single_loop', 'pause_after_sentence'
   const [loopingIndex, setLoopingIndex] = useState(null);
 
@@ -365,6 +385,36 @@ export default function LanguageReactorPlayer({
     return () => { isMounted = false; };
   }, [currentVideo?.videoId]);
 
+  // 1-1. Auto-skip intro to first spoken sentence (TED & 영상 오프닝 음악/로고 자동 건너뛰기)
+  useEffect(() => {
+    if (!autoSkipIntro || !currentVideo?.videoId) return;
+    if (transcript.length === 0) return;
+    if (introSkippedRef.current === currentVideo.videoId) return;
+
+    const firstLine = transcript[0];
+    if (firstLine && typeof firstLine.start === 'number' && firstLine.start >= 1.0) {
+      if (bgAudioMode && audioRef.current) {
+        introSkippedRef.current = currentVideo.videoId;
+        const targetTime = Math.max(0, firstLine.start - 0.1);
+        audioRef.current.currentTime = targetTime;
+        audioRef.current.play().catch(() => {});
+        setIsPlaying(true);
+        setActiveIndex(0);
+        showVocabToast(`⚡ 인트로 건너뛰기: 첫 문장(${firstLine.start.toFixed(1)}초)부터 시작`, 'info');
+      } else if (playerReady && player && typeof player.seekTo === 'function') {
+        introSkippedRef.current = currentVideo.videoId;
+        const targetTime = Math.max(0, firstLine.start - 0.1);
+        player.seekTo(targetTime, true);
+        player.playVideo();
+        setIsPlaying(true);
+        setActiveIndex(0);
+        showVocabToast(`⚡ 인트로 건너뛰기: 첫 문장(${firstLine.start.toFixed(1)}초)부터 시작`, 'info');
+      }
+    } else if (firstLine && typeof firstLine.start === 'number' && firstLine.start < 1.0) {
+      introSkippedRef.current = currentVideo.videoId;
+    }
+  }, [currentVideo?.videoId, transcript, playerReady, player, bgAudioMode, autoSkipIntro]);
+
   // 2. Fetch direct audio URL for background playback
   const fetchAudioUrl = async () => {
     if (!currentVideo?.videoId) return null;
@@ -396,17 +446,24 @@ export default function LanguageReactorPlayer({
           if (data.ok && data.audioUrl && audioRef.current) {
             setAudioUrl(data.audioUrl);
             audioRef.current.src = data.audioUrl;
-            audioRef.current.currentTime = 0;
+            let startT = 0;
+            if (autoSkipIntro && transcript.length > 0 && transcript[0]?.start >= 1.0 && introSkippedRef.current !== currentVideo?.videoId) {
+              introSkippedRef.current = currentVideo?.videoId;
+              startT = Math.max(0, transcript[0].start - 0.1);
+              showVocabToast(`⚡ 인트로 건너뛰기: 첫 문장(${transcript[0].start.toFixed(1)}초)부터 시작`, 'info');
+            }
+            audioRef.current.currentTime = startT;
             audioRef.current.playbackRate = playbackRate;
             audioRef.current.play().then(() => {
               setIsPlaying(true);
+              if (startT > 0) setActiveIndex(0);
             }).catch(() => {});
           }
         })
         .catch(e => console.error(e))
         .finally(() => setLoadingAudio(false));
     }
-  }, [currentVideo?.videoId, bgAudioMode]);
+  }, [currentVideo?.videoId, bgAudioMode, autoSkipIntro, transcript]);
 
   // 3. Initialize YouTube IFrame API
   useEffect(() => {
@@ -433,7 +490,19 @@ export default function LanguageReactorPlayer({
             if (playbackRate !== 1) {
               try { event.target.setPlaybackRate(playbackRate); } catch (e) {}
             }
-            if (!bgAudioMode) event.target.playVideo();
+            if (!bgAudioMode) {
+              if (autoSkipIntro && transcript.length > 0 && transcript[0]?.start >= 1.0 && introSkippedRef.current !== currentVideo?.videoId) {
+                introSkippedRef.current = currentVideo?.videoId;
+                const targetTime = Math.max(0, transcript[0].start - 0.1);
+                event.target.seekTo(targetTime, true);
+                event.target.playVideo();
+                setIsPlaying(true);
+                setActiveIndex(0);
+                showVocabToast(`⚡ 인트로 건너뛰기: 첫 문장(${transcript[0].start.toFixed(1)}초)부터 시작`, 'info');
+              } else {
+                event.target.playVideo();
+              }
+            }
           },
           onStateChange: (event) => {
             if (event.data === 1) {
@@ -1285,6 +1354,16 @@ export default function LanguageReactorPlayer({
                   </button>
                 </div>
               )}
+            </div>
+
+            <div className="settings-section">
+              <span className="section-title">⚡ 오프닝 / 인트로 자동 건너뛰기</span>
+              <button
+                className={`set-toggle-btn ${autoSkipIntro ? 'active' : ''}`}
+                onClick={handleToggleAutoSkipIntro}
+              >
+                {autoSkipIntro ? '✅ 오프닝/음악 건너뛰고 첫 대사부터 자동 시작 ON' : '❌ 영상 맨 앞(0초)부터 시작 OFF'}
+              </button>
             </div>
 
             <div className="settings-section">
