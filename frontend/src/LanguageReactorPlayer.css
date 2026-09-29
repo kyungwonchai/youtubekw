@@ -683,6 +683,43 @@
   color: #f472b6 !important;
 }
 
+/* =========================================================
+   HIGHLIGHT STYLES (✨ 좌측 포인트 바 / 🔲 사각형 전체 / 🔤 글자만)
+   ========================================================= */
+
+/* 1. Minimal Left Bar (Default: 눈 피로 최소화 좌측 포인트 바) */
+.highlight-style-minimal_bar .lr-sub-line {
+  border-left-width: 4px;
+}
+.highlight-style-minimal_bar .lr-sub-line.active {
+  border-top-color: transparent !important;
+  border-right-color: transparent !important;
+  border-bottom-color: transparent !important;
+  border-left-width: 4px !important;
+  border-radius: 4px 12px 12px 4px;
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* 2. Full Box (기존 사각형 전체 테두리) */
+.highlight-style-full_box .lr-sub-line.active {
+  border-width: 1.5px !important;
+  border-radius: 12px;
+}
+
+/* 3. Text Only (테두리 완전 제거, 글자 선명 강조) */
+.highlight-style-text_only .lr-sub-line.active {
+  border-color: transparent !important;
+  background: rgba(255, 255, 255, 0.035) !important;
+}
+.highlight-style-text_only .lr-sub-line.active .line-en {
+  color: #ffffff !important;
+  font-weight: 700;
+}
+.highlight-style-text_only .lr-sub-line.active .line-ko {
+  color: #38bdf8 !important;
+  font-weight: 600;
+}
+
 .lr-sub-line.looping {
   border-color: #a855f7 !important;
   box-shadow: none !important;

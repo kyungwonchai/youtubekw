@@ -249,6 +249,47 @@ export default function LanguageReactorPlayer({
     } catch (e) {}
   };
 
+  // Subtitle Scroll Mode ('instant': 초고속 즉시, 'smart_page': 스마트 넘김, 'smooth': 부드러운 슬라이딩, 'off': 끔)
+  const [scrollMode, setScrollMode] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ytkw_scroll_mode');
+      return saved || 'instant';
+    } catch (e) {
+      return 'instant';
+    }
+  });
+
+  const handleScrollModeChange = (mode) => {
+    setScrollMode(mode);
+    try {
+      localStorage.setItem('ytkw_scroll_mode', mode);
+    } catch (e) {}
+    if (mode === 'instant') showVocabToast('⚡ 자막 스크롤: 초고속 즉시 전환 (어지러움 방지)', 'info');
+    else if (mode === 'smart_page') showVocabToast('📖 자막 스크롤: 스마트 넘김 (화면 벗어날 때만)', 'info');
+    else if (mode === 'smooth') showVocabToast('🌊 자막 스크롤: 부드러운 슬라이딩 (기존)', 'info');
+    else showVocabToast('⏹️ 자막 자동 스크롤 꺼짐', 'info');
+  };
+
+  // Subtitle Highlight Style ('minimal_bar': 좌측 포인트 바, 'full_box': 사각 전체 테두리, 'text_only': 글자만 강조)
+  const [highlightStyle, setHighlightStyle] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ytkw_highlight_style');
+      return saved || 'minimal_bar';
+    } catch (e) {
+      return 'minimal_bar';
+    }
+  });
+
+  const handleHighlightStyleChange = (style) => {
+    setHighlightStyle(style);
+    try {
+      localStorage.setItem('ytkw_highlight_style', style);
+    } catch (e) {}
+    if (style === 'minimal_bar') showVocabToast('✨ 강조 스타일: 좌측 포인트 바 (눈 피로 최소)', 'info');
+    else if (style === 'full_box') showVocabToast('🔲 강조 스타일: 사각형 전체 테두리', 'info');
+    else showVocabToast('🔤 강조 스타일: 글자만 밝게 (테두리 제거)', 'info');
+  };
+
   // Saved Sentences Drawer State (좋은 명문장 별도 저장함)
   const [savedSentences, setSavedSentences] = useState([]);
   const [showSentencesDrawer, setShowSentencesDrawer] = useState(false);
@@ -717,22 +758,47 @@ export default function LanguageReactorPlayer({
     }
   };
 
-  // 7. Auto scroll active subtitle into center stably
+  // 7. Auto scroll active subtitle stably without dizziness
   const lastScrolledIndex = useRef(-1);
 
   useEffect(() => {
-    if (!autoScroll || activeIndex === -1) return;
+    if (scrollMode === 'off' || activeIndex === -1) return;
     if (lastScrolledIndex.current === activeIndex) return;
 
     if (activeLineRef.current && subtitleListRef.current) {
       lastScrolledIndex.current = activeIndex;
-      activeLineRef.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-        inline: 'nearest'
-      });
+
+      if (scrollMode === 'smart_page') {
+        const container = subtitleListRef.current;
+        const line = activeLineRef.current;
+        const containerRect = container.getBoundingClientRect();
+        const lineRect = line.getBoundingClientRect();
+
+        // Check if active line is getting close to top (15%) or bottom (25%) of container
+        const isOutOfView = (lineRect.top < containerRect.top + containerRect.height * 0.15) ||
+                            (lineRect.bottom > containerRect.bottom - containerRect.height * 0.25);
+        if (isOutOfView) {
+          line.scrollIntoView({
+            behavior: 'auto',
+            block: 'center',
+            inline: 'nearest'
+          });
+        }
+      } else if (scrollMode === 'instant') {
+        activeLineRef.current.scrollIntoView({
+          behavior: 'auto',
+          block: 'center',
+          inline: 'nearest'
+        });
+      } else if (scrollMode === 'smooth') {
+        activeLineRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'nearest'
+        });
+      }
     }
-  }, [activeIndex, autoScroll]);
+  }, [activeIndex, scrollMode]);
 
   // 8. Jump to subtitle timestamp & play
   const handleSeekTo = (startTime, index = null, shouldPlay = true) => {
@@ -1100,7 +1166,7 @@ export default function LanguageReactorPlayer({
   return (
     <div className="lr-modal-backdrop" onClick={onClose}>
       <div
-        className={`lr-studio-container ${hideVideo ? 'layout-text_only' : compactVideo ? 'compact-video-mode layout-compact' : 'layout-expanded'} ${bgAudioMode ? 'bg-audio-active' : ''} ${posHighlight ? 'pos-highlight-enabled' : ''} border-theme-${activeBorderColor}`}
+        className={`lr-studio-container ${hideVideo ? 'layout-text_only' : compactVideo ? 'compact-video-mode layout-compact' : 'layout-expanded'} ${bgAudioMode ? 'bg-audio-active' : ''} ${posHighlight ? 'pos-highlight-enabled' : ''} border-theme-${activeBorderColor} highlight-style-${highlightStyle}`}
         style={{ '--sub-font-scale': fontScale }}
         onClick={e => e.stopPropagation()}
       >
@@ -1301,10 +1367,74 @@ export default function LanguageReactorPlayer({
                 </button>
               </div>
             </div>
+
+            {/* SCROLL TRANSITION MODE (어지러움 방지 스크롤 제어) */}
+            <div className="settings-section">
+              <span className="section-title">📜 자막 스크롤 이동 효과 (어지러움 조절)</span>
+              <div className="settings-btn-grid">
+                <button
+                  className={`set-choice-btn ${scrollMode === 'instant' ? 'active' : ''}`}
+                  onClick={() => handleScrollModeChange('instant')}
+                  title="올라가는 미끄럼 효과 없이 눈 깜빡임처럼 즉시 전환되어 어지러움이 전혀 없습니다."
+                >
+                  ⚡ 초고속 즉시 (어지럼 방지)
+                </button>
+                <button
+                  className={`set-choice-btn ${scrollMode === 'smart_page' ? 'active' : ''}`}
+                  onClick={() => handleScrollModeChange('smart_page')}
+                  title="문장이 화면 아래로 벗어날 때만 한 번에 전환합니다."
+                >
+                  📖 스마트 넘김 (벗어날 때만)
+                </button>
+                <button
+                  className={`set-choice-btn ${scrollMode === 'smooth' ? 'active' : ''}`}
+                  onClick={() => handleScrollModeChange('smooth')}
+                  title="기존의 부드러운 스크롤 애니메이션"
+                >
+                  🌊 부드러운 슬라이딩
+                </button>
+                <button
+                  className={`set-choice-btn ${scrollMode === 'off' ? 'active' : ''}`}
+                  onClick={() => handleScrollModeChange('off')}
+                  title="자동 스크롤을 끄고 수동으로만 봅니다."
+                >
+                  ⏹️ 자동스크롤 끔
+                </button>
+              </div>
+            </div>
+
+            {/* HIGHLIGHT STYLE (현재 문장 강조 스타일) */}
+            <div className="settings-section">
+              <span className="section-title">✨ 현재 문장 강조 스타일</span>
+              <div className="settings-btn-grid">
+                <button
+                  className={`set-choice-btn ${highlightStyle === 'minimal_bar' ? 'active' : ''}`}
+                  onClick={() => handleHighlightStyleChange('minimal_bar')}
+                  title="눈부신 4면 테두리 대신 좌측 포인트 바로 깔끔하게 표시합니다."
+                >
+                  ✨ 좌측 포인트 바 (눈 피로 최소)
+                </button>
+                <button
+                  className={`set-choice-btn ${highlightStyle === 'full_box' ? 'active' : ''}`}
+                  onClick={() => handleHighlightStyleChange('full_box')}
+                  title="사각형 전체를 테두리로 감싸는 스타일"
+                >
+                  🔲 사각형 전체 테두리
+                </button>
+                <button
+                  className={`set-choice-btn ${highlightStyle === 'text_only' ? 'active' : ''}`}
+                  onClick={() => handleHighlightStyleChange('text_only')}
+                  title="테두리 없이 글자만 선명하고 밝게 강조합니다."
+                >
+                  🔤 글자만 밝게 (테두리 제거)
+                </button>
+              </div>
+            </div>
+
             {/* ACTIVE LINE BORDER COLOR THEME (하늘색 테두리 색상 커스텀) */}
             <div className="settings-section">
               <div className="section-title-row">
-                <span className="section-title">✨ 재생중 자막 테두리 색상</span>
+                <span className="section-title">🎨 강조 테두리 / 포인트 바 색상</span>
               </div>
               <div className="border-color-palette">
                 {[
