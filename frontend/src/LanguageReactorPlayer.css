@@ -1798,95 +1798,136 @@
 .lr-focus-replace-view {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: stretch;
   gap: 12px;
   height: 100%;
   min-height: 280px;
-  padding: 8px 4px;
+  padding: 8px 6px;
   box-sizing: border-box;
 }
 
 .focus-sub-card {
   border-radius: 14px;
-  transition: background 0.15s ease, opacity 0.15s ease;
+  transition: all 0.15s ease;
   box-sizing: border-box;
 }
 
-.focus-sub-card.prev-card,
-.focus-sub-card.next-card {
-  padding: 10px 14px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px dashed rgba(255, 255, 255, 0.08);
-  opacity: 0.5;
+/* TOP PREVIOUS CARD (상단 이전 문장 - 스카이/인디고 포인트 컬러) */
+.focus-sub-card.prev-card {
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.65), rgba(15, 23, 42, 0.75));
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-left: 4px solid #38bdf8;
+  opacity: 0.88;
   cursor: pointer;
   flex-shrink: 0;
 }
 
-.focus-sub-card.prev-card:hover,
+.focus-sub-card.prev-card:hover {
+  opacity: 1;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.9));
+  border-color: #38bdf8;
+  transform: translateY(-1px);
+}
+
+/* BOTTOM NEXT CARD (하단 다음 문장 - 에메랄드/민트 포인트 컬러) */
+.focus-sub-card.next-card {
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(20, 35, 30, 0.65), rgba(15, 23, 42, 0.75));
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-left: 4px solid #10b981;
+  opacity: 0.88;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
 .focus-sub-card.next-card:hover {
-  opacity: 0.85;
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(56, 189, 248, 0.3);
+  opacity: 1;
+  background: linear-gradient(135deg, rgba(20, 35, 30, 0.85), rgba(15, 23, 42, 0.9));
+  border-color: #10b981;
+  transform: translateY(1px);
 }
 
 .focus-sub-card.placeholder {
-  opacity: 0.25;
+  opacity: 0.35;
   cursor: default;
   text-align: center;
-  padding: 8px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  border-left: 4px solid rgba(255, 255, 255, 0.1);
 }
 
 .focus-card-meta {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
-.focus-tag {
-  font-size: 0.74rem;
-  font-weight: 600;
-  color: #94a3b8;
+.focus-tag-prev {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #080c16;
+  background: linear-gradient(135deg, #38bdf8, #818cf8);
+  padding: 2px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.2px;
+}
+
+.focus-tag-next {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #080c16;
+  background: linear-gradient(135deg, #10b981, #34d399);
+  padding: 2px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.2px;
 }
 
 .focus-time {
-  font-size: 0.72rem;
-  color: #64748b;
+  font-size: 0.75rem;
+  color: #94a3b8;
   font-family: monospace;
+  font-weight: 600;
 }
 
 .focus-en-sub {
   margin: 0;
-  font-size: calc(0.95rem * min(var(--sub-font-scale, 1), 1.4));
-  color: #cbd5e1;
-  line-height: 1.4;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: calc(clamp(1.0rem, 1.2vw + 0.7rem, 1.25rem) * var(--sub-font-scale, 1));
+  color: #f1f5f9;
+  line-height: 1.45;
+  font-weight: 500;
 }
 
 .focus-ko-sub {
-  margin: 2px 0 0 0;
-  font-size: calc(0.82rem * min(var(--sub-font-scale, 1), 1.4));
+  margin: 3px 0 0 0;
+  font-size: calc(clamp(0.88rem, 1.0vw + 0.6rem, 1.1rem) * var(--sub-font-scale, 1));
   color: #94a3b8;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.4;
 }
 
-/* MAIN CURRENT CENTER CARD (FIXED STATIONARY SLOT) */
+.prev-card .focus-ko-sub {
+  color: #cbd5e1;
+}
+
+.next-card .focus-ko-sub {
+  color: #6ee7b7;
+}
+
+/* MAIN CURRENT CENTER CARD (동적 초대형 반응형 폰트 슬롯) */
 .focus-sub-card.current-main-card {
   flex: 1;
-  min-height: 140px;
-  padding: 16px 18px;
-  background: rgba(15, 23, 42, 0.8);
+  min-height: 150px;
+  padding: 18px 20px;
+  background: rgba(15, 23, 42, 0.9);
   border: 2px solid #00f2fe;
   border-radius: 16px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45), 0 0 15px rgba(0, 242, 254, 0.12);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 242, 254, 0.15);
   transform: none !important;
 }
 
@@ -1903,21 +1944,21 @@
   border-top-color: transparent !important;
   border-right-color: transparent !important;
   border-bottom-color: transparent !important;
-  border-left-width: 5px !important;
+  border-left-width: 6px !important;
   border-radius: 6px 16px 16px 6px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .highlight-style-text_only .focus-sub-card.current-main-card {
   border-color: transparent !important;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .focus-main-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   flex-shrink: 0;
 }
 
@@ -1930,19 +1971,19 @@
 .focus-main-badge {
   background: linear-gradient(135deg, #00f2fe, #38bdf8);
   color: #080c16;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 800;
-  padding: 3px 9px;
+  padding: 4px 10px;
   border-radius: 999px;
   letter-spacing: 0.2px;
 }
 
 .focus-time-badge {
-  background: rgba(255, 255, 255, 0.08);
-  color: #94a3b8;
-  font-size: 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  font-size: 0.78rem;
   font-weight: 600;
-  padding: 2px 7px;
+  padding: 3px 8px;
   border-radius: 6px;
   font-family: monospace;
 }
@@ -1958,23 +1999,45 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 8px;
-  padding: 6px 0;
+  gap: 10px;
+  padding: 8px 0;
 }
 
+/* 동적 확장 영어 메인 폰트 (화면 크기에 따라 시원하게 확대) */
 .focus-main-en {
-  font-size: calc(1.26rem * min(var(--sub-font-scale, 1), 1.6));
-  font-weight: 600;
+  font-size: calc(clamp(1.36rem, 2.2vw + 0.95rem, 2.3rem) * var(--sub-font-scale, 1));
+  font-weight: 700;
   line-height: 1.55;
   color: #ffffff;
   word-break: break-word;
+  letter-spacing: -0.2px;
 }
 
+/* 동적 확장 한글 번역 폰트 */
 .focus-main-ko {
-  font-size: calc(1.02rem * min(var(--sub-font-scale, 1), 1.6));
-  font-weight: 400;
-  line-height: 1.45;
-  color: #38bdf8;
+  font-size: calc(clamp(1.06rem, 1.3vw + 0.8rem, 1.52rem) * var(--sub-font-scale, 1));
+  font-weight: 500;
+  line-height: 1.5;
+  color: #67e8f9;
   word-break: keep-all;
+}
+
+/* 영상 숨김 모드 (글자 전체 점유) 시 초대형 텍스트 */
+.layout-text_only .focus-main-en {
+  font-size: calc(clamp(1.7rem, 3.2vw + 1.1rem, 2.9rem) * var(--sub-font-scale, 1));
+  line-height: 1.6;
+}
+
+.layout-text_only .focus-main-ko {
+  font-size: calc(clamp(1.25rem, 1.8vw + 0.95rem, 1.9rem) * var(--sub-font-scale, 1));
+}
+
+@media (max-width: 992px) {
+  .focus-main-en {
+    font-size: calc(clamp(1.28rem, 4.5vw + 0.45rem, 1.85rem) * min(var(--sub-font-scale, 1), 1.5));
+  }
+  .focus-main-ko {
+    font-size: calc(clamp(1.0rem, 3.2vw + 0.35rem, 1.35rem) * min(var(--sub-font-scale, 1), 1.5));
+  }
 }
 

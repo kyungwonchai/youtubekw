@@ -1966,12 +1966,29 @@ export default function LanguageReactorPlayer({
                       title="이전 문장으로 이동 (클릭)"
                     >
                       <div className="focus-card-meta">
-                        <span className="focus-tag">⬆️ 이전 문장 #{activeIndex}</span>
+                        <span className="focus-tag focus-tag-prev">⬆️ 이전 문장 #{activeIndex}</span>
                         <span className="focus-time">{formatTime(transcript[activeIndex - 1].start)}</span>
                       </div>
                       <div className="focus-card-text">
                         {(displayMode === 'dual' || displayMode === 'en_only') && (
-                          <p className="focus-en-sub">{transcript[activeIndex - 1].text}</p>
+                          <div className="focus-en-sub">
+                            {transcript[activeIndex - 1].text.split(' ').map((word, wIdx) => {
+                              const posClass = getWordPosClass(word);
+                              return (
+                                <span
+                                  key={wIdx}
+                                  className={`clickable-word ${posClass}`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleWordClick(word, e, transcript[activeIndex - 1]);
+                                  }}
+                                  title="단어 사전 & 발음 듣기"
+                                >
+                                  {word}{' '}
+                                </span>
+                              );
+                            })}
+                          </div>
                         )}
                         {(displayMode === 'dual' || displayMode === 'ko_only') && transcript[activeIndex - 1].translation && (
                           <p className="focus-ko-sub">{transcript[activeIndex - 1].translation}</p>
@@ -2061,12 +2078,29 @@ export default function LanguageReactorPlayer({
                       title="다음 문장으로 이동 (클릭)"
                     >
                       <div className="focus-card-meta">
-                        <span className="focus-tag">⬇️ 다음 문장 #{activeIndex + 2}</span>
+                        <span className="focus-tag focus-tag-next">⬇️ 다음 문장 #{activeIndex + 2}</span>
                         <span className="focus-time">{formatTime(transcript[activeIndex + 1].start)}</span>
                       </div>
                       <div className="focus-card-text">
                         {(displayMode === 'dual' || displayMode === 'en_only') && (
-                          <p className="focus-en-sub">{transcript[activeIndex + 1].text}</p>
+                          <div className="focus-en-sub">
+                            {transcript[activeIndex + 1].text.split(' ').map((word, wIdx) => {
+                              const posClass = getWordPosClass(word);
+                              return (
+                                <span
+                                  key={wIdx}
+                                  className={`clickable-word ${posClass}`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleWordClick(word, e, transcript[activeIndex + 1]);
+                                  }}
+                                  title="단어 사전 & 발음 듣기"
+                                >
+                                  {word}{' '}
+                                </span>
+                              );
+                            })}
+                          </div>
                         )}
                         {(displayMode === 'dual' || displayMode === 'ko_only') && transcript[activeIndex + 1].translation && (
                           <p className="focus-ko-sub">{transcript[activeIndex + 1].translation}</p>
