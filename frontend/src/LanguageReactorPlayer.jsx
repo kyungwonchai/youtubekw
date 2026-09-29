@@ -465,6 +465,29 @@ export default function LanguageReactorPlayer({
     };
   }, [currentVideo?.videoId]);
 
+  const seekLockRef = useRef(null);
+
+  // Helper: Find subtitle index accurately without false positive overlap to previous subtitle
+  const findSubtitleIndex = (subtitles, time) => {
+    if (!subtitles || subtitles.length === 0) return -1;
+    // 1. Direct hit inside subtitle start/end boundary
+    for (let i = 0; i < subtitles.length; i++) {
+      const cur = subtitles[i];
+      const next = subtitles[i + 1];
+      const endLimit = next ? Math.min(cur.end + 0.05, next.start) : cur.end + 0.2;
+      if (time >= cur.start && time < endLimit) {
+        return i;
+      }
+    }
+    // 2. Nearest prior subtitle
+    for (let i = subtitles.length - 1; i >= 0; i--) {
+      if (time >= subtitles[i].start) {
+        return i;
+      }
+    }
+    return 0;
+  };
+
   // 4. Time polling loop (100ms) for high-precision subtitle sync & loop handling
   useEffect(() => {
     timeUpdateInterval.current = setInterval(() => {
@@ -480,21 +503,36 @@ export default function LanguageReactorPlayer({
           setCurrentTime(t);
 
           if (transcript.length > 0) {
-            const idx = transcript.findIndex(line => t >= line.start && t < line.end + 0.3);
-            if (idx !== -1 && idx !== activeIndex) {
-              setActiveIndex(idx);
-
-              if (loopMode === 'pause_after_sentence' && loopingIndex !== null && idx > loopingIndex) {
-                if (bgAudioMode && audioRef.current) audioRef.current.pause();
-                else if (player) player.pauseVideo();
-                setLoopingIndex(null);
-              }
-            }
-
+            // SINGLE SENTENCE LOOP MODE: Lock activeIndex strictly to loopingIndex to prevent jitter/dizziness
             if (loopMode === 'single_loop' && loopingIndex !== null) {
+              if (activeIndex !== loopingIndex) {
+                setActiveIndex(loopingIndex);
+              }
               const curLine = transcript[loopingIndex];
-              if (curLine && t >= curLine.end) {
-                handleSeekTo(curLine.start, loopingIndex);
+              if (curLine) {
+                const nextLine = transcript[loopingIndex + 1];
+                const loopEndTime = nextLine ? Math.min(curLine.end, nextLine.start) : curLine.end;
+                if (t >= loopEndTime || t > curLine.end + 0.3) {
+                  handleSeekTo(curLine.start, loopingIndex, true);
+                }
+              }
+            } else {
+              // Grace period during explicit seekTo so keyframe offsets don't flash previous line
+              if (seekLockRef.current && Date.now() < seekLockRef.current.until) {
+                if (activeIndex !== seekLockRef.current.index) {
+                  setActiveIndex(seekLockRef.current.index);
+                }
+              } else {
+                const idx = findSubtitleIndex(transcript, t);
+                if (idx !== -1 && idx !== activeIndex) {
+                  setActiveIndex(idx);
+
+                  if (loopMode === 'pause_after_sentence' && loopingIndex !== null && idx > loopingIndex) {
+                    if (bgAudioMode && audioRef.current) audioRef.current.pause();
+                    else if (player) player.pauseVideo();
+                    setLoopingIndex(null);
+                  }
+                }
               }
             }
           }
@@ -631,6 +669,7 @@ export default function LanguageReactorPlayer({
   const handleSeekTo = (startTime, index = null, shouldPlay = true) => {
     if (index !== null) {
       setActiveIndex(index);
+      seekLockRef.current = { index, until: Date.now() + 600 };
       lastScrolledIndex.current = -1; // Force immediate scroll centering on click
       if (loopMode === 'single_loop' && loopingIndex !== index) {
         setLoopingIndex(index);
