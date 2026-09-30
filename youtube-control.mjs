@@ -593,65 +593,995 @@ const MUSIC_FILE = '/home/kw/kwsoft/ytmusic/data/music.json';
 
 export const DEFAULT_NEWS_INTERVIEW_TRACKS = [
   {
-    videoId: 'zxTMjX1U2HI',
-    title: 'Melinda French Gates on Tech, Wealth & Purpose | Bloomberg Originals (Emily Chang)',
-    channelTitle: 'Bloomberg Originals',
-    description: 'Emily Chang (블룸버그 간판 여성 앵커) & Melinda French Gates • 기술의 미래, 자선사업, 진정한 가치관에 대한 1:1 심층 초대석 인터뷰 (24분, 완벽한 표준 미국식 딕션)',
-    thumbnailUrl: 'https://img.youtube.com/vi/zxTMjX1U2HI/hqdefault.jpg',
-    duration: '23:53',
-    language: 'en',
-    category: 'news_interview',
-    tags: ['뉴스초대석', 'Bloomberg', 'EmilyChang', 'MelindaGates', '명품인터뷰'],
-    source: 'curated_news',
+    "videoId": "hlpEWErMjgY",
+    "title": "NextEV's Padmasree Warrior on Studio 1.0",
+    "channelTitle": "Bloomberg Originals",
+    "description": "Bloomberg Originals • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (23:37)",
+    "thumbnailUrl": "https://img.youtube.com/vi/hlpEWErMjgY/hqdefault.jpg",
+    "duration": "23:37",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
   },
   {
-    videoId: 'AbzHJktYCa8',
-    title: 'Sheryl Sandberg: Bloomberg Studio 1.0 with Emily Chang (Full Interview)',
-    channelTitle: 'Bloomberg Television',
-    description: 'Emily Chang & Sheryl Sandberg (전 메타 COO) • 여성 리더십, 린인(Lean In), 위기 극복에 관한 24분 심층 대담',
-    thumbnailUrl: 'https://img.youtube.com/vi/AbzHJktYCa8/hqdefault.jpg',
-    duration: '24:17',
-    language: 'en',
-    category: 'news_interview',
-    tags: ['뉴스초대석', 'Bloomberg', 'SherylSandberg', '여성리더십', '고급영어'],
-    source: 'curated_news',
+    "videoId": "UMzma1aATAU",
+    "title": "Crypto Investor Katie Haun on Bloomberg Studio 1.0",
+    "channelTitle": "Bloomberg Tech",
+    "description": "Bloomberg Tech • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (24:07)",
+    "thumbnailUrl": "https://img.youtube.com/vi/UMzma1aATAU/hqdefault.jpg",
+    "duration": "24:07",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
   },
   {
-    videoId: 'UMzma1aATAU',
-    title: 'Crypto Investor Katie Haun on Bloomberg Studio 1.0 with Emily Chang',
-    channelTitle: 'Bloomberg Tech',
-    description: 'Emily Chang & Katie Haun (전 미 연방검사 / 실리콘밸리 톱 투자자) • 명쾌한 논리와 빠른 템포의 비즈니스 딕션 인터뷰 (24분)',
-    thumbnailUrl: 'https://img.youtube.com/vi/UMzma1aATAU/hqdefault.jpg',
-    duration: '24:07',
-    language: 'en',
-    category: 'news_interview',
-    tags: ['뉴스초대석', 'Bloomberg', 'KatieHaun', '투자자인터뷰', '실전비즈니스'],
-    source: 'curated_news',
+    "videoId": "AbzHJktYCa8",
+    "title": "Sheryl Sandberg: Bloomberg Studio 1.0 (Full Show)",
+    "channelTitle": "Bloomberg Television",
+    "description": "Bloomberg Television • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (24:17)",
+    "thumbnailUrl": "https://img.youtube.com/vi/AbzHJktYCa8/hqdefault.jpg",
+    "duration": "24:17",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
   },
   {
-    videoId: '1PGi5QDAob4',
-    title: "Savannah Guthrie's In-Depth Conversation With Hoda Kotb (TODAY Extended Cut)",
-    channelTitle: 'NBC TODAY',
-    description: 'Savannah Guthrie (NBC 대표 앵커) & Hoda Kotb • 두 여성 메인 앵커가 나누는 진솔한 인생, 뉴스 비하인드, 삶의 지혜 (35분 대화)',
-    thumbnailUrl: 'https://img.youtube.com/vi/1PGi5QDAob4/hqdefault.jpg',
-    duration: '35:28',
-    language: 'en',
-    category: 'news_interview',
-    tags: ['뉴스초대석', 'NBCTODAY', 'SavannahGuthrie', 'HodaKotb', '진솔한대화'],
-    source: 'curated_news',
+    "videoId": "6sS17Rto0fM",
+    "title": "Katrina Lake on 'Bloomberg Studio 1.0'",
+    "channelTitle": "Bloomberg Tech",
+    "description": "Bloomberg Tech • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (24:06)",
+    "thumbnailUrl": "https://img.youtube.com/vi/6sS17Rto0fM/hqdefault.jpg",
+    "duration": "24:06",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
   },
   {
-    videoId: '5fTFGGycba8',
-    title: "CNBC's Full Interview with Accenture CEO Julie Sweet (Global Business Leader)",
-    channelTitle: 'CNBC International Live',
-    description: 'CNBC 대표 여성 앵커 & Julie Sweet (액센츄어 글로벌 CEO) • 세계 경제와 AI 혁신, 기업가정신을 다룬 12분 심층 인터뷰',
-    thumbnailUrl: 'https://img.youtube.com/vi/5fTFGGycba8/hqdefault.jpg',
-    duration: '11:58',
-    language: 'en',
-    category: 'news_interview',
-    tags: ['뉴스초대석', 'CNBC', 'JulieSweet', 'CEO인터뷰', '비즈니스영어'],
-    source: 'curated_news',
+    "videoId": "cs5RCLPoTW4",
+    "title": "Bloomberg Studio 1.0: RealReal CEO Julie Wainwright",
+    "channelTitle": "Bloomberg Tech",
+    "description": "Bloomberg Tech • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (24:05)",
+    "thumbnailUrl": "https://img.youtube.com/vi/cs5RCLPoTW4/hqdefault.jpg",
+    "duration": "24:05",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
   },
+  {
+    "videoId": "mLr893-MPHg",
+    "title": "Emily Chang on the Importance of Gender Equality",
+    "channelTitle": "HubSpot Live",
+    "description": "HubSpot Live • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (26:39)",
+    "thumbnailUrl": "https://img.youtube.com/vi/mLr893-MPHg/hqdefault.jpg",
+    "duration": "26:39",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "HxfwkzsZtkg",
+    "title": "Bloomberg Studio 1.0: The Social Solution",
+    "channelTitle": "Bloomberg Tech",
+    "description": "Bloomberg Tech • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (24:07)",
+    "thumbnailUrl": "https://img.youtube.com/vi/HxfwkzsZtkg/hqdefault.jpg",
+    "duration": "24:07",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "7wd95YYEQ0E",
+    "title": "Bloomberg Studio 1.0 - Zoox CEO Aicha Evans",
+    "channelTitle": "Bloomberg Tech",
+    "description": "Bloomberg Tech • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (23:56)",
+    "thumbnailUrl": "https://img.youtube.com/vi/7wd95YYEQ0E/hqdefault.jpg",
+    "duration": "23:56",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "ZCj2y95-Db8",
+    "title": "Making Space with Hoda Kotb: Savannah Guthrie",
+    "channelTitle": "TODAY",
+    "description": "TODAY • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (48:41)",
+    "thumbnailUrl": "https://img.youtube.com/vi/ZCj2y95-Db8/hqdefault.jpg",
+    "duration": "48:41",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "YwywFKXWtsY",
+    "title": "‘Making Space With Hoda Kotb’: Maria Shriver",
+    "channelTitle": "TODAY",
+    "description": "TODAY • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (25:12)",
+    "thumbnailUrl": "https://img.youtube.com/vi/YwywFKXWtsY/hqdefault.jpg",
+    "duration": "25:12",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "NV_ykigdjg8",
+    "title": "‘Making Space With Hoda Kotb’: Delia Ephron",
+    "channelTitle": "TODAY",
+    "description": "TODAY • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (25:18)",
+    "thumbnailUrl": "https://img.youtube.com/vi/NV_ykigdjg8/hqdefault.jpg",
+    "duration": "25:18",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "LjM08J8o7JQ",
+    "title": "‘Making Space With Hoda Kotb’: Oprah Winfrey & Maria Shriver On Friendship",
+    "channelTitle": "TODAY",
+    "description": "TODAY • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (49:07)",
+    "thumbnailUrl": "https://img.youtube.com/vi/LjM08J8o7JQ/hqdefault.jpg",
+    "duration": "49:07",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "C9HGSWDcgz4",
+    "title": "Esther Perel on How to Reignite the Spark in Your Relationship | Making Space with Hoda Kotb",
+    "channelTitle": "TODAY",
+    "description": "TODAY • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (37:11)",
+    "thumbnailUrl": "https://img.youtube.com/vi/C9HGSWDcgz4/hqdefault.jpg",
+    "duration": "37:11",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "z-Dn416-MJM",
+    "title": "‘Making Space With Hoda Kotb’: Wynonna Judd",
+    "channelTitle": "TODAY",
+    "description": "TODAY • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (25:06)",
+    "thumbnailUrl": "https://img.youtube.com/vi/z-Dn416-MJM/hqdefault.jpg",
+    "duration": "25:06",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "-gc5dgLw0Xk",
+    "title": "‘Making Space With Hoda Kotb’: Shania Twain",
+    "channelTitle": "TODAY",
+    "description": "TODAY • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (25:13)",
+    "thumbnailUrl": "https://img.youtube.com/vi/-gc5dgLw0Xk/hqdefault.jpg",
+    "duration": "25:13",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "oHrKUSmoCdw",
+    "title": "‘Making Space With Hoda Kotb’: Karen Swensen",
+    "channelTitle": "TODAY",
+    "description": "TODAY • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (25:14)",
+    "thumbnailUrl": "https://img.youtube.com/vi/oHrKUSmoCdw/hqdefault.jpg",
+    "duration": "25:14",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "oPKgOYRyDac",
+    "title": "‘Making Space With Hoda Kotb’: Viola Davis",
+    "channelTitle": "TODAY",
+    "description": "TODAY • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (25:17)",
+    "thumbnailUrl": "https://img.youtube.com/vi/oPKgOYRyDac/hqdefault.jpg",
+    "duration": "25:17",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "u-4AZvLcWw4",
+    "title": "‘Making Space With Hoda Kotb’: Bevy Smith",
+    "channelTitle": "TODAY",
+    "description": "TODAY • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (25:17)",
+    "thumbnailUrl": "https://img.youtube.com/vi/u-4AZvLcWw4/hqdefault.jpg",
+    "duration": "25:17",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "Oxy3s84cfZM",
+    "title": "‘Making Space With Hoda Kotb’: CeCe Winans",
+    "channelTitle": "TODAY",
+    "description": "TODAY • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (24:49)",
+    "thumbnailUrl": "https://img.youtube.com/vi/Oxy3s84cfZM/hqdefault.jpg",
+    "duration": "24:49",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "_Hx-l8o9EtM",
+    "title": "Making Space with Hoda Kotb: Suleika Jaouad",
+    "channelTitle": "TODAY",
+    "description": "TODAY • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (41:02)",
+    "thumbnailUrl": "https://img.youtube.com/vi/_Hx-l8o9EtM/hqdefault.jpg",
+    "duration": "41:02",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "RcFzYzPEYIc",
+    "title": "Jamie Lynn Sigler On Hiding MS for 14 Years | Making Space with Hoda Kotb",
+    "channelTitle": "TODAY",
+    "description": "TODAY • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (44:23)",
+    "thumbnailUrl": "https://img.youtube.com/vi/RcFzYzPEYIc/hqdefault.jpg",
+    "duration": "44:23",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "hbgBqvalbYc",
+    "title": "#63—Julia Boorstin: Why Women Leaders Excel, and What We Can Learn",
+    "channelTitle": "Outthinker",
+    "description": "Outthinker • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (24:34)",
+    "thumbnailUrl": "https://img.youtube.com/vi/hbgBqvalbYc/hqdefault.jpg",
+    "duration": "24:34",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "SLFsK0XFwF0",
+    "title": "Media & Tech Insights with CNBC's Julia Boorstin on In Her Words Podcast",
+    "channelTitle": "Women in Entertainment",
+    "description": "Women in Entertainment • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (38:43)",
+    "thumbnailUrl": "https://img.youtube.com/vi/SLFsK0XFwF0/hqdefault.jpg",
+    "duration": "38:43",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "YZnb5baQd2M",
+    "title": "When Women Lead: Julia Boorstin, CNBC's Senior Media & Tech Correspondent",
+    "channelTitle": "Walker & Dunlop",
+    "description": "Walker & Dunlop • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (57:17)",
+    "thumbnailUrl": "https://img.youtube.com/vi/YZnb5baQd2M/hqdefault.jpg",
+    "duration": "57:17",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "t6GIb5zOil4",
+    "title": "Power Conversations w/ Julia Boorstin CNBC Media & Tech Correspondent & Author, \"When Women Lead\"",
+    "channelTitle": "All Raise",
+    "description": "All Raise • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (48:49)",
+    "thumbnailUrl": "https://img.youtube.com/vi/t6GIb5zOil4/hqdefault.jpg",
+    "duration": "48:49",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "nfYu_fHXMAI",
+    "title": "Julia Boorstin, CNBC Senior Media & Tech Reporter,  CNBC’s #Disruptor50, Author \"When Women Lead\"",
+    "channelTitle": "WECAN ",
+    "description": "WECAN  • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (13:08)",
+    "thumbnailUrl": "https://img.youtube.com/vi/nfYu_fHXMAI/hqdefault.jpg",
+    "duration": "13:08",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "mc-p1MFci-Q",
+    "title": "When Women Lead: Julia Boorstin",
+    "channelTitle": "FranklinCovey",
+    "description": "FranklinCovey • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (38:30)",
+    "thumbnailUrl": "https://img.youtube.com/vi/mc-p1MFci-Q/hqdefault.jpg",
+    "duration": "38:30",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "QRotNEuaCEs",
+    "title": "Episode 337: CNBC’s Julia Boorstin Weighs In on “When Women Lead”",
+    "channelTitle": "New York Stock Exchange",
+    "description": "New York Stock Exchange • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (56:11)",
+    "thumbnailUrl": "https://img.youtube.com/vi/QRotNEuaCEs/hqdefault.jpg",
+    "duration": "56:11",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "m5HO_XNWDdI",
+    "title": "What Happens “When Women Lead”: with CNBC's Julia Boorstin",
+    "channelTitle": "Question Everything Podcast",
+    "description": "Question Everything Podcast • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (48:55)",
+    "thumbnailUrl": "https://img.youtube.com/vi/m5HO_XNWDdI/hqdefault.jpg",
+    "duration": "48:55",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "X2nfLCMyX9A",
+    "title": "are you living for you?",
+    "channelTitle": "anything goes with emma chamberlain",
+    "description": "anything goes with emma chamberlain • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (58:38)",
+    "thumbnailUrl": "https://img.youtube.com/vi/X2nfLCMyX9A/hqdefault.jpg",
+    "duration": "58:38",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "I7InO0tYYDc",
+    "title": "overthinking, advice session",
+    "channelTitle": "anything goes with emma chamberlain",
+    "description": "anything goes with emma chamberlain • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (41:10)",
+    "thumbnailUrl": "https://img.youtube.com/vi/I7InO0tYYDc/hqdefault.jpg",
+    "duration": "41:10",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "752o1YpwSz0",
+    "title": "finding comfort in yourself, advice session",
+    "channelTitle": "anything goes with emma chamberlain",
+    "description": "anything goes with emma chamberlain • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (37:49)",
+    "thumbnailUrl": "https://img.youtube.com/vi/752o1YpwSz0/hqdefault.jpg",
+    "duration": "37:49",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "NiOoACQVPGQ",
+    "title": "obsessed with your ex, advice session",
+    "channelTitle": "anything goes with emma chamberlain",
+    "description": "anything goes with emma chamberlain • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (40:17)",
+    "thumbnailUrl": "https://img.youtube.com/vi/NiOoACQVPGQ/hqdefault.jpg",
+    "duration": "40:17",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "SOyOnkgy1Ns",
+    "title": "the mental health conversation on the internet",
+    "channelTitle": "anything goes with emma chamberlain",
+    "description": "anything goes with emma chamberlain • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (56:27)",
+    "thumbnailUrl": "https://img.youtube.com/vi/SOyOnkgy1Ns/hqdefault.jpg",
+    "duration": "56:27",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "nkghxBeWYUk",
+    "title": "relationships change us",
+    "channelTitle": "anything goes with emma chamberlain",
+    "description": "anything goes with emma chamberlain • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (38:42)",
+    "thumbnailUrl": "https://img.youtube.com/vi/nkghxBeWYUk/hqdefault.jpg",
+    "duration": "38:42",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "0njScngRj6U",
+    "title": "a talk with kendall jenner",
+    "channelTitle": "anything goes with emma chamberlain",
+    "description": "anything goes with emma chamberlain • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (49:24)",
+    "thumbnailUrl": "https://img.youtube.com/vi/0njScngRj6U/hqdefault.jpg",
+    "duration": "49:24",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "0UeQGWPscp8",
+    "title": "chasing happiness is making you miserable, advice session",
+    "channelTitle": "anything goes with emma chamberlain",
+    "description": "anything goes with emma chamberlain • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (27:55)",
+    "thumbnailUrl": "https://img.youtube.com/vi/0UeQGWPscp8/hqdefault.jpg",
+    "duration": "27:55",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "U-MQKXcrG_w",
+    "title": "what my meltdowns have shown me",
+    "channelTitle": "anything goes with emma chamberlain",
+    "description": "anything goes with emma chamberlain • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (41:10)",
+    "thumbnailUrl": "https://img.youtube.com/vi/U-MQKXcrG_w/hqdefault.jpg",
+    "duration": "41:10",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "QiJIYF25HAQ",
+    "title": "is it time to move on? advice session",
+    "channelTitle": "anything goes with emma chamberlain",
+    "description": "anything goes with emma chamberlain • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (47:22)",
+    "thumbnailUrl": "https://img.youtube.com/vi/QiJIYF25HAQ/hqdefault.jpg",
+    "duration": "47:22",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "DDtectxpME4",
+    "title": "the fear of missing out",
+    "channelTitle": "anything goes with emma chamberlain",
+    "description": "anything goes with emma chamberlain • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (42:38)",
+    "thumbnailUrl": "https://img.youtube.com/vi/DDtectxpME4/hqdefault.jpg",
+    "duration": "42:38",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "w5KHFU-jIJk",
+    "title": "Emma Chamberlain On Building Chamberlain Coffee, Burnout & Walking Away From YouTube",
+    "channelTitle": "Emma Grede",
+    "description": "Emma Grede • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (1:12:14)",
+    "thumbnailUrl": "https://img.youtube.com/vi/w5KHFU-jIJk/hqdefault.jpg",
+    "duration": "1:12:14",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "Ov5HkYJXToM",
+    "title": "becoming a better person, advice session",
+    "channelTitle": "anything goes with emma chamberlain",
+    "description": "anything goes with emma chamberlain • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (35:21)",
+    "thumbnailUrl": "https://img.youtube.com/vi/Ov5HkYJXToM/hqdefault.jpg",
+    "duration": "35:21",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "nNILpIjGNDg",
+    "title": "bittersweet",
+    "channelTitle": "anything goes with emma chamberlain",
+    "description": "anything goes with emma chamberlain • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (17:16)",
+    "thumbnailUrl": "https://img.youtube.com/vi/nNILpIjGNDg/hqdefault.jpg",
+    "duration": "17:16",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "hPwA5qRrdpE",
+    "title": "the struggle to find a hobby",
+    "channelTitle": "anything goes with emma chamberlain",
+    "description": "anything goes with emma chamberlain • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (54:12)",
+    "thumbnailUrl": "https://img.youtube.com/vi/hPwA5qRrdpE/hqdefault.jpg",
+    "duration": "54:12",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "QZT_D45nenc",
+    "title": "Going Viral: 3,000,000 Views in Under 8 Months with Erika Kullberg",
+    "channelTitle": "Think Media Podcast",
+    "description": "Think Media Podcast • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (28:50)",
+    "thumbnailUrl": "https://img.youtube.com/vi/QZT_D45nenc/hqdefault.jpg",
+    "duration": "28:50",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "EgbIVOVwhDA",
+    "title": "Why Erika Kullberg Turned Down A $100,000 Brand Deal To Build Trust With Her Audience",
+    "channelTitle": "Forbes",
+    "description": "Forbes • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (27:21)",
+    "thumbnailUrl": "https://img.youtube.com/vi/EgbIVOVwhDA/hqdefault.jpg",
+    "duration": "27:21",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "vehJDe4P2Pc",
+    "title": "6 Ways To Succeed In Your Career and Get Paid More",
+    "channelTitle": "Erika Kullberg",
+    "description": "Erika Kullberg • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (1:10:03)",
+    "thumbnailUrl": "https://img.youtube.com/vi/vehJDe4P2Pc/hqdefault.jpg",
+    "duration": "1:10:03",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "iL4Pc5povO8",
+    "title": "How Barbara Corcoran turned $1,000 into $66 million",
+    "channelTitle": "Erika Kullberg",
+    "description": "Erika Kullberg • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (40:10)",
+    "thumbnailUrl": "https://img.youtube.com/vi/iL4Pc5povO8/hqdefault.jpg",
+    "duration": "40:10",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "1pJlpgv6PkY",
+    "title": "5 Millionaire Habits that Changed My Life",
+    "channelTitle": "Erika Kullberg",
+    "description": "Erika Kullberg • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (14:05)",
+    "thumbnailUrl": "https://img.youtube.com/vi/1pJlpgv6PkY/hqdefault.jpg",
+    "duration": "14:05",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "XwNLSnQCAYQ",
+    "title": "What Financial Experts Won't Tell You About Money With Morgan Housel",
+    "channelTitle": "Erika Taught Me with Erika Kullberg",
+    "description": "Erika Taught Me with Erika Kullberg • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (1:33:56)",
+    "thumbnailUrl": "https://img.youtube.com/vi/XwNLSnQCAYQ/hqdefault.jpg",
+    "duration": "1:33:56",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "Ec9K6ZV3Ds4",
+    "title": "$270,000,000 Worth of Business Advice From Noah Kagan",
+    "channelTitle": "Erika Kullberg",
+    "description": "Erika Kullberg • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (1:01:17)",
+    "thumbnailUrl": "https://img.youtube.com/vi/Ec9K6ZV3Ds4/hqdefault.jpg",
+    "duration": "1:01:17",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "iKQUgk41wJ4",
+    "title": "Ace Your Job Interview With This Uncommon Sales Strategy",
+    "channelTitle": "Erika Kullberg",
+    "description": "Erika Kullberg • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (1:15:59)",
+    "thumbnailUrl": "https://img.youtube.com/vi/iKQUgk41wJ4/hqdefault.jpg",
+    "duration": "1:15:59",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "4TFr__qfOfw",
+    "title": "Does Fame Make You Happy? Life With Over 60 Million Followers with Nas Daily",
+    "channelTitle": "Erika Taught Me with Erika Kullberg",
+    "description": "Erika Taught Me with Erika Kullberg • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (58:19)",
+    "thumbnailUrl": "https://img.youtube.com/vi/4TFr__qfOfw/hqdefault.jpg",
+    "duration": "58:19",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "nQy0Pif7I9c",
+    "title": "Former Secret Service Agent Reveals Psychological Tricks You're Falling For",
+    "channelTitle": "Erika Kullberg",
+    "description": "Erika Kullberg • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (1:06:29)",
+    "thumbnailUrl": "https://img.youtube.com/vi/nQy0Pif7I9c/hqdefault.jpg",
+    "duration": "1:06:29",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  },
+  {
+    "videoId": "zglDZqfHPo4",
+    "title": "Marketing Expert Reveals Secret For Building an Audience That Buys | Seth Godin",
+    "channelTitle": "Erika Kullberg",
+    "description": "Erika Kullberg • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (55:19)",
+    "thumbnailUrl": "https://img.youtube.com/vi/zglDZqfHPo4/hqdefault.jpg",
+    "duration": "55:19",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "여성명사",
+      "심층인터뷰",
+      "고급딕션",
+      "쉐도잉"
+    ],
+    "source": "curated_news"
+  }
 ];
 
 export const DEFAULT_MOVIE_DRAMA_TRACKS = [
