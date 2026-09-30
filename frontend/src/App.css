@@ -545,6 +545,24 @@ body {
   box-shadow: 0 0 12px rgba(192, 38, 211, 0.5);
 }
 
+.pop-artist-pill.adele.active {
+  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+  border-color: #93c5fd;
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+}
+
+.pop-artist-pill.lana.active {
+  background: linear-gradient(135deg, #334155, #64748b);
+  border-color: #cbd5e1;
+  box-shadow: 0 0 12px rgba(148, 163, 184, 0.5);
+}
+
+.pop-artist-pill.gracie.active {
+  background: linear-gradient(135deg, #475569, #94a3b8);
+  border-color: #f1f5f9;
+  box-shadow: 0 0 12px rgba(241, 245, 249, 0.5);
+}
+
 .pop-artist-pill.billie.active {
   background: linear-gradient(135deg, #059669, #10b981);
   border-color: #6ee7b7;
