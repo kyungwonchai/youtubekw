@@ -23,6 +23,56 @@ export default function App() {
   const [playerPlaylistState, setPlayerPlaylistState] = useState(null); // { playlist: Array, initialIndex: number }
   const [selectedVideoIds, setSelectedVideoIds] = useState([]); // List of selected IDs for batch repeat playback
 
+  // 🔒 VIP Secret Lounge States (Password Protected)
+  const [vipUnlocked, setVipUnlocked] = useState(() => sessionStorage.getItem('ytkw_vip_unlocked') === 'true');
+  const [vipItems, setVipItems] = useState([]);
+  const [loadingVip, setLoadingVip] = useState(false);
+  const [showVipModal, setShowVipModal] = useState(false);
+  const [vipPasswordInput, setVipPasswordInput] = useState('');
+  const [vipFilterSub, setVipFilterSub] = useState('all'); // 'all', '수영/다이빙', '요가/필라테스', '폴댄스'
+
+  const handleUnlockVip = async (e) => {
+    if (e) e.preventDefault();
+    if (!vipPasswordInput.trim()) return;
+
+    setLoadingVip(true);
+    try {
+      const res = await fetch(`${API_BASE}/secret-vip?pass=${encodeURIComponent(vipPasswordInput.trim())}`);
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || '암호가 일치하지 않습니다.');
+      }
+      setVipItems(data.items || []);
+      setVipUnlocked(true);
+      sessionStorage.setItem('ytkw_vip_unlocked', 'true');
+      setShowVipModal(false);
+      setActiveTab('secret_vip');
+      showToast('🔓 [VIP 시크릿 특별편] 잠금이 해제되었습니다.', 'success');
+    } catch (err) {
+      showToast(err.message, 'error');
+    } finally {
+      setLoadingVip(false);
+    }
+  };
+
+  const handleOpenVipLounge = async () => {
+    if (vipUnlocked) {
+      if (vipItems.length === 0) {
+        setLoadingVip(true);
+        try {
+          const res = await fetch(`${API_BASE}/secret-vip?pass=7777`);
+          const data = await res.json();
+          if (data.ok) setVipItems(data.items || []);
+        } catch (e) {}
+        setLoadingVip(false);
+      }
+      setActiveTab('secret_vip');
+    } else {
+      setVipPasswordInput('');
+      setShowVipModal(true);
+    }
+  };
+
   // Sentence & Video Listening Counter Stats
   const [listenStats, setListenStats] = useState(() => {
     try {
@@ -427,6 +477,13 @@ export default function App() {
             onClick={() => setActiveTab('speakers')}
           >
             👥 롤모델 인재풀 ({speakers.length})
+          </button>
+          <button
+            className={`btn-sub-view vip-btn ${activeTab === 'secret_vip' ? 'active' : ''}`}
+            onClick={handleOpenVipLounge}
+            title="미녀 수영강사, 레깅스 요가/필라테스, 폴댄스 프라이빗 라운지"
+          >
+            {vipUnlocked ? '🔓 VIP 시크릿 특별편' : '🔒 VIP 시크릿 특별편'}
           </button>
         </div>
       </div>
@@ -973,7 +1030,162 @@ export default function App() {
             </div>
           </div>
         )}
+        {/* TAB 5: Secret VIP Special Lounge (Password Protected) */}
+        {activeTab === 'secret_vip' && (
+          <div className="vip-lounge-section">
+            <div className="vip-header-bar">
+              <div className="vip-title-area">
+                <div className="vip-title-badge-row">
+                  <span className="vip-crown-badge">👑 PRIVATE LOUNGE</span>
+                  <span className="vip-lock-badge">🔒 암호화 보안 세션</span>
+                </div>
+                <h2>💎 VIP 시크릿 특별편 (미녀 수영강사 / 레깅스 요가 & 필라테스 / 폴댄스)</h2>
+                <p>프라이빗 단독 라운지: 미녀 수영 코치 레슨, 레깅스 바디핏 필라테스/요가, 아크로바틱 폴댄스 쉐도잉 컬렉션 ({vipItems.length}편)</p>
+              </div>
+              <button
+                className="btn-lock-vip"
+                onClick={() => {
+                  setVipUnlocked(false);
+                  sessionStorage.removeItem('ytkw_vip_unlocked');
+                  setActiveTab('feed');
+                  showToast('🔒 VIP 라운지가 안전하게 다시 잠겼습니다.', 'info');
+                }}
+              >
+                🔒 즉시 다시 잠그기
+              </button>
+            </div>
+
+            {/* Subtype Filter Pills for VIP */}
+            <div className="vip-filter-bar">
+              {['all', '수영/다이빙', '요가/필라테스', '폴댄스'].map(sub => {
+                const count = sub === 'all'
+                  ? vipItems.length
+                  : vipItems.filter(v => v.subType === sub || v.tags?.includes(sub)).length;
+                return (
+                  <button
+                    key={sub}
+                    className={`vip-sub-pill ${vipFilterSub === sub ? 'active' : ''}`}
+                    onClick={() => setVipFilterSub(sub)}
+                  >
+                    {sub === 'all' && '✨ 전체 특별편'}
+                    {sub === '수영/다이빙' && '🏊‍♀️ 미녀 수영/다이빙 강사'}
+                    {sub === '요가/필라테스' && '🧘‍♀️ 레깅스 요가 & 필라테스'}
+                    {sub === '폴댄스' && '💃 폴댄스 피트니스'}
+                    <span className="vip-sub-count">({count})</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {loadingVip ? (
+              <div className="loading-state">
+                <div className="spinner large"></div>
+                <p>VIP 콘텐츠를 불러오는 중입니다...</p>
+              </div>
+            ) : vipItems.length === 0 ? (
+              <div className="empty-state">
+                <div className="empty-icon">💎</div>
+                <h2>불러온 VIP 영상이 없습니다.</h2>
+              </div>
+            ) : (
+              <div className="yt-grid vip-grid">
+                {vipItems
+                  .filter(item => vipFilterSub === 'all' || item.subType === vipFilterSub || item.tags?.includes(vipFilterSub))
+                  .map((item, index) => (
+                    <div key={item.id || index} className="yt-card vip-card">
+                      <div
+                        className="yt-thumb-wrap"
+                        onClick={() => {
+                          const currentFiltered = vipItems.filter(v => vipFilterSub === 'all' || v.subType === vipFilterSub || v.tags?.includes(vipFilterSub));
+                          setPlayerPlaylistState({ playlist: currentFiltered, initialIndex: index });
+                        }}
+                      >
+                        <img
+                          src={item.thumbnailUrl}
+                          alt={item.title}
+                          className="yt-thumb"
+                          loading="lazy"
+                        />
+                        <span className="yt-duration">{item.duration}</span>
+                        <div className="card-badge-group">
+                          <span className="vip-badge-tag">💎 VIP 특별편</span>
+                          <span className="vip-sub-badge">{item.subType || 'FITNESS'}</span>
+                        </div>
+                        <div className="yt-play-overlay">
+                          <span className="play-icon">▶</span>
+                        </div>
+                      </div>
+
+                      <div className="yt-card-content">
+                        <h3 className="yt-card-title" title={item.title}>
+                          {item.title}
+                        </h3>
+                        <div className="yt-channel-row">
+                          <span className="yt-channel-name">{item.channelTitle}</span>
+                        </div>
+                        {item.description && (
+                          <p className="yt-desc-snippet">{item.description}</p>
+                        )}
+                        <div className="yt-card-actions">
+                          <button
+                            onClick={() => {
+                              const currentFiltered = vipItems.filter(v => vipFilterSub === 'all' || v.subType === vipFilterSub || v.tags?.includes(vipFilterSub));
+                              setPlayerPlaylistState({ playlist: currentFiltered, initialIndex: index });
+                            }}
+                            className="btn-play-primary btn-play-vip"
+                          >
+                            ⚡ 쉐도잉 시작 (실시간 자막)
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            )}
+          </div>
+        )}
       </main>
+
+      {/* VIP Security Password Unlock Modal */}
+      {showVipModal && (
+        <div className="modal-backdrop" onClick={() => !loadingVip && setShowVipModal(false)}>
+          <div className="vip-pass-modal" onClick={e => e.stopPropagation()}>
+            <div className="vip-modal-head">
+              <span className="vip-lock-icon">🔒</span>
+              <h3>VIP 시크릿 라운지 암호 입력</h3>
+              <p>프라이빗 특별편 (미녀 수영강사 / 레깅스 피트니스 / 폴댄스) 접근을 위해 보안 암호를 입력하세요.</p>
+            </div>
+            <form onSubmit={handleUnlockVip} className="vip-pass-form">
+              <input
+                type="password"
+                className="vip-pass-input"
+                placeholder="비밀번호 입력 (예: 7777 또는 1234)"
+                value={vipPasswordInput}
+                onChange={e => setVipPasswordInput(e.target.value)}
+                autoFocus
+                disabled={loadingVip}
+              />
+              <div className="vip-modal-actions">
+                <button
+                  type="button"
+                  className="btn-modal-cancel"
+                  onClick={() => setShowVipModal(false)}
+                  disabled={loadingVip}
+                >
+                  닫기
+                </button>
+                <button
+                  type="submit"
+                  className="btn-vip-unlock"
+                  disabled={!vipPasswordInput.trim() || loadingVip}
+                >
+                  {loadingVip ? '확인 중...' : '🔓 잠금 해제 & 입장'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Language Reactor Studio Live Player Modal */}
       {playerPlaylistState && (
