@@ -545,12 +545,15 @@ export function parseDurationInSeconds(durationStr) {
 }
 
 /**
- * Require at least 5 minutes (300 seconds) up to 3.5 hours (12600 seconds) - No Shorts!
+ * Require at least 5 minutes (300 seconds) for speech/talks, or 2 minutes (120 seconds) for songs/music - No Shorts!
  */
-export function isGoodShadowingLength(durationStr) {
+export function isGoodShadowingLength(durationStr, category = '') {
   if (!durationStr) return false;
   const secs = parseDurationInSeconds(durationStr);
-  return secs >= 300 && secs <= 12600; // strictly >= 5 minutes (300 seconds)
+  if (category === 'pop_music') {
+    return secs >= 120 && secs <= 12600; // 노래는 2분(120초) 이상 허용!
+  }
+  return secs >= 300 && secs <= 12600; // 일반 영상은 5분(300초) 이상
 }
 
 /**
@@ -3000,6 +3003,305 @@ export const DEFAULT_ENGLISH_POP_TRACKS = [
     tags: ['영어발라드', 'BillieEilish', 'whenthepartysover', '피아노발라드'],
     source: 'curated_pop',
   },
+  {
+    videoId: 'eVli-tstM5E',
+    title: 'Sabrina Carpenter - Espresso (Official Music Video)',
+    channelTitle: 'Sabrina Carpenter',
+    artist: 'Sabrina Carpenter',
+    album: 'Short n\' Sweet',
+    description: 'Sabrina Carpenter • 전 세계를 사로잡은 레트로 감성 팝 & 위트 넘치는 가사 쉐도잉',
+    thumbnailUrl: 'https://img.youtube.com/vi/eVli-tstM5E/hqdefault.jpg',
+    duration: '3:19',
+    category: 'pop_music',
+    tags: ['영어팝송', 'SabrinaCarpenter', 'Espresso', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
+  {
+    videoId: 'cF1Na4AIecM',
+    title: 'Sabrina Carpenter - Please Please Please (Official Video)',
+    channelTitle: 'Sabrina Carpenter',
+    artist: 'Sabrina Carpenter',
+    album: 'Short n\' Sweet',
+    description: 'Sabrina Carpenter • 차분하고 매력적인 보컬 & 정확한 원어민 딕션 훈련',
+    thumbnailUrl: 'https://img.youtube.com/vi/cF1Na4AIecM/hqdefault.jpg',
+    duration: '3:30',
+    category: 'pop_music',
+    tags: ['영어팝송', 'SabrinaCarpenter', 'PleasePleasePlease', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
+  {
+    videoId: 'TUVcZfQe-Kw',
+    title: 'Dua Lipa - Levitating (Official Music Video)',
+    channelTitle: 'Dua Lipa',
+    artist: 'Dua Lipa',
+    album: 'Future Nostalgia',
+    description: 'Dua Lipa • 리드미컬하고 선명한 영국식 발음의 디스코 팝 & 영어 쉐도잉',
+    thumbnailUrl: 'https://img.youtube.com/vi/TUVcZfQe-Kw/hqdefault.jpg',
+    duration: '3:23',
+    category: 'pop_music',
+    tags: ['영어팝송', 'DuaLipa', 'Levitating', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
+  {
+    videoId: '2Vv-BfVoq4g',
+    title: 'Ed Sheeran - Perfect (Official Music Video)',
+    channelTitle: 'Ed Sheeran',
+    artist: 'Ed Sheeran',
+    album: '÷ (Divide)',
+    description: 'Ed Sheeran • 전 세계적인 웨딩송 & 로맨틱하고 따뜻한 어쿠스틱 발라드',
+    thumbnailUrl: 'https://img.youtube.com/vi/2Vv-BfVoq4g/hqdefault.jpg',
+    duration: '4:23',
+    category: 'pop_music',
+    tags: ['영어발라드', 'EdSheeran', 'Perfect', '어쿠스틱', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
+  {
+    videoId: 'lp-EO5I60KA',
+    title: 'Ed Sheeran - Thinking Out Loud (Official Music Video)',
+    channelTitle: 'Ed Sheeran',
+    artist: 'Ed Sheeran',
+    album: 'x (Multiply)',
+    description: 'Ed Sheeran • 감미로운 기타와 소울풀한 보컬이 어우러진 불후의 명곡',
+    thumbnailUrl: 'https://img.youtube.com/vi/lp-EO5I60KA/hqdefault.jpg',
+    duration: '4:41',
+    category: 'pop_music',
+    tags: ['영어발라드', 'EdSheeran', 'ThinkingOutLoud', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
+  {
+    videoId: 'Oa_RSwwpPaA',
+    title: 'Benson Boone - Beautiful Things (Official Music Video)',
+    channelTitle: 'Benson Boone',
+    artist: 'Benson Boone',
+    album: 'Fireworks & Rollerblades',
+    description: 'Benson Boone • 폭발적인 가창력과 감성적인 멜로디의 팝 발라드',
+    thumbnailUrl: 'https://img.youtube.com/vi/Oa_RSwwpPaA/hqdefault.jpg',
+    duration: '3:00',
+    category: 'pop_music',
+    tags: ['영어발라드', 'BensonBoone', 'BeautifulThings', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
+  {
+    videoId: 'k4V3Mo61fJM',
+    title: 'Coldplay - Fix You (Official Video)',
+    channelTitle: 'Coldplay',
+    artist: 'Coldplay',
+    album: 'X&Y',
+    description: 'Coldplay • 마음을 위로하는 따뜻한 오르간과 감동적인 브리티시 락 발라드',
+    thumbnailUrl: 'https://img.youtube.com/vi/k4V3Mo61fJM/hqdefault.jpg',
+    duration: '4:55',
+    category: 'pop_music',
+    tags: ['영어발라드', 'Coldplay', 'FixYou', '위로발라드', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
+  {
+    videoId: 'yKNxeF4KMsY',
+    title: 'Coldplay - Yellow (Official Video)',
+    channelTitle: 'Coldplay',
+    artist: 'Coldplay',
+    album: 'Parachutes',
+    description: 'Coldplay • 콜드플레이의 시그니처 & 서정적이고 아련한 명품 어쿠스틱 발라드',
+    thumbnailUrl: 'https://img.youtube.com/vi/yKNxeF4KMsY/hqdefault.jpg',
+    duration: '4:29',
+    category: 'pop_music',
+    tags: ['영어발라드', 'Coldplay', 'Yellow', '어쿠스틱', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
+  {
+    videoId: 'RB-RcX5DS5A',
+    title: 'Coldplay - The Scientist (Official 4K Video)',
+    channelTitle: 'Coldplay',
+    artist: 'Coldplay',
+    album: 'A Rush of Blood to the Head',
+    description: 'Coldplay • 피아노 선율과 깊은 애절함이 담긴 세계적인 명품 팝',
+    thumbnailUrl: 'https://img.youtube.com/vi/RB-RcX5DS5A/hqdefault.jpg',
+    duration: '4:26',
+    category: 'pop_music',
+    tags: ['영어발라드', 'Coldplay', 'TheScientist', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
+  {
+    videoId: '5vheNbQlsyU',
+    title: 'Lady Gaga - Always Remember Us This Way (From A Star Is Born)',
+    channelTitle: 'Lady Gaga',
+    artist: 'Lady Gaga',
+    album: 'A Star Is Born',
+    description: 'Lady Gaga • 영화 스타 이즈 본 OST & 폭발적인 감성의 피아노 발라드',
+    thumbnailUrl: 'https://img.youtube.com/vi/5vheNbQlsyU/hqdefault.jpg',
+    duration: '3:30',
+    category: 'pop_music',
+    tags: ['영어발라드', 'LadyGaga', '스타이즈본', '피아노발라드', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
+  {
+    videoId: 'pB-5XG-DbAA',
+    title: 'Sam Smith - Stay With Me (Official Music Video)',
+    channelTitle: 'Sam Smith',
+    artist: 'Sam Smith',
+    album: 'In the Lonely Hour',
+    description: 'Sam Smith • 소울풀한 가스펠 화음과 애절한 목소리의 그래미 수상작',
+    thumbnailUrl: 'https://img.youtube.com/vi/pB-5XG-DbAA/hqdefault.jpg',
+    duration: '3:00',
+    category: 'pop_music',
+    tags: ['영어발라드', 'SamSmith', 'StayWithMe', '소울발라드', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
+  {
+    videoId: 'nCkpzqqog4k',
+    title: 'Sam Smith - I\'m Not The Only One (Official Music Video)',
+    channelTitle: 'Sam Smith',
+    artist: 'Sam Smith',
+    album: 'In the Lonely Hour',
+    description: 'Sam Smith • 서정적인 멜로디와 차분한 딕션이 돋보이는 소울 발라드',
+    thumbnailUrl: 'https://img.youtube.com/vi/nCkpzqqog4k/hqdefault.jpg',
+    duration: '3:59',
+    category: 'pop_music',
+    tags: ['영어발라드', 'SamSmith', 'ImNotTheOnlyOne', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
+  {
+    videoId: 'zABLecsR5UE',
+    title: 'Lewis Capaldi - Someone You Loved (Official Video)',
+    channelTitle: 'Lewis Capaldi',
+    artist: 'Lewis Capaldi',
+    album: 'Divinely Uninspired to a Hellish Extent',
+    description: 'Lewis Capaldi • 거친 허스키 보이스와 진한 감동의 피아노 발라드',
+    thumbnailUrl: 'https://img.youtube.com/vi/zABLecsR5UE/hqdefault.jpg',
+    duration: '3:02',
+    category: 'pop_music',
+    tags: ['영어발라드', 'LewisCapaldi', 'SomeoneYouLoved', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
+  {
+    videoId: 'ZmDBbnmKpqQ',
+    title: 'Olivia Rodrigo - drivers license (Official Video)',
+    channelTitle: 'Olivia Rodrigo',
+    artist: 'Olivia Rodrigo',
+    album: 'SOUR',
+    description: 'Olivia Rodrigo • 전 세계를 뒤흔든 데뷔 싱글 & 폭발적인 감정선의 틴 발라드',
+    thumbnailUrl: 'https://img.youtube.com/vi/ZmDBbnmKpqQ/hqdefault.jpg',
+    duration: '4:07',
+    category: 'pop_music',
+    tags: ['영어발라드', 'OliviaRodrigo', 'driverslicense', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
+  {
+    videoId: 'cii6ruuycQA',
+    title: 'Olivia Rodrigo - deja vu (Official Video)',
+    channelTitle: 'Olivia Rodrigo',
+    artist: 'Olivia Rodrigo',
+    album: 'SOUR',
+    description: 'Olivia Rodrigo • 몽환적인 신스 사운드와 세밀한 가사 스토리텔링',
+    thumbnailUrl: 'https://img.youtube.com/vi/cii6ruuycQA/hqdefault.jpg',
+    duration: '3:51',
+    category: 'pop_music',
+    tags: ['영어팝송', 'OliviaRodrigo', 'dejavu', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
+  {
+    videoId: 'CRrf3h9vhp8',
+    title: 'Olivia Rodrigo - traitor (Official Video)',
+    channelTitle: 'Olivia Rodrigo',
+    artist: 'Olivia Rodrigo',
+    album: 'SOUR',
+    description: 'Olivia Rodrigo • 차분한 기타 아르페지오와 슬픈 멜로디의 어쿠스틱 발라드',
+    thumbnailUrl: 'https://img.youtube.com/vi/CRrf3h9vhp8/hqdefault.jpg',
+    duration: '3:58',
+    category: 'pop_music',
+    tags: ['영어발라드', 'OliviaRodrigo', 'traitor', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
+  {
+    videoId: 'V1Pl8CzNzCw',
+    title: 'Billie Eilish, Khalid - lovely',
+    channelTitle: 'Billie Eilish',
+    artist: 'Billie Eilish & Khalid',
+    album: '13 Reasons Why',
+    description: 'Billie Eilish & Khalid • 현악기와 두 보컬의 하모니가 만들어내는 서정미',
+    thumbnailUrl: 'https://img.youtube.com/vi/V1Pl8CzNzCw/hqdefault.jpg',
+    duration: '3:20',
+    category: 'pop_music',
+    tags: ['영어발라드', 'BillieEilish', 'Khalid', 'lovely', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
+  {
+    videoId: '-tn2S3kJlyU',
+    title: 'Billie Eilish - idontwannabeyouanymore (Official Video)',
+    channelTitle: 'Billie Eilish',
+    artist: 'Billie Eilish',
+    album: 'dont smile at me',
+    description: 'Billie Eilish • 재즈 감성의 코드와 부드러운 중저음 보컬 쉐도잉',
+    thumbnailUrl: 'https://img.youtube.com/vi/-tn2S3kJlyU/hqdefault.jpg',
+    duration: '3:24',
+    category: 'pop_music',
+    tags: ['영어발라드', 'BillieEilish', 'idontwannabeyouanymore', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
+  {
+    videoId: 'b1kbLwvqugk',
+    title: 'Taylor Swift - Anti-Hero (Official Music Video)',
+    channelTitle: 'Taylor Swift',
+    artist: 'Taylor Swift',
+    album: 'Midnights',
+    description: 'Taylor Swift • 솔직하고 성찰적인 가사와 중독적인 신스 팝',
+    thumbnailUrl: 'https://img.youtube.com/vi/b1kbLwvqugk/hqdefault.jpg',
+    duration: '5:09',
+    category: 'pop_music',
+    tags: ['영어팝송', 'TaylorSwift', 'AntiHero', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
+  {
+    videoId: 'RsEZmictANA',
+    title: 'Taylor Swift - willow (Official Music Video)',
+    channelTitle: 'Taylor Swift',
+    artist: 'Taylor Swift',
+    album: 'evermore',
+    description: 'Taylor Swift • 마법 같은 동화적 포크 멜로디 & 우아한 어쿠스틱 사운드',
+    thumbnailUrl: 'https://img.youtube.com/vi/RsEZmictANA/hqdefault.jpg',
+    duration: '4:13',
+    category: 'pop_music',
+    tags: ['영어발라드', 'TaylorSwift', 'willow', '포크팝', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
+  {
+    videoId: 'DDWKuo3gXMQ',
+    title: 'Adele - When We Were Young (Live at The Church Studios)',
+    channelTitle: 'Adele',
+    artist: 'Adele',
+    album: '25',
+    description: 'Adele • 추억과 청춘을 노래하는 압도적인 가창력의 라이브 명품 발라드',
+    thumbnailUrl: 'https://img.youtube.com/vi/DDWKuo3gXMQ/hqdefault.jpg',
+    duration: '5:43',
+    category: 'pop_music',
+    tags: ['영어발라드', 'Adele', 'WhenWeWereYoung', '라이브명곡', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
+  {
+    videoId: '0put0_a--Ng',
+    title: 'Adele - Make You Feel My Love (Official Video)',
+    channelTitle: 'Adele',
+    artist: 'Adele',
+    album: '19',
+    description: 'Adele • 밥 딜런 원곡의 따뜻하고 감미로운 피아노 커버 발라드',
+    thumbnailUrl: 'https://img.youtube.com/vi/0put0_a--Ng/hqdefault.jpg',
+    duration: '3:32',
+    category: 'pop_music',
+    tags: ['영어발라드', 'Adele', 'MakeYouFeelMyLove', '피아노발라드', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
+  {
+    videoId: 'ekzHIouo8Q4',
+    title: 'Bruno Mars - When I Was Your Man (Official Music Video)',
+    channelTitle: 'Bruno Mars',
+    artist: 'Bruno Mars',
+    album: 'Unorthodox Jukebox',
+    description: 'Bruno Mars • 오직 피아노와 목소리만으로 전 세계를 울린 감성 발라드',
+    thumbnailUrl: 'https://img.youtube.com/vi/ekzHIouo8Q4/hqdefault.jpg',
+    duration: '3:55',
+    category: 'pop_music',
+    tags: ['영어발라드', 'BrunoMars', 'WhenIWasYourMan', '피아노발라드', '가사쉐도잉'],
+    source: 'curated_pop',
+  },
 ];
 
 /**
@@ -5239,7 +5541,7 @@ export function loadYouTubeData() {
 
   if (popTracks.length > 0) {
     for (const popTrack of popTracks) {
-      if (!existingVideoIds.has(popTrack.videoId) && parseDurationInSeconds(popTrack.duration) >= 300) {
+      if (!existingVideoIds.has(popTrack.videoId) && parseDurationInSeconds(popTrack.duration) >= 120) {
         popTrack.language = 'en';
         store.items.push(popTrack);
         existingVideoIds.add(popTrack.videoId);
@@ -5369,8 +5671,14 @@ export function extractYouTubeId(url) {
  */
 export function getYouTubeLinks({ filter = 'all', language = 'all', category = 'all', search = '' } = {}) {
   const store = loadYouTubeData();
-  // Normalize language for all items and filter out shorts / under 5 min (< 300s)
-  let list = (store.items || []).filter(item => parseDurationInSeconds(item.duration) >= 300);
+  // Normalize language for all items and filter out shorts (노래는 2분+, 일반 영상은 5분+)
+  let list = (store.items || []).filter(item => {
+    const secs = parseDurationInSeconds(item.duration);
+    if (item.category === 'pop_music' || item.source === 'curated_pop' || item.source === 'ytmusic_pop') {
+      return secs >= 120;
+    }
+    return secs >= 300;
+  });
   list.forEach(item => {
     item.language = detectItemLanguage(item);
     if (item.category === 'education_sci' || item.category === 'career_mind' || item.category === 'diction_essay') {

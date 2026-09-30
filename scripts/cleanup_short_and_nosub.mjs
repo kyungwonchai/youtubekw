@@ -51,13 +51,16 @@ async function cleanFile(filePath, isArray = false) {
   console.log(`Processing ${path.basename(filePath)} (Initial: ${initialCount})`);
   console.log(`========================================`);
 
-  // Step 1: Filter out shorts / under 5 min (< 300s)
+  // Step 1: Filter out shorts / under 5 min (< 300s), but KEEP songs/music >= 2 min (>= 120s)
   const filteredDuration = items.filter(item => {
     const secs = parseSecs(item.duration);
-    return secs >= 300;
+    if (item.category === 'pop_music' || item.source === 'curated_pop' || item.source === 'ytmusic_pop') {
+      return secs >= 120; // 노래는 2분(120초) 이상 허용!
+    }
+    return secs >= 300; // 일반 영상은 5분(300초) 이상
   });
   const removedShortCount = initialCount - filteredDuration.length;
-  console.log(`1. Removed under 5min / Shorts (< 300s): ${removedShortCount} items`);
+  console.log(`1. Removed under 5min / Shorts (< 300s, 노래 120s 미만): ${removedShortCount} items`);
   console.log(`   Remaining to test for subtitles: ${filteredDuration.length} items`);
 
   // Step 2: Test for subtitles in parallel batches
