@@ -418,7 +418,10 @@ export default function App() {
                   <button
                     key={lang.id}
                     className={`lang-tab-btn ${selectedLanguage === lang.id ? 'active' : ''}`}
-                    onClick={() => setSelectedLanguage(lang.id)}
+                    onClick={() => {
+                      setSelectedLanguage(lang.id);
+                      setPopArtistFilter('all');
+                    }}
                   >
                     <span className="lang-flag">{lang.flag}</span>
                     <span className="lang-name">{lang.name}</span>
@@ -450,63 +453,71 @@ export default function App() {
         </div>
       )}
 
-      {/* Pop Music Artist Sub-filter */}
+      {/* Pop Music Artist Sub-filter (언어별 동적 필터링) */}
       {(activeTab === 'feed' || activeTab === 'bookmarked') && selectedCategory === 'pop_music' && (
         <div className="pop-artist-filter-bar">
           <button
             className={`pop-artist-pill ${popArtistFilter === 'all' ? 'active' : ''}`}
             onClick={() => setPopArtistFilter('all')}
           >
-            🎵 전체 발라드 & 노래 ({items.filter(i => i.category === 'pop_music' || i.source === 'ytmusic_pop').length}곡)
+            🎵 전체 발라드 & 노래 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (selectedLanguage === 'all' || (i.language || 'en') === selectedLanguage)).length}곡)
           </button>
-          <button
-            className={`pop-artist-pill adele ${popArtistFilter === 'Adele' ? 'active' : ''}`}
-            onClick={() => setPopArtistFilter('Adele')}
-          >
-            💙 아델 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('adele') || i.title?.toLowerCase().includes('adele'))).length}곡)
-          </button>
-          <button
-            className={`pop-artist-pill lana ${popArtistFilter === 'Lana Del Rey' ? 'active' : ''}`}
-            onClick={() => setPopArtistFilter('Lana Del Rey')}
-          >
-            🖤 라나 델 레이 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('lana') || i.title?.toLowerCase().includes('lana'))).length}곡)
-          </button>
-          <button
-            className={`pop-artist-pill gracie ${popArtistFilter === 'Gracie Abrams' ? 'active' : ''}`}
-            onClick={() => setPopArtistFilter('Gracie Abrams')}
-          >
-            🤍 그레이시 에이브럼스 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('gracie') || i.title?.toLowerCase().includes('gracie'))).length}곡)
-          </button>
-          <button
-            className={`pop-artist-pill taylor ${popArtistFilter === 'Taylor Swift' ? 'active' : ''}`}
-            onClick={() => setPopArtistFilter('Taylor Swift')}
-          >
-            💖 테일러 스위프트 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('taylor') || i.channelTitle?.toLowerCase().includes('taylor') || i.title?.toLowerCase().includes('taylor'))).length}곡)
-          </button>
-          <button
-            className={`pop-artist-pill billie ${popArtistFilter === 'Billie Eilish' ? 'active' : ''}`}
-            onClick={() => setPopArtistFilter('Billie Eilish')}
-          >
-            💚 빌리 아일리시 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('billie') || i.channelTitle?.toLowerCase().includes('billie') || i.title?.toLowerCase().includes('billie'))).length}곡)
-          </button>
-          <button
-            className={`pop-artist-pill olivia ${popArtistFilter === 'Olivia Rodrigo' ? 'active' : ''}`}
-            onClick={() => setPopArtistFilter('Olivia Rodrigo')}
-          >
-            💜 올리비아 로드리고 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('olivia') || i.channelTitle?.toLowerCase().includes('olivia') || i.title?.toLowerCase().includes('olivia'))).length}곡)
-          </button>
-          <button
-            className={`pop-artist-pill aitana ${popArtistFilter === 'Spanish Ballads' ? 'active' : ''}`}
-            onClick={() => setPopArtistFilter('Spanish Ballads')}
-          >
-            🇪🇸 아이타나 & 라틴 발라드 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('aitana') || i.artist?.toLowerCase().includes('shakira') || i.artist?.toLowerCase().includes('mon laferte') || i.tags?.includes('스페인어노래') || i.tags?.includes('감성발라드'))).length}곡)
-          </button>
-          <button
-            className={`pop-artist-pill gem ${popArtistFilter === 'G.E.M.' ? 'active' : ''}`}
-            onClick={() => setPopArtistFilter('G.E.M.')}
-          >
-            🇨🇳 덩쯔치 G.E.M. ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('gem') || i.artist?.toLowerCase().includes('g.e.m') || i.title?.includes('鄧紫棋'))).length}곡)
-          </button>
+          {(selectedLanguage === 'all' || selectedLanguage === 'en') && (
+            <>
+              <button
+                className={`pop-artist-pill adele ${popArtistFilter === 'Adele' ? 'active' : ''}`}
+                onClick={() => setPopArtistFilter('Adele')}
+              >
+                💙 아델 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('adele') || i.title?.toLowerCase().includes('adele'))).length}곡)
+              </button>
+              <button
+                className={`pop-artist-pill lana ${popArtistFilter === 'Lana Del Rey' ? 'active' : ''}`}
+                onClick={() => setPopArtistFilter('Lana Del Rey')}
+              >
+                🖤 라나 델 레이 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('lana') || i.title?.toLowerCase().includes('lana'))).length}곡)
+              </button>
+              <button
+                className={`pop-artist-pill gracie ${popArtistFilter === 'Gracie Abrams' ? 'active' : ''}`}
+                onClick={() => setPopArtistFilter('Gracie Abrams')}
+              >
+                🤍 그레이시 에이브럼스 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('gracie') || i.title?.toLowerCase().includes('gracie'))).length}곡)
+              </button>
+              <button
+                className={`pop-artist-pill taylor ${popArtistFilter === 'Taylor Swift' ? 'active' : ''}`}
+                onClick={() => setPopArtistFilter('Taylor Swift')}
+              >
+                💖 테일러 스위프트 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('taylor') || i.channelTitle?.toLowerCase().includes('taylor') || i.title?.toLowerCase().includes('taylor'))).length}곡)
+              </button>
+              <button
+                className={`pop-artist-pill billie ${popArtistFilter === 'Billie Eilish' ? 'active' : ''}`}
+                onClick={() => setPopArtistFilter('Billie Eilish')}
+              >
+                💚 빌리 아일리시 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('billie') || i.channelTitle?.toLowerCase().includes('billie') || i.title?.toLowerCase().includes('billie'))).length}곡)
+              </button>
+              <button
+                className={`pop-artist-pill olivia ${popArtistFilter === 'Olivia Rodrigo' ? 'active' : ''}`}
+                onClick={() => setPopArtistFilter('Olivia Rodrigo')}
+              >
+                💜 올리비아 로드리고 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('olivia') || i.channelTitle?.toLowerCase().includes('olivia') || i.title?.toLowerCase().includes('olivia'))).length}곡)
+              </button>
+            </>
+          )}
+          {(selectedLanguage === 'all' || selectedLanguage === 'es') && (
+            <button
+              className={`pop-artist-pill aitana ${popArtistFilter === 'Spanish Ballads' ? 'active' : ''}`}
+              onClick={() => setPopArtistFilter('Spanish Ballads')}
+            >
+              🇪🇸 아이타나 & 라틴 발라드 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('aitana') || i.artist?.toLowerCase().includes('shakira') || i.artist?.toLowerCase().includes('mon laferte') || i.tags?.includes('스페인어노래') || i.tags?.includes('감성발라드'))).length}곡)
+            </button>
+          )}
+          {(selectedLanguage === 'all' || selectedLanguage === 'zh') && (
+            <button
+              className={`pop-artist-pill gem ${popArtistFilter === 'G.E.M.' ? 'active' : ''}`}
+              onClick={() => setPopArtistFilter('G.E.M.')}
+            >
+              🇨🇳 덩쯔치 G.E.M. ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('gem') || i.artist?.toLowerCase().includes('g.e.m') || i.title?.includes('鄧紫棋'))).length}곡)
+            </button>
+          )}
         </div>
       )}
 
