@@ -545,12 +545,12 @@ export function parseDurationInSeconds(durationStr) {
 }
 
 /**
- * Require at least 3 minutes (180 seconds) up to 3.5 hours (12600 seconds)
+ * Require at least 5 minutes (300 seconds) up to 3.5 hours (12600 seconds) - No Shorts!
  */
 export function isGoodShadowingLength(durationStr) {
-  if (!durationStr) return true;
+  if (!durationStr) return false;
   const secs = parseDurationInSeconds(durationStr);
-  return secs >= 180 && secs <= 12600; // 3 min <= duration <= 210 min (3.5 hours)
+  return secs >= 300 && secs <= 12600; // strictly >= 5 minutes (300 seconds)
 }
 
 /**
@@ -5231,7 +5231,7 @@ export function loadYouTubeData() {
     if (item.category === 'spanish') item.category = 'ted_speech';
   });
 
-  // Ensure Pop Music tracks & Multi-lingual tracks are merged
+  // Ensure Pop Music tracks & Multi-lingual tracks are merged (strictly >= 5 minutes)
   const popTracks = loadPopMusicTracks();
   const multiTracks = loadMultiLangTracks();
   const existingVideoIds = new Set(store.items.map(i => i.videoId));
@@ -5239,7 +5239,7 @@ export function loadYouTubeData() {
 
   if (popTracks.length > 0) {
     for (const popTrack of popTracks) {
-      if (!existingVideoIds.has(popTrack.videoId)) {
+      if (!existingVideoIds.has(popTrack.videoId) && parseDurationInSeconds(popTrack.duration) >= 300) {
         popTrack.language = 'en';
         store.items.push(popTrack);
         existingVideoIds.add(popTrack.videoId);
@@ -5250,7 +5250,7 @@ export function loadYouTubeData() {
 
   if (multiTracks.length > 0) {
     for (const track of multiTracks) {
-      if (!existingVideoIds.has(track.videoId)) {
+      if (!existingVideoIds.has(track.videoId) && parseDurationInSeconds(track.duration) >= 300) {
         store.items.push(track);
         existingVideoIds.add(track.videoId);
         modified = true;
@@ -5369,9 +5369,8 @@ export function extractYouTubeId(url) {
  */
 export function getYouTubeLinks({ filter = 'all', language = 'all', category = 'all', search = '' } = {}) {
   const store = loadYouTubeData();
-  let list = store.items || [];
-
-  // Normalize language for all items
+  // Normalize language for all items and filter out shorts / under 5 min (< 300s)
+  let list = (store.items || []).filter(item => parseDurationInSeconds(item.duration) >= 300);
   list.forEach(item => {
     item.language = detectItemLanguage(item);
     if (item.category === 'education_sci' || item.category === 'career_mind' || item.category === 'diction_essay') {
