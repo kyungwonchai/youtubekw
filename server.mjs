@@ -69,8 +69,8 @@ const VIP_FILE = '/home/kw/.kwsoft-youtube-secret-vip.json';
 const handleGetSecretVip = async (req, res) => {
   try {
     const { pass } = req.query;
-    // Allow 'kw' or '7777' or '1234' or '0000'
-    if (pass !== '7777' && pass !== 'kw' && pass !== '1234' && pass !== '0000') {
+    // Allow 'kw1121'
+    if (pass !== 'kw1121' && pass !== '7777') {
       return res.status(403).json({ ok: false, error: '암호가 일치하지 않습니다.' });
     }
     const fs = await import('fs');
