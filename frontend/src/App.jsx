@@ -225,6 +225,7 @@ export default function App() {
 
   const categories = [
     { id: 'all', label: '✨ 전체 추천 영상' },
+    { id: 'spanish', label: '🇪🇸 스페인어 쉐도잉 (TED·회화·명연설)' },
     { id: 'top_trained', label: '🔥 최다 훈련순 (Top Trained)' },
     { id: 'pop_music', label: '🎵 팝송 & 올리비아 (가사 쉐도잉)' },
     { id: 'ted_speech', label: '🎤 TED & 명품 강연' },
@@ -236,7 +237,9 @@ export default function App() {
     let result = items.filter(item => {
       if (activeTab === 'bookmarked' && !item.bookmarked) return false;
       if (selectedCategory !== 'all' && selectedCategory !== 'top_trained') {
-        if (selectedCategory === 'sleep_life') {
+        if (selectedCategory === 'spanish') {
+          if (item.category !== 'spanish') return false;
+        } else if (selectedCategory === 'sleep_life') {
           const parts = (item.duration || '').split(':').map(Number);
           let secs = 0;
           if (parts.length === 3) secs = parts[0] * 3600 + parts[1] * 60 + parts[2];
@@ -560,9 +563,11 @@ export default function App() {
                         })()}
 
                         <span className="duration-tag">{item.duration || '10분+'}</span>
-                        <span className={`cat-badge ${item.category === 'pop_music' ? 'pop-badge' : ''}`}>
+                        <span className={`cat-badge ${item.category === 'pop_music' ? 'pop-badge' : item.category === 'spanish' ? 'spanish-badge' : ''}`}>
                           {item.category === 'pop_music'
                             ? (item.artist?.toLowerCase().includes('olivia') || item.title?.toLowerCase().includes('olivia') ? '💜 Olivia Rodrigo' : item.artist?.toLowerCase().includes('billie') || item.title?.toLowerCase().includes('billie') ? '💚 Billie Eilish' : '🎵 팝송 쉐도잉')
+                            : item.category === 'spanish'
+                            ? '🇪🇸 스페인어'
                             : item.category === 'ted_speech'
                             ? '🎤 TED 강연'
                             : item.category === 'sleep_life'

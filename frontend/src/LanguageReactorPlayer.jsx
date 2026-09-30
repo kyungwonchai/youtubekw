@@ -1041,7 +1041,7 @@ export default function LanguageReactorPlayer({
   // 11. Word click dictionary popup (Instant & Rich)
   const handleWordClick = async (word, e, lineContext = null) => {
     if (e) e.stopPropagation();
-    const cleanWord = word.replace(/[^a-zA-Z'-]/g, '').trim();
+    const cleanWord = word.replace(/[^\p{L}'-]/gu, '').trim();
     if (!cleanWord) return;
 
     const rect = e.target.getBoundingClientRect();
@@ -1080,13 +1080,14 @@ export default function LanguageReactorPlayer({
     }
   };
 
-  // 11-1. Native TTS Pronunciation Audio Playback
+  // 11-1. Native TTS Pronunciation Audio Playback (English & Spanish support)
   const handleSpeakWord = (text, e) => {
     if (e) e.stopPropagation();
     if (!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-US';
+    const isSpanish = currentVideo?.category === 'spanish' || /[\u00C0-\u00FFñÑáéíóúÁÉÍÓÚ¿¡]/.test(text || '');
+    utterance.lang = isSpanish ? 'es-ES' : 'en-US';
     utterance.rate = 0.9;
     window.speechSynthesis.speak(utterance);
   };

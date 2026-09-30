@@ -142,6 +142,16 @@ export const CURATION_CHANNELS = [
     defaultTags: ['명품딕션', '롤모델스피치', '기업가정신', '쉐도잉최적'],
   },
   {
+    id: 'spanish',
+    label: '🇪🇸 스페인어 쉐도잉 (TED·회화·명연설)',
+    shortLabel: '🇪🇸 스페인어',
+    target: 'TED en Español, 스페인어 명연설, 실전 회화 팟캐스트 및 Linguriosa 딕션 마스터클래스',
+    icon: '🇪🇸',
+    desc: '또렷한 표준 카스티야 & 히스패닉 스페인어 딕션, TED 명강연 및 스페인어 회화 쉐도잉',
+    category: 'spanish',
+    defaultTags: ['스페인어', 'TEDenEspañol', '스페인어회화', '고급스페인어', '쉐도잉'],
+  },
+  {
     id: 'ted_speech',
     label: '🎤 TED & 명품 강연',
     shortLabel: 'TED & 명연설',
@@ -320,6 +330,61 @@ export const MENTOR_SPEAKER_POOL = [
     coreTopics: '기술의 미래, AI 리더십, 혁신을 이끄는 마인드셋',
     keywords: ['Mira Murati interview keynote talk', 'Mira Murati AI speech leadership', 'Mira Murati keynote speech'],
   },
+  {
+    id: 'linguriosa_elena',
+    name: 'Elena Herraiz (Linguriosa)',
+    role: '언어학자 & 스페인어 발음·어원 1타 크리에이터 (마드리드)',
+    category: 'spanish',
+    avatar: '🇪🇸',
+    badge: '🇪🇸 스페인어 딕션 1타',
+    dictionStyle: '스페인 마드리드 표준 카스티야 딕션, 또렷하고 경쾌한 전달력과 어원 스토리텔링',
+    coreTopics: '스페인어 발음 마스터, 단어의 역사와 어원, 스페인 vs 중남미 억양',
+    keywords: ['Linguriosa espanol pronunciacion explicacion', 'Elena Herraiz Linguriosa espanol gramatica', 'Linguriosa acentos espanol'],
+  },
+  {
+    id: 'wendy_ramos',
+    name: 'Wendy Ramos',
+    role: '배우, 작가 & TEDx 전설의 대중 연설가 (페루/스페인권)',
+    category: 'spanish',
+    avatar: '🌟',
+    badge: '🎤 TEDx 전설의 스피치',
+    dictionStyle: '유쾌하면서도 가슴을 울리는 독보적인 스토리텔링과 완벽한 스페인어 억양',
+    coreTopics: '인생의 주인공이 되는 법, 나만의 길을 찾는 용기, 대중 스피치 마스터',
+    keywords: ['Wendy Ramos TEDx charla completa espanol', 'Wendy Ramos aprender a volar TED speech', 'Wendy Ramos charla inspiradora'],
+  },
+  {
+    id: 'patrycia_centeno',
+    name: 'Patrycia Centeno',
+    role: '정치 비언어 커뮤니케이션 전문가 & 리더십 연설가 (바르셀로나)',
+    category: 'spanish',
+    avatar: '👑',
+    badge: '👑 리더십 커뮤니케이션',
+    dictionStyle: '명확하고 지적인 스페인식 전달력, 자신감 있는 템포와 설득력',
+    coreTopics: '여성 리더십, 비언어 커뮤니케이션, 설득의 심리학',
+    keywords: ['Patrycia Centeno TEDx liderazgo femenino', 'Patrycia Centeno comunicacion no verbal charla'],
+  },
+  {
+    id: 'margarita_pasos',
+    name: 'Margarita Pasos',
+    role: '포춘 500 기업 리더십 코치 & 세계적 스페인어 동기부여 연설가',
+    category: 'spanish',
+    avatar: '⚡',
+    badge: '🔥 멘탈 & 동기부여 코치',
+    dictionStyle: '압도적인 에너지와 명쾌한 발음, 긍정 심리학 기반의 스페인어 스피치',
+    coreTopics: '멘탈 혁신, 두려움 극복, 감정 조절 및 인생 목표 달성',
+    keywords: ['Margarita Pasos TEDx charla espanol mente', 'Margarita Pasos motivacion liderazgo charla completa'],
+  },
+  {
+    id: 'emma_rodero',
+    name: 'Dr. Emma Rodero',
+    role: '음성 심리학자 & 바르셀로나 폼페우 파브라 대학교 교수',
+    category: 'spanish',
+    avatar: '🎙️',
+    badge: '🎙️ 목소리 & 신뢰감 스피치',
+    dictionStyle: '과학적으로 완벽한 목소리 톤과 발성, 최고 수준의 스페인어 딕션',
+    coreTopics: '목소리로 신뢰를 얻는 법, 말의 전달력과 설득의 음성학',
+    keywords: ['Emma Rodero TEDx persuade con tu voz charla', 'Emma Rodero hablar en publico voz espanol'],
+  },
 ];
 
 // Targeted queries focused strictly on bright, young, inspiring female speakers, diverse TED topics, elite diction essays, and 1-hour+ sleep & life stories
@@ -378,6 +443,15 @@ const SEARCH_QUERIES = [
   '1 hour podcast young woman life lessons advice calm clear voice',
   'young articulate woman deep talk life journey podcast full episode 1 hour',
   'calm clear english podcast woman mindset life philosophy sleep bedtime',
+
+  // 5. Spanish Shadowing & Speeches (스페인어 쉐도잉 & TED en Español & 회화)
+  'TED en espanol charla inspiradora mujer diccion clara',
+  'TEDx charla mujer espanol diccion pronunciacion',
+  'Linguriosa espanol pronunciacion explicacion',
+  'aprender espanol shadowing podcast conversacion clara',
+  'TED en espanol psicologia liderazgo mujer charla',
+  'charla motivacional espanol mujer inspiradora',
+  'TEDx speech spanish clear pronunciation storytelling',
 ];
 
 /**
@@ -578,6 +652,137 @@ export function loadPopMusicTracks() {
   }
 }
 
+export const DEFAULT_SPANISH_TRACKS = [
+  {
+    videoId: 'YlI-e4QJWG0',
+    title: 'Persuade con tu voz. Estrategias para sonar creíble. | Emma Rodero | TEDxMalagueta',
+    channelTitle: 'TEDx Talks',
+    description: 'Dr. Emma Rodero • 음성 심리학자가 알려주는 신뢰를 얻는 목소리와 스페인어 대중 스피치 마스터클래스',
+    thumbnailUrl: 'https://img.youtube.com/vi/YlI-e4QJWG0/hqdefault.jpg',
+    duration: '16:43',
+    category: 'spanish',
+    tags: ['스페인어', 'TEDx', '목소리훈련', '신뢰스피치', '쉐도잉'],
+    source: 'curated_spanish',
+  },
+  {
+    videoId: 'CX9IN4fAx6I',
+    title: '¿Por qué seguimos escribiendo una letra que no se pronuncia? | Linguriosa',
+    channelTitle: 'Linguriosa',
+    description: 'Elena Herraiz (Linguriosa) • 마드리드 표준 카스티야 딕션으로 배우는 스페인어 철자와 발음의 비밀',
+    thumbnailUrl: 'https://img.youtube.com/vi/CX9IN4fAx6I/hqdefault.jpg',
+    duration: '18:03',
+    category: 'spanish',
+    tags: ['스페인어', 'Linguriosa', '발음마스터', '카스티야딕션', '쉐도잉'],
+    source: 'curated_spanish',
+  },
+  {
+    videoId: 'KAcl8ekUz9Y',
+    title: 'No parece ansiedad… pero lo es | Kassandra Quezada | TEDxTecdeMty',
+    channelTitle: 'TEDx Talks',
+    description: 'Kassandra Quezada • 감정 조절과 불안 극복을 위한 또렷하고 공감 넘치는 스페인어 TEDx 강연',
+    thumbnailUrl: 'https://img.youtube.com/vi/KAcl8ekUz9Y/hqdefault.jpg',
+    duration: '16:35',
+    category: 'spanish',
+    tags: ['스페인어', 'TEDx', '심리학', '감동스피치', '쉐도잉'],
+    source: 'curated_spanish',
+  },
+  {
+    videoId: 'eGyNufJ8-Cg',
+    title: 'El poderío del liderazgo femenino | Patrycia Centeno | TEDxTarragona',
+    channelTitle: 'TEDx Talks',
+    description: 'Patrycia Centeno • 비언어 커뮤니케이션 전문가가 전하는 여성 리더십과 카리스마 스페인어 스피치',
+    thumbnailUrl: 'https://img.youtube.com/vi/eGyNufJ8-Cg/hqdefault.jpg',
+    duration: '13:25',
+    category: 'spanish',
+    tags: ['스페인어', 'TEDx', '여성리더십', '스피치기법', '쉐도잉'],
+    source: 'curated_spanish',
+  },
+  {
+    videoId: 'nExwGbuz8gE',
+    title: '¿Qué historia te cuentas? | Lety Sahagún | TEDxUANL',
+    channelTitle: 'TEDx Talks',
+    description: 'Lety Sahagún • 인생을 바꾸는 내면의 대화와 생각의 힘을 전하는 감동적인 스페인어 연설',
+    thumbnailUrl: 'https://img.youtube.com/vi/nExwGbuz8gE/hqdefault.jpg',
+    duration: '11:30',
+    category: 'spanish',
+    tags: ['스페인어', 'TEDx', '마인드셋', '동기부여', '쉐도잉'],
+    source: 'curated_spanish',
+  },
+  {
+    videoId: 'uhZzB5hid6M',
+    title: 'Cambia tu mente, cambia tu vida | Margarita Pasos | TEDxManagua',
+    channelTitle: 'TEDx Talks',
+    description: 'Margarita Pasos • 글로벌 리더십 코치가 전하는 뇌 가소성과 마인드셋 혁신 스페인어 명강연',
+    thumbnailUrl: 'https://img.youtube.com/vi/uhZzB5hid6M/hqdefault.jpg',
+    duration: '20:44',
+    category: 'spanish',
+    tags: ['스페인어', 'TEDx', '멘탈코칭', '인생가치관', '쉐도잉'],
+    source: 'curated_spanish',
+  },
+  {
+    videoId: '4cX3k1NVOHo',
+    title: 'Speak Spanish Fluently with Shadowing (A2) | Learn Spanish with Podcast',
+    channelTitle: 'Easy Spanish Podcast',
+    description: 'Easy Spanish Podcast • 초중급자를 위한 한 문장씩 따라 말하는 실전 스페인어 쉐도잉 팟캐스트',
+    thumbnailUrl: 'https://img.youtube.com/vi/4cX3k1NVOHo/hqdefault.jpg',
+    duration: '10:27',
+    category: 'spanish',
+    tags: ['스페인어', '쉐도잉훈련', '실전회화', '팟캐스트'],
+    source: 'curated_spanish',
+  },
+  {
+    videoId: 'w6jmZk-o6wU',
+    title: 'Cómo mejorar tu FLUIDEZ EN ESPAÑOL con ejercicios de SHADOWING 🗣️',
+    channelTitle: 'Español con Juan',
+    description: '스페인어 유창성을 극대화하는 쉐도잉 훈련법과 자연스러운 억양 형성 비결',
+    thumbnailUrl: 'https://img.youtube.com/vi/w6jmZk-o6wU/hqdefault.jpg',
+    duration: '22:38',
+    category: 'spanish',
+    tags: ['스페인어', '유창성', '발음훈련', '쉐도잉'],
+    source: 'curated_spanish',
+  },
+  {
+    videoId: '5GEr6PaMc-g',
+    title: 'Esto es SÚPER IMPORTANTE ⚠️ [Reglas de Acentuación] 📏 | Linguriosa',
+    channelTitle: 'Linguriosa',
+    description: 'Elena Herraiz (Linguriosa) • 스페인어 강세 규칙과 정확한 억양 완벽 마스터',
+    thumbnailUrl: 'https://img.youtube.com/vi/5GEr6PaMc-g/hqdefault.jpg',
+    duration: '12:47',
+    category: 'spanish',
+    tags: ['스페인어', 'Linguriosa', '강세규칙', '억양훈련', '쉐도잉'],
+    source: 'curated_spanish',
+  },
+  {
+    videoId: 'eTtpy4XotIg',
+    title: 'Spanish Shadowing Practice | Real Conversations for Daily Use | Spanish Podcast',
+    channelTitle: 'Easy Español',
+    description: 'Easy Español • 원어민 실전 일상 대화 38분 집중 스페인어 리스닝 & 쉐도잉 훈련',
+    thumbnailUrl: 'https://img.youtube.com/vi/eTtpy4XotIg/hqdefault.jpg',
+    duration: '38:42',
+    category: 'spanish',
+    tags: ['스페인어', '일상회화', '집중훈련', '팟캐스트', '쉐도잉'],
+    source: 'curated_spanish',
+  },
+];
+
+export function loadSpanishTracks() {
+  return DEFAULT_SPANISH_TRACKS.map(t => ({
+    id: `es_${t.videoId}`,
+    videoId: t.videoId,
+    title: t.title,
+    channelTitle: t.channelTitle,
+    description: t.description,
+    thumbnailUrl: t.thumbnailUrl,
+    url: `https://www.youtube.com/watch?v=${t.videoId}`,
+    duration: t.duration,
+    category: 'spanish',
+    tags: t.tags,
+    source: 'curated_spanish',
+    bookmarked: false,
+    addedAt: Date.now() - 40000,
+  }));
+}
+
 /**
  * Load YouTube links data from local JSON database
  */
@@ -600,9 +805,11 @@ export function loadYouTubeData() {
 
   // Ensure Pop Music tracks (Olivia Rodrigo 31곡 & Pop tracks) are merged
   const popTracks = loadPopMusicTracks();
+  const spanishTracks = loadSpanishTracks();
+  const existingVideoIds = new Set(store.items.map(i => i.videoId));
+  let modified = false;
+
   if (popTracks.length > 0) {
-    const existingVideoIds = new Set(store.items.map(i => i.videoId));
-    let modified = false;
     for (const popTrack of popTracks) {
       if (!existingVideoIds.has(popTrack.videoId)) {
         store.items.push(popTrack);
@@ -610,9 +817,21 @@ export function loadYouTubeData() {
         modified = true;
       }
     }
-    if (modified) {
-      saveYouTubeData(store);
+  }
+
+  // Ensure Spanish Shadowing tracks are merged
+  if (spanishTracks.length > 0) {
+    for (const esTrack of spanishTracks) {
+      if (!existingVideoIds.has(esTrack.videoId)) {
+        store.items.push(esTrack);
+        existingVideoIds.add(esTrack.videoId);
+        modified = true;
+      }
     }
+  }
+
+  if (modified) {
+    saveYouTubeData(store);
   }
 
   return store;
@@ -996,7 +1215,23 @@ export function determineCategory(title = '', query = '', durationStr = '') {
   const text = `${title} ${query}`.toLowerCase();
   const secs = parseDurationInSeconds(durationStr);
 
-  // 1. Sleep & Long-form Life Stories / Deep Talks (>= 60 minutes, or sleep/intimate podcast >= 40 minutes)
+  // 1. Spanish Shadowing (TED en Español, Spanish speeches, Linguriosa, Spanish podcasts)
+  if (
+    text.includes('espanol') ||
+    text.includes('español') ||
+    text.includes('spanish') ||
+    text.includes('linguriosa') ||
+    text.includes('charla') ||
+    text.includes('aprender espanol') ||
+    text.includes('conversacion') ||
+    text.includes('hablar') ||
+    text.includes('pronunciacion') ||
+    text.includes('liderazgo')
+  ) {
+    return 'spanish';
+  }
+
+  // 2. Sleep & Long-form Life Stories / Deep Talks (>= 60 minutes, or sleep/intimate podcast >= 40 minutes)
   if (
     secs >= 3600 ||
     ((text.includes('sleep') || text.includes('bedtime') || text.includes('life story') || text.includes('anything goes') || text.includes('slight change of plans') || text.includes('call her daddy') || text.includes('full episode') || text.includes('podcast')) && secs >= 2400)
@@ -1004,7 +1239,7 @@ export function determineCategory(title = '', query = '', durationStr = '') {
     return 'sleep_life';
   }
 
-  // 2. TED & speech
+  // 3. TED & speech
   if (
     text.includes('ted') ||
     text.includes('speech') ||

@@ -10,31 +10,34 @@ if (!existsSync(CACHE_DIR)) {
 const memoryCache = new Map();
 
 /**
- * Translate English text to Korean using Multi-Provider Fallbacks
- * (Primary: Google Clients5, Fallback 1: Google GTX, Fallback 2: MyMemory, Fallback 3: Lingva)
+ * Translate text (English, Spanish, etc.) to Korean using Multi-Provider Fallbacks
+ * (Primary: Google Clients5 auto, Fallback 1: Google GTX auto, Fallback 2: MyMemory)
  */
-export async function translateEnToKo(text) {
+export async function translateTextToKo(text, sourceLang = 'auto') {
   if (!text || !text.trim()) return '';
   const clean = text.trim();
 
-  // Provider 1: Google Clients5 (Extremely high limit & reliable)
+  // Provider 1: Google Clients5 (Extremely high limit & reliable with auto-detection)
   try {
-    const url = `https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=en&tl=ko&q=${encodeURIComponent(clean)}`;
+    const sl = sourceLang || 'auto';
+    const url = `https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=${encodeURIComponent(sl)}&tl=ko&q=${encodeURIComponent(clean)}`;
     const res = await fetch(url, {
       headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
       signal: AbortSignal.timeout(4500)
     });
     if (res.ok) {
       const data = await res.json();
-      if (Array.isArray(data) && data.length > 0 && typeof data[0] === 'string') {
-        return data[0];
+      if (Array.isArray(data) && data.length > 0) {
+        if (typeof data[0] === 'string') return data[0];
+        if (Array.isArray(data[0]) && typeof data[0][0] === 'string') return data[0][0];
       }
     }
   } catch (e) {}
 
   // Provider 2: Google GTX Web
   try {
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ko&dt=t&q=${encodeURIComponent(clean)}`;
+    const sl = sourceLang || 'auto';
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${encodeURIComponent(sl)}&tl=ko&dt=t&q=${encodeURIComponent(clean)}`;
     const res = await fetch(url, {
       headers: { 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64)' },
       signal: AbortSignal.timeout(4000)
@@ -48,7 +51,8 @@ export async function translateEnToKo(text) {
 
   // Provider 3: MyMemory API (Reliable single/sentence fallback)
   try {
-    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(clean)}&langpair=en|ko`;
+    const langpair = sourceLang && sourceLang !== 'auto' ? `${sourceLang}|ko` : 'autodetect|ko';
+    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(clean)}&langpair=${langpair}`;
     const res = await fetch(url, { signal: AbortSignal.timeout(3500) });
     if (res.ok) {
       const data = await res.json();
@@ -61,16 +65,19 @@ export async function translateEnToKo(text) {
   return '';
 }
 
+// Backward compatibility alias
+export const translateEnToKo = translateTextToKo;
+
 /**
  * Batch translate transcript lines quickly (chunks of 25 lines with delimiter safety)
  */
-export async function batchTranslateLines(lines) {
+export async function batchTranslateLines(lines, sourceLang = 'auto') {
   const BATCH_SIZE = 25;
   for (let i = 0; i < lines.length; i += BATCH_SIZE) {
     const slice = lines.slice(i, i + BATCH_SIZE);
     const combined = slice.map(l => l.text.replace(/[\r\n]+/g, ' ')).join('\n');
     try {
-      const translated = await translateEnToKo(combined);
+      const translated = await translateTextToKo(combined, sourceLang);
       if (translated) {
         const transParts = translated.split('\n');
         slice.forEach((line, idx) => {
@@ -81,13 +88,16 @@ export async function batchTranslateLines(lines) {
       }
     } catch (e) {}
 
-    // Fallback line by line for any line that still has empty translation
-    for (const line of slice) {
-      if (!line.translation) {
-        try {
-          line.translation = await translateEnToKo(line.text);
-        } catch (err) {}
-      }
+    // Parallel fallback for any lines in the batch that still have empty translations
+    const missingLines = slice.filter(l => !l.translation);
+    if (missingLines.length > 0) {
+      await Promise.allSettled(
+        missingLines.map(async (line) => {
+          try {
+            line.translation = await translateTextToKo(line.text, sourceLang);
+          } catch (err) {}
+        })
+      );
     }
   }
   return lines;
@@ -96,7 +106,7 @@ export async function batchTranslateLines(lines) {
 /**
  * Fetch and parse YouTube transcript with Korean translations
  */
-export async function getTranscriptForVideo(videoId, { autoTranslate = true } = {}) {
+export async function getTranscriptForVideo(videoId, { autoTranslate = true, lang = null } = {}) {
   if (!videoId) throw new Error('Video ID is required');
 
   // Check memory cache
@@ -121,18 +131,19 @@ export async function getTranscriptForVideo(videoId, { autoTranslate = true } = 
   }
 
   let rawList = [];
-  try {
-    rawList = await YoutubeTranscript.fetchTranscript(videoId, { lang: 'en' });
-  } catch (errEn) {
+  // Strategy: Try candidate language codes in order (Spanish, English, default without param)
+  const candidateLangs = lang ? [lang, 'es', 'en', undefined] : ['en', 'es', 'es-419', 'es-ES', undefined];
+
+  for (const candidate of candidateLangs) {
     try {
-      rawList = await YoutubeTranscript.fetchTranscript(videoId);
-    } catch (errFallback) {
-      return {
-        ok: false,
-        videoId,
-        error: '자막 데이터를 가져올 수 없거나 자막이 제공되지 않는 영상입니다.',
-        lines: []
-      };
+      if (candidate) {
+        rawList = await YoutubeTranscript.fetchTranscript(videoId, { lang: candidate });
+      } else {
+        rawList = await YoutubeTranscript.fetchTranscript(videoId);
+      }
+      if (rawList && rawList.length > 0) break;
+    } catch (err) {
+      // Continue to next candidate
     }
   }
 
@@ -140,7 +151,7 @@ export async function getTranscriptForVideo(videoId, { autoTranslate = true } = 
     return {
       ok: false,
       videoId,
-      error: '제공된 자막 텍스트가 없습니다.',
+      error: '제공된 자막 텍스트가 없거나 자막을 가져올 수 없습니다.',
       lines: []
     };
   }
@@ -239,14 +250,14 @@ const wordCache = new Map();
  */
 export async function lookupWord(word) {
   if (!word || !word.trim()) return null;
-  const cleanWord = word.toLowerCase().replace(/[^a-z'-]/g, '').trim();
+  const cleanWord = word.toLowerCase().replace(/[^\p{L}'-]/gu, '').trim();
   if (!cleanWord) return null;
 
   if (wordCache.has(cleanWord)) {
     return wordCache.get(cleanWord);
   }
 
-  // 1. Check instant local master DB (0ms response with full IPA)
+  // 1. Check instant local master DB (0ms response with full IPA for English)
   const map = getLocalVocabMap();
   const localMatch = map.get(cleanWord);
 
@@ -273,12 +284,12 @@ export async function lookupWord(word) {
     return result;
   }
 
-  // 2. Fallback: Parallel fetch Free Dictionary API + Google Translate
+  // 2. Parallel fetch Free Dictionary API + Multi-lingual auto translation
   const [dictRes, transKo] = await Promise.allSettled([
-    fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${cleanWord}`, { signal: AbortSignal.timeout(2500) })
+    fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(cleanWord)}`, { signal: AbortSignal.timeout(2500) })
       .then(r => r.ok ? r.json() : null)
       .catch(() => null),
-    koTranslation ? Promise.resolve(koTranslation) : translateEnToKo(cleanWord).catch(() => '')
+    koTranslation ? Promise.resolve(koTranslation) : translateTextToKo(cleanWord, 'auto').catch(() => '')
   ]);
 
   if (transKo.status === 'fulfilled' && transKo.value) {
