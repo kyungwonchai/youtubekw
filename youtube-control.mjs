@@ -3079,239 +3079,1218 @@ export function loadPopMusicTracks() {
 }
 
 export const DEFAULT_SPANISH_TRACKS = [
-  // Spanish Pop Music (ROSALÍA, Aitana, Becky G)
   {
-    videoId: 'Mq7gC2gLPLI',
-    title: 'ROSALÍA - DESPECHÁ (Official Video)',
-    channelTitle: 'ROSALÍA',
-    artist: 'ROSALÍA',
-    description: 'ROSALÍA • 전 세계를 강타한 스페인어 라틴 팝 메가히트곡 & 경쾌한 가사 쉐도잉',
-    thumbnailUrl: 'https://img.youtube.com/vi/Mq7gC2gLPLI/hqdefault.jpg',
-    duration: '2:40',
-    category: 'pop_music',
-    tags: ['스페인어', 'ROSALÍA', '라틴팝', '가사쉐도잉', '스페인어노래'],
-    source: 'curated_spanish',
+    "videoId": "KAcl8ekUz9Y",
+    "title": "No parece ansiedad… pero lo es | Kassandra Quezada | TEDxTecdeMty",
+    "channelTitle": "TEDx Talks",
+    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (16:35)",
+    "thumbnailUrl": "https://img.youtube.com/vi/KAcl8ekUz9Y/hqdefault.jpg",
+    "duration": "16:35",
+    "language": "es",
+    "category": "ted_speech",
+    "tags": [
+      "스페인어",
+      "TEDx",
+      "여성리더십",
+      "명품스피치",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
   },
   {
-    videoId: '3d3eXWowX1Y',
-    title: 'ROSALÍA, Rauw Alejandro - BESO (Official Video)',
-    channelTitle: 'ROSALÍA',
-    artist: 'ROSALÍA',
-    description: 'ROSALÍA & Rauw Alejandro • 감미롭고 로맨틱한 스페인어 듀엣 & 딕션 싱크 쉐도잉',
-    thumbnailUrl: 'https://img.youtube.com/vi/3d3eXWowX1Y/hqdefault.jpg',
-    duration: '3:20',
-    category: 'pop_music',
-    tags: ['스페인어', 'ROSALÍA', '스페인어노래', '가사쉐도잉'],
-    source: 'curated_spanish',
+    "videoId": "eGyNufJ8-Cg",
+    "title": "El poderío del liderazgo femenino | Patrycia Centeno | TEDxTarragona",
+    "channelTitle": "TEDx Talks",
+    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (13:25)",
+    "thumbnailUrl": "https://img.youtube.com/vi/eGyNufJ8-Cg/hqdefault.jpg",
+    "duration": "13:25",
+    "language": "es",
+    "category": "ted_speech",
+    "tags": [
+      "스페인어",
+      "TEDx",
+      "여성리더십",
+      "명품스피치",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
   },
   {
-    videoId: 'x4WX5IP5Ju0',
-    title: 'Aitana, Nicki Nicole - Formentera (Official Video)',
-    channelTitle: 'Aitana',
-    artist: 'Aitana',
-    description: 'Aitana • 스페인 대표 팝스타 Aitana의 세련된 일렉트로 팝 & 또렷한 카스티야 딕션',
-    thumbnailUrl: 'https://img.youtube.com/vi/x4WX5IP5Ju0/hqdefault.jpg',
-    duration: '3:26',
-    category: 'pop_music',
-    tags: ['스페인어', 'Aitana', '스페인어노래', '가사쉐도잉', '스페인팝'],
-    source: 'curated_spanish',
+    "videoId": "vKn_t5wcsn0",
+    "title": "Sororidad: ¿Qué podemos lograr las mujeres si trabajamos juntas? | Marlene Molero | TEDxTukuyWomen",
+    "channelTitle": "TEDx Talks",
+    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (17:42)",
+    "thumbnailUrl": "https://img.youtube.com/vi/vKn_t5wcsn0/hqdefault.jpg",
+    "duration": "17:42",
+    "language": "es",
+    "category": "ted_speech",
+    "tags": [
+      "스페인어",
+      "TEDx",
+      "여성리더십",
+      "명품스피치",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
   },
   {
-    videoId: 'o2tdLOK7-PE',
-    title: 'zzoilo, Aitana - Mon Amour (Remix)',
-    channelTitle: 'zzoilo & Aitana',
-    artist: 'Aitana',
-    description: 'Aitana & zzoilo • 유럽 전역을 사로잡은 밝고 청량한 팝송 & 쉬운 스페인어 가사 훈련',
-    thumbnailUrl: 'https://img.youtube.com/vi/o2tdLOK7-PE/hqdefault.jpg',
-    duration: '3:00',
-    category: 'pop_music',
-    tags: ['스페인어', 'Aitana', 'MonAmour', '스페인어노래', '가사쉐도잉'],
-    source: 'curated_spanish',
+    "videoId": "kuC1HC3HFZA",
+    "title": "Liderazgo que inspira. | Marisa Lazo | TEDxUniversidadPanamericanaGuadalajara",
+    "channelTitle": "TEDx Talks",
+    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (18:17)",
+    "thumbnailUrl": "https://img.youtube.com/vi/kuC1HC3HFZA/hqdefault.jpg",
+    "duration": "18:17",
+    "language": "es",
+    "category": "ted_speech",
+    "tags": [
+      "스페인어",
+      "TEDx",
+      "여성리더십",
+      "명품스피치",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
   },
   {
-    videoId: 'XUctUGKs1Sc',
-    title: 'Aitana - Los Ángeles (Official Video)',
-    channelTitle: 'Aitana',
-    artist: 'Aitana',
-    description: 'Aitana • 트렌디한 클럽 하우스 비트 & 속도감 있는 스페인어 리듬 트레이닝',
-    thumbnailUrl: 'https://img.youtube.com/vi/XUctUGKs1Sc/hqdefault.jpg',
-    duration: '2:40',
-    category: 'pop_music',
-    tags: ['스페인어', 'Aitana', 'LosAngeles', '스페인어노래'],
-    source: 'curated_spanish',
+    "videoId": "acY31MrsTJw",
+    "title": "EMPODERAMIENTO DE LA  MUJER, MÁS ALLÁ DEL GÉNERO. | Maricela Cervantes | TEDxBarriodelEncino",
+    "channelTitle": "TEDx Talks",
+    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (14:18)",
+    "thumbnailUrl": "https://img.youtube.com/vi/acY31MrsTJw/hqdefault.jpg",
+    "duration": "14:18",
+    "language": "es",
+    "category": "ted_speech",
+    "tags": [
+      "스페인어",
+      "TEDx",
+      "여성리더십",
+      "명품스피치",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
   },
   {
-    videoId: 'XK06sajscPg',
-    title: 'Becky G, KAROL G - MAMIII (Audio)',
-    channelTitle: 'Becky G',
-    artist: 'Becky G',
-    description: 'Becky G & KAROL G • 당당하고 에너지 넘치는 라틴 어반 팝 가사 쉐도잉',
-    thumbnailUrl: 'https://img.youtube.com/vi/XK06sajscPg/hqdefault.jpg',
-    duration: '3:50',
-    category: 'pop_music',
-    tags: ['스페인어', 'BeckyG', '라틴팝', '스페인어노래'],
-    source: 'curated_spanish',
-  },
-
-  {
-    videoId: 'e8vI0pYLcYU',
-    title: 'Aitana - Vas A Quedarte (Official Music Video)',
-    channelTitle: 'Aitana',
-    artist: 'Aitana',
-    description: 'Aitana • 스페인을 눈물짓게 한 정통 감성 피아노 발라드 & 맑고 청아한 카스티야 보컬 쉐도잉',
-    thumbnailUrl: 'https://img.youtube.com/vi/e8vI0pYLcYU/hqdefault.jpg',
-    duration: '4:05',
-    category: 'pop_music',
-    tags: ['스페인어', 'Aitana', 'VasAQuedarte', '감성발라드', '가사쉐도잉'],
-    source: 'curated_spanish',
+    "videoId": "0IFBpLruSYM",
+    "title": "La gorda que ya no quiere adelgazar | Priscila Arias | TEDxTecate Youth",
+    "channelTitle": "TEDx Talks",
+    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (17:02)",
+    "thumbnailUrl": "https://img.youtube.com/vi/0IFBpLruSYM/hqdefault.jpg",
+    "duration": "17:02",
+    "language": "es",
+    "category": "ted_speech",
+    "tags": [
+      "스페인어",
+      "TEDx",
+      "여성리더십",
+      "명품스피치",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
   },
   {
-    videoId: 'WT-VE9OyAJk',
-    title: 'Mon Laferte - Tu Falta De Querer (Official Video)',
-    channelTitle: 'Mon Laferte',
-    artist: 'Mon Laferte',
-    description: 'Mon Laferte • 호소력 짙은 감성과 폭발적인 가창력의 전설적인 라틴 발라드',
-    thumbnailUrl: 'https://img.youtube.com/vi/WT-VE9OyAJk/hqdefault.jpg',
-    duration: '4:39',
-    category: 'pop_music',
-    tags: ['스페인어', 'MonLaferte', '라틴발라드', '가사쉐도잉'],
-    source: 'curated_spanish',
+    "videoId": "ECnT4yiCWso",
+    "title": "El poder de la palabra  | Rebeca Schürenkämper | TEDxMorelia",
+    "channelTitle": "TEDx Talks",
+    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (13:12)",
+    "thumbnailUrl": "https://img.youtube.com/vi/ECnT4yiCWso/hqdefault.jpg",
+    "duration": "13:12",
+    "language": "es",
+    "category": "ted_speech",
+    "tags": [
+      "스페인어",
+      "TEDx",
+      "여성리더십",
+      "명품스피치",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
   },
   {
-    videoId: 'MCH1tA-6JWs',
-    title: 'Shakira - Antología (Audio Oficial Con Letra)',
-    channelTitle: 'Shakira',
-    artist: 'Shakira',
-    description: 'Shakira • 시적이고 아름다운 스페인어 가사가 돋보이는 불후의 명품 어쿠스틱 발라드',
-    thumbnailUrl: 'https://img.youtube.com/vi/MCH1tA-6JWs/hqdefault.jpg',
-    duration: '4:18',
-    category: 'pop_music',
-    tags: ['스페인어', 'Shakira', 'Antologia', '어쿠스틱발라드', '가사쉐도잉'],
-    source: 'curated_spanish',
-  },
-
-  // Spanish Speeches / Talks / Essays / Podcasts
-  {
-    videoId: 'kuC1HC3HFZA',
-    title: 'Liderazgo que inspira y transforma vidas | Marisa Lazo | TEDx',
-    channelTitle: 'TEDx Talks',
-    description: 'Marisa Lazo • 진정한 리더십과 내면의 열정을 일깨우는 감동적인 스페인어 TED 강연',
-    thumbnailUrl: 'https://img.youtube.com/vi/kuC1HC3HFZA/hqdefault.jpg',
-    duration: '16:15',
-    category: 'ted_speech',
-    tags: ['스페인어', 'TEDx', '리더십', '동기부여', '명품스피치'],
-    source: 'curated_spanish',
+    "videoId": "viHMKr5rJ24",
+    "title": "Para lograr un amor bonito primero tuve que darme a mí ese amor bonito | Karen Ferrero | TEDxCondesa",
+    "channelTitle": "TEDx Talks",
+    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (15:47)",
+    "thumbnailUrl": "https://img.youtube.com/vi/viHMKr5rJ24/hqdefault.jpg",
+    "duration": "15:47",
+    "language": "es",
+    "category": "ted_speech",
+    "tags": [
+      "스페인어",
+      "TEDx",
+      "여성리더십",
+      "명품스피치",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
   },
   {
-    videoId: 'dd_uI8-vdwM',
-    title: '20 Hábitos para Transformar tu Vida y Mente | Patri Psicóloga (Full Talk)',
-    channelTitle: 'Patri Psicóloga',
-    description: 'Patri Psicóloga • 삶을 변화시키는 20가지 심리학 습관, 취침 전 듣기 좋은 1시간 22분 차분한 스페인어 롱폼 대담',
-    thumbnailUrl: 'https://img.youtube.com/vi/dd_uI8-vdwM/hqdefault.jpg',
-    duration: '1:22:15',
-    category: 'sleep_life',
-    tags: ['스페인어', '심리학', '수면토크', '습관형성', '롱폼에세이'],
-    source: 'curated_spanish',
+    "videoId": "SXF-gtNsg6I",
+    "title": "La mujer rural: fuente de inspiración de la agroecología | Natalia Escobar | TEDxUCundinamarca",
+    "channelTitle": "TEDx Talks",
+    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (17:36)",
+    "thumbnailUrl": "https://img.youtube.com/vi/SXF-gtNsg6I/hqdefault.jpg",
+    "duration": "17:36",
+    "language": "es",
+    "category": "ted_speech",
+    "tags": [
+      "스페인어",
+      "TEDx",
+      "여성리더십",
+      "명품스피치",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
   },
   {
-    videoId: '-iYL9ZlQtes',
-    title: 'DESARROLLO PERSONAL: 4 pasos para cambiar tu mentalidad | Sara Linares',
-    channelTitle: 'Sara Linares',
-    description: 'Sara Linares • 마인드셋 혁신과 자기 성장을 위한 4가지 실행 로드맵 스페인어 에세이',
-    thumbnailUrl: 'https://img.youtube.com/vi/-iYL9ZlQtes/hqdefault.jpg',
-    duration: '14:40',
-    category: 'essay_deep',
-    tags: ['스페인어', '자기계발', '마인드셋', '에세이', '쉐도잉'],
-    source: 'curated_spanish',
+    "videoId": "uhZzB5hid6M",
+    "title": "Cambia tu mente, cambia tu vida | Margarita Pasos | TEDxManagua",
+    "channelTitle": "TEDx Talks",
+    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (20:44)",
+    "thumbnailUrl": "https://img.youtube.com/vi/uhZzB5hid6M/hqdefault.jpg",
+    "duration": "20:44",
+    "language": "es",
+    "category": "ted_speech",
+    "tags": [
+      "스페인어",
+      "TEDx",
+      "여성리더십",
+      "명품스피치",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
   },
   {
-    videoId: 'zFiDudVClRU',
-    title: '¿Dónde nació el CASTELLANO realmente? | Linguriosa',
-    channelTitle: 'Linguriosa',
-    description: 'Elena Herraiz (Linguriosa) • 카스티야 스페인어의 역사와 어원, 가장 아름답고 명료한 마드리드 딕션',
-    thumbnailUrl: 'https://img.youtube.com/vi/zFiDudVClRU/hqdefault.jpg',
-    duration: '15:20',
-    category: 'conversation',
-    tags: ['스페인어', 'Linguriosa', '카스티야딕션', '어원이야기', '명품발음'],
-    source: 'curated_spanish',
+    "videoId": "QBMNtJx3NmE",
+    "title": "¿Cómo usar las habilidades femeninas en los negocios? | María Carolina Rondón | TEDxAltamiraWomen",
+    "channelTitle": "TEDx Talks",
+    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (6:57)",
+    "thumbnailUrl": "https://img.youtube.com/vi/QBMNtJx3NmE/hqdefault.jpg",
+    "duration": "6:57",
+    "language": "es",
+    "category": "ted_speech",
+    "tags": [
+      "스페인어",
+      "TEDx",
+      "여성리더십",
+      "명품스피치",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
   },
   {
-    videoId: '2RiadhCBhiY',
-    title: 'El idioma ESPAÑOL NO es LÓGICO... o sí? | Linguriosa',
-    channelTitle: 'Linguriosa',
-    description: 'Elena Herraiz (Linguriosa) • 스페인어 문법의 재미있는 비밀과 발음 뉘앙스 완벽 분석',
-    thumbnailUrl: 'https://img.youtube.com/vi/2RiadhCBhiY/hqdefault.jpg',
-    duration: '16:05',
-    category: 'conversation',
-    tags: ['스페인어', 'Linguriosa', '스페인어문법', '발음훈련', '쉐도잉'],
-    source: 'curated_spanish',
+    "videoId": "1zlNC2CJ-GA",
+    "title": "Nuevos líderes para un nuevo mundo | Beatriz Navarro | TEDxGracia",
+    "channelTitle": "TEDx Talks",
+    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (11:50)",
+    "thumbnailUrl": "https://img.youtube.com/vi/1zlNC2CJ-GA/hqdefault.jpg",
+    "duration": "11:50",
+    "language": "es",
+    "category": "ted_speech",
+    "tags": [
+      "스페인어",
+      "TEDx",
+      "여성리더십",
+      "명품스피치",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
   },
   {
-    videoId: 'YlI-e4QJWG0',
-    title: 'Persuade con tu voz. Estrategias para sonar creíble. | Emma Rodero | TEDxMalagueta',
-    channelTitle: 'TEDx Talks',
-    description: 'Dr. Emma Rodero • 음성 심리학자가 알려주는 신뢰를 얻는 목소리와 스페인어 대중 스피치 마스터클래스',
-    thumbnailUrl: 'https://img.youtube.com/vi/YlI-e4QJWG0/hqdefault.jpg',
-    duration: '16:43',
-    category: 'ted_speech',
-    tags: ['스페인어', 'TEDx', '목소리훈련', '신뢰스피치', '쉐도잉'],
-    source: 'curated_spanish',
+    "videoId": "LZhXeDbyvMo",
+    "title": "¿Cómo tener juntas efectivas? | Elvira Toba | TEDxCalzadaDeLosHéroes",
+    "channelTitle": "TEDx Talks",
+    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (19:18)",
+    "thumbnailUrl": "https://img.youtube.com/vi/LZhXeDbyvMo/hqdefault.jpg",
+    "duration": "19:18",
+    "language": "es",
+    "category": "ted_speech",
+    "tags": [
+      "스페인어",
+      "TEDx",
+      "여성리더십",
+      "명품스피치",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
   },
   {
-    videoId: 'CX9IN4fAx6I',
-    title: '¿Por qué seguimos escribiendo una letra que no se pronuncia? | Linguriosa',
-    channelTitle: 'Linguriosa',
-    description: 'Elena Herraiz (Linguriosa) • 마드리드 표준 카스티야 딕션으로 배우는 스페인어 철자와 발음의 비밀',
-    thumbnailUrl: 'https://img.youtube.com/vi/CX9IN4fAx6I/hqdefault.jpg',
-    duration: '18:03',
-    category: 'conversation',
-    tags: ['스페인어', 'Linguriosa', '발음마스터', '카스티야딕션', '쉐도잉'],
-    source: 'curated_spanish',
+    "videoId": "7foLnilB7Lw",
+    "title": "El poder de conocer tu propria identidad | Maysun Abu-Khdeir | TEDxZaragoza",
+    "channelTitle": "TEDx Talks",
+    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (17:58)",
+    "thumbnailUrl": "https://img.youtube.com/vi/7foLnilB7Lw/hqdefault.jpg",
+    "duration": "17:58",
+    "language": "es",
+    "category": "ted_speech",
+    "tags": [
+      "스페인어",
+      "TEDx",
+      "여성리더십",
+      "명품스피치",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
   },
   {
-    videoId: 'KAcl8ekUz9Y',
-    title: 'No parece ansiedad… pero lo es | Kassandra Quezada | TEDxTecdeMty',
-    channelTitle: 'TEDx Talks',
-    description: 'Kassandra Quezada • 감정 조절과 불안 극복을 위한 또렷하고 공감 넘치는 스페인어 TEDx 강연',
-    thumbnailUrl: 'https://img.youtube.com/vi/KAcl8ekUz9Y/hqdefault.jpg',
-    duration: '16:35',
-    category: 'ted_speech',
-    tags: ['스페인어', 'TEDx', '심리학', '감동스피치', '쉐도잉'],
-    source: 'curated_spanish',
+    "videoId": "qbrNNudXCCw",
+    "title": "Resiliencia, Poder y Liderazgo | Adriana Torres | TEDxComodoroRivadavia",
+    "channelTitle": "TEDx Talks",
+    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (20:02)",
+    "thumbnailUrl": "https://img.youtube.com/vi/qbrNNudXCCw/hqdefault.jpg",
+    "duration": "20:02",
+    "language": "es",
+    "category": "ted_speech",
+    "tags": [
+      "스페인어",
+      "TEDx",
+      "여성리더십",
+      "명품스피치",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
   },
   {
-    videoId: 'eGyNufJ8-Cg',
-    title: 'El poderío del liderazgo femenino | Patrycia Centeno | TEDxTarragona',
-    channelTitle: 'TEDx Talks',
-    description: 'Patrycia Centeno • 비언어 커뮤니케이션 전문가가 전하는 여성 리더십과 카리스마 스페인어 스피치',
-    thumbnailUrl: 'https://img.youtube.com/vi/eGyNufJ8-Cg/hqdefault.jpg',
-    duration: '13:25',
-    category: 'ted_speech',
-    tags: ['스페인어', 'TEDx', '여성리더십', '스피치기법', '쉐도잉'],
-    source: 'curated_spanish',
+    "videoId": "zleOf9qSSEY",
+    "title": "Solo es amor si... | Ro García Platas | TEDxCondesa",
+    "channelTitle": "TEDx Talks",
+    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (17:55)",
+    "thumbnailUrl": "https://img.youtube.com/vi/zleOf9qSSEY/hqdefault.jpg",
+    "duration": "17:55",
+    "language": "es",
+    "category": "ted_speech",
+    "tags": [
+      "스페인어",
+      "TEDx",
+      "여성리더십",
+      "명품스피치",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
   },
   {
-    videoId: 'uhZzB5hid6M',
-    title: 'Cambia tu mente, cambia tu vida | Margarita Pasos | TEDxManagua',
-    channelTitle: 'TEDx Talks',
-    description: 'Margarita Pasos • 글로벌 리더십 코치가 전하는 뇌 가소성과 마인드셋 혁신 스페인어 명강연',
-    thumbnailUrl: 'https://img.youtube.com/vi/uhZzB5hid6M/hqdefault.jpg',
-    duration: '20:44',
-    category: 'ted_speech',
-    tags: ['스페인어', 'TEDx', '멘탈코칭', '인생가치관', '쉐도잉'],
-    source: 'curated_spanish',
+    "videoId": "JzvtGcrnBi4",
+    "title": "Tu autenticidad te puede llevar a ser tu mejor versión | Paula Folch | TEDxIgualada",
+    "channelTitle": "TEDx Talks",
+    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (18:21)",
+    "thumbnailUrl": "https://img.youtube.com/vi/JzvtGcrnBi4/hqdefault.jpg",
+    "duration": "18:21",
+    "language": "es",
+    "category": "ted_speech",
+    "tags": [
+      "스페인어",
+      "TEDx",
+      "여성리더십",
+      "명품스피치",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
   },
   {
-    videoId: 'eTtpy4XotIg',
-    title: 'Spanish Shadowing Practice | Real Conversations for Daily Use | Spanish Podcast',
-    channelTitle: 'Easy Español',
-    description: 'Easy Español • 원어민 실전 일상 대화 38분 집중 스페인어 리스닝 & 쉐도잉 훈련',
-    thumbnailUrl: 'https://img.youtube.com/vi/eTtpy4XotIg/hqdefault.jpg',
-    duration: '38:42',
-    category: 'conversation',
-    tags: ['스페인어', '일상회화', '집중훈련', '팟캐스트', '쉐도잉'],
-    source: 'curated_spanish',
+    "videoId": "Ff-R-IH80OQ",
+    "title": "El poder de lo femenino | Mercè Brey | TEDxEixample",
+    "channelTitle": "TEDx Talks",
+    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (11:52)",
+    "thumbnailUrl": "https://img.youtube.com/vi/Ff-R-IH80OQ/hqdefault.jpg",
+    "duration": "11:52",
+    "language": "es",
+    "category": "ted_speech",
+    "tags": [
+      "스페인어",
+      "TEDx",
+      "여성리더십",
+      "명품스피치",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
   },
+  {
+    "videoId": "5xsEMzui9c4",
+    "title": "Kaizen: más allá de lo empresarial | Roxana Aveiga | TEDxGamboa",
+    "channelTitle": "TEDx Talks",
+    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (8:46)",
+    "thumbnailUrl": "https://img.youtube.com/vi/5xsEMzui9c4/hqdefault.jpg",
+    "duration": "8:46",
+    "language": "es",
+    "category": "ted_speech",
+    "tags": [
+      "스페인어",
+      "TEDx",
+      "여성리더십",
+      "명품스피치",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "tb0YspHHpAM",
+    "title": "Cómo ser líder y femenina .. y  no  morir en el intento…Se puede!!! | Soledad Ovando | TEDxUAIWomen",
+    "channelTitle": "TEDx Talks",
+    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (16:59)",
+    "thumbnailUrl": "https://img.youtube.com/vi/tb0YspHHpAM/hqdefault.jpg",
+    "duration": "16:59",
+    "language": "es",
+    "category": "ted_speech",
+    "tags": [
+      "스페인어",
+      "TEDx",
+      "여성리더십",
+      "명품스피치",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "zt3uvhim96Q",
+    "title": "Desbloquea la vida de tus sueños | Stephanie Rodriguez | TEDxTecdeMty",
+    "channelTitle": "TEDx Talks",
+    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (18:35)",
+    "thumbnailUrl": "https://img.youtube.com/vi/zt3uvhim96Q/hqdefault.jpg",
+    "duration": "18:35",
+    "language": "es",
+    "category": "ted_speech",
+    "tags": [
+      "스페인어",
+      "TEDx",
+      "여성리더십",
+      "명품스피치",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "OE8ehj_h2qA",
+    "title": "Ser mujer en la universidad: Una carrera de supervivencia | Ljubica Fuentes | TEDxLaFloresta",
+    "channelTitle": "TEDx Talks",
+    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (15:36)",
+    "thumbnailUrl": "https://img.youtube.com/vi/OE8ehj_h2qA/hqdefault.jpg",
+    "duration": "15:36",
+    "language": "es",
+    "category": "ted_speech",
+    "tags": [
+      "스페인어",
+      "TEDx",
+      "여성리더십",
+      "명품스피치",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "Y-cHbf-WGiI",
+    "title": "Aitana - La Última (De \"La Última\"/Banda Sonora Original)",
+    "channelTitle": "HollywoodRecordsVEVO",
+    "description": "HollywoodRecordsVEVO • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:46)",
+    "thumbnailUrl": "https://img.youtube.com/vi/Y-cHbf-WGiI/hqdefault.jpg",
+    "duration": "3:46",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "DUyQqjnsWoI",
+    "title": "Aitana - Vas A Quedarte (Letra)",
+    "channelTitle": "Marinosaurio",
+    "description": "Marinosaurio • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:46)",
+    "thumbnailUrl": "https://img.youtube.com/vi/DUyQqjnsWoI/hqdefault.jpg",
+    "duration": "3:46",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "yxGhRK2Hth4",
+    "title": "Aitana - CUANDO HABLES CON ÉL (Video Oficial)",
+    "channelTitle": "Aitana",
+    "description": "Aitana • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:24)",
+    "thumbnailUrl": "https://img.youtube.com/vi/yxGhRK2Hth4/hqdefault.jpg",
+    "duration": "3:24",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "SXEucvJoArk",
+    "title": "Aitana - CUANDO HABLES CON ÉL (Letra)",
+    "channelTitle": "jostland.",
+    "description": "jostland. • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:04)",
+    "thumbnailUrl": "https://img.youtube.com/vi/SXEucvJoArk/hqdefault.jpg",
+    "duration": "3:04",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "685K2BYA184",
+    "title": "Aitana - “Vas A Quedarte” (Acústico) LaLiga Santander Fest",
+    "channelTitle": "NEWS AITANA",
+    "description": "NEWS AITANA • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:20)",
+    "thumbnailUrl": "https://img.youtube.com/vi/685K2BYA184/hqdefault.jpg",
+    "duration": "4:20",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "zPayJHaosLg",
+    "title": "Aitana - Vas A Quedarte (En Directo En El Palau Sant Jordi / 2019)",
+    "channelTitle": "Aitana",
+    "description": "Aitana • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:54)",
+    "thumbnailUrl": "https://img.youtube.com/vi/zPayJHaosLg/hqdefault.jpg",
+    "duration": "3:54",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "7csX6CfgMoo",
+    "title": "Aitana - 6 DE FEBRERO (Video Oficial)",
+    "channelTitle": "Aitana",
+    "description": "Aitana • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:11)",
+    "thumbnailUrl": "https://img.youtube.com/vi/7csX6CfgMoo/hqdefault.jpg",
+    "duration": "3:11",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "doDRobQA5Fk",
+    "title": "Aitana - Luna (Amazon Music Performance)",
+    "channelTitle": "Aitana",
+    "description": "Aitana • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:50)",
+    "thumbnailUrl": "https://img.youtube.com/vi/doDRobQA5Fk/hqdefault.jpg",
+    "duration": "3:50",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "66cxG1XQjpI",
+    "title": "“SUPERESTRELLA” - AITANA | LOS40 Music Awards Santander 2025 (Roig Arena)",
+    "channelTitle": "AITANA TODAY",
+    "description": "AITANA TODAY • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:05)",
+    "thumbnailUrl": "https://img.youtube.com/vi/66cxG1XQjpI/hqdefault.jpg",
+    "duration": "3:05",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "8Q1omTAxSPs",
+    "title": "Aitana & Dani Martín - “Puede ser” (+Aitana 2021)",
+    "channelTitle": "RTVE Música",
+    "description": "RTVE Música • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:35)",
+    "thumbnailUrl": "https://img.youtube.com/vi/8Q1omTAxSPs/hqdefault.jpg",
+    "duration": "3:35",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "m0xOa1XFE_w",
+    "title": "Vas A Quedarte - Aitana - (Karaoke Instrumental con coros)",
+    "channelTitle": "KaraokeMedia",
+    "description": "KaraokeMedia • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:12)",
+    "thumbnailUrl": "https://img.youtube.com/vi/m0xOa1XFE_w/hqdefault.jpg",
+    "duration": "4:12",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "gvKL2-MW4Do",
+    "title": "Aitana - Ni Una Más (INSTRUMENTAL KARAOKE)",
+    "channelTitle": "KaraokeMedia",
+    "description": "KaraokeMedia • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:35)",
+    "thumbnailUrl": "https://img.youtube.com/vi/gvKL2-MW4Do/hqdefault.jpg",
+    "duration": "3:35",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "N8Nzb-oc8XA",
+    "title": "Abraham Mateo, Ana Mena - Quiero Decirte 💔 (Letra) || Track Culpa Nuestra",
+    "channelTitle": "LowDrow",
+    "description": "LowDrow • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:43)",
+    "thumbnailUrl": "https://img.youtube.com/vi/N8Nzb-oc8XA/hqdefault.jpg",
+    "duration": "3:43",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "TCsIrIFNBRI",
+    "title": "Mon Laferte - Tu Falta De Querer (Acoustic)",
+    "channelTitle": "Mon Laferte",
+    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (5:29)",
+    "thumbnailUrl": "https://img.youtube.com/vi/TCsIrIFNBRI/hqdefault.jpg",
+    "duration": "5:29",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "6PJBxWsEzUo",
+    "title": "Mon Laferte - Placer Hollywood (Tiny Desk (Home) Live)",
+    "channelTitle": "Mon Laferte",
+    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:15)",
+    "thumbnailUrl": "https://img.youtube.com/vi/6PJBxWsEzUo/hqdefault.jpg",
+    "duration": "4:15",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "5R1RGl4WQP8",
+    "title": "Mon Laferte - Tu Falta De Querer (En Vivo)",
+    "channelTitle": "Mon Laferte",
+    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:37)",
+    "thumbnailUrl": "https://img.youtube.com/vi/5R1RGl4WQP8/hqdefault.jpg",
+    "duration": "4:37",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "0yiHp6KW4oE",
+    "title": "Por Qué Me Fui A Enamorar de Ti (En Vivo, Desde El Lunario del Auditorio Nacional)",
+    "channelTitle": "Mon Laferte",
+    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:41)",
+    "thumbnailUrl": "https://img.youtube.com/vi/0yiHp6KW4oE/hqdefault.jpg",
+    "duration": "4:41",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "fRJ3kh9cnQo",
+    "title": "Mon Laferte - Antes De Ti",
+    "channelTitle": "Mon Laferte",
+    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:03)",
+    "thumbnailUrl": "https://img.youtube.com/vi/fRJ3kh9cnQo/hqdefault.jpg",
+    "duration": "4:03",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "13m9v78uNJk",
+    "title": "Mon Laferte - Mi Buen Amor ft. Enrique Bunbury",
+    "channelTitle": "Mon Laferte",
+    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:50)",
+    "thumbnailUrl": "https://img.youtube.com/vi/13m9v78uNJk/hqdefault.jpg",
+    "duration": "3:50",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "WX-f_pbo5jc",
+    "title": "Mon Laferte - Te Ví (En Vivo)",
+    "channelTitle": "Mon Laferte",
+    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:56)",
+    "thumbnailUrl": "https://img.youtube.com/vi/WX-f_pbo5jc/hqdefault.jpg",
+    "duration": "3:56",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "xD27uAJUMIo",
+    "title": "Mon Laferte - Mi Buen Amor (En Vivo)",
+    "channelTitle": "Mon Laferte",
+    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:45)",
+    "thumbnailUrl": "https://img.youtube.com/vi/xD27uAJUMIo/hqdefault.jpg",
+    "duration": "3:45",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "skyk3T7Hu1g",
+    "title": "Mon Laferte - Supermercado (Visualizer)",
+    "channelTitle": "Mon Laferte",
+    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:36)",
+    "thumbnailUrl": "https://img.youtube.com/vi/skyk3T7Hu1g/hqdefault.jpg",
+    "duration": "3:36",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "PQlG1gznMBE",
+    "title": "Mon Laferte - Amor Completo",
+    "channelTitle": "Mon Laferte",
+    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:09)",
+    "thumbnailUrl": "https://img.youtube.com/vi/PQlG1gznMBE/hqdefault.jpg",
+    "duration": "4:09",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "viELAGDXqH0",
+    "title": "Mon Laferte - Invéntame",
+    "channelTitle": "TodosSomosMASVEVO",
+    "description": "TodosSomosMASVEVO • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:37)",
+    "thumbnailUrl": "https://img.youtube.com/vi/viELAGDXqH0/hqdefault.jpg",
+    "duration": "3:37",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "rF2Bn-qmM1s",
+    "title": "Mon Laferte - Chilango Blues",
+    "channelTitle": "Mon Laferte",
+    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:47)",
+    "thumbnailUrl": "https://img.youtube.com/vi/rF2Bn-qmM1s/hqdefault.jpg",
+    "duration": "3:47",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "P8ZVtEDn0PM",
+    "title": "Mon Laferte - Paisaje Japonés",
+    "channelTitle": "Mon Laferte",
+    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:26)",
+    "thumbnailUrl": "https://img.youtube.com/vi/P8ZVtEDn0PM/hqdefault.jpg",
+    "duration": "3:26",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "pmbcl0YN4lg",
+    "title": "Mon Laferte - Aunque Te Mueras Por Volver (Video Oficial)",
+    "channelTitle": "Mon Laferte",
+    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:28)",
+    "thumbnailUrl": "https://img.youtube.com/vi/pmbcl0YN4lg/hqdefault.jpg",
+    "duration": "4:28",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "l_ZyDlTfndE",
+    "title": "Mon Laferte - Amárrame ft. Juanes",
+    "channelTitle": "Mon Laferte",
+    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:26)",
+    "thumbnailUrl": "https://img.youtube.com/vi/l_ZyDlTfndE/hqdefault.jpg",
+    "duration": "3:26",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "BJpCypyvYtc",
+    "title": "Shakira - Última (Official Video)",
+    "channelTitle": "Shakira",
+    "description": "Shakira • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:00)",
+    "thumbnailUrl": "https://img.youtube.com/vi/BJpCypyvYtc/hqdefault.jpg",
+    "duration": "3:00",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "Bwvmi-0SRQ8",
+    "title": "Shakira & Laura Pausini - Antología (Live from LMYNL World Tour)",
+    "channelTitle": "Shakira",
+    "description": "Shakira • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:56)",
+    "thumbnailUrl": "https://img.youtube.com/vi/Bwvmi-0SRQ8/hqdefault.jpg",
+    "duration": "4:56",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "nYbcVK2jjXc",
+    "title": "Shakira - Inevitable (Official HD Video)",
+    "channelTitle": "Shakira",
+    "description": "Shakira • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:21)",
+    "thumbnailUrl": "https://img.youtube.com/vi/nYbcVK2jjXc/hqdefault.jpg",
+    "duration": "3:21",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "d6BvXSPScI4",
+    "title": "Shakira — Inevitable [Letra]",
+    "channelTitle": "armxndo",
+    "description": "armxndo • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:44)",
+    "thumbnailUrl": "https://img.youtube.com/vi/d6BvXSPScI4/hqdefault.jpg",
+    "duration": "3:44",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "pWgVRK_Ggww",
+    "title": "Shakira - Antología (Official Live Video)",
+    "channelTitle": "Shakira",
+    "description": "Shakira • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:52)",
+    "thumbnailUrl": "https://img.youtube.com/vi/pWgVRK_Ggww/hqdefault.jpg",
+    "duration": "4:52",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "onlZQ0jKUZc",
+    "title": "Shakira - Antología (El Dorado World Tour - Live)",
+    "channelTitle": "Shakira",
+    "description": "Shakira • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:02)",
+    "thumbnailUrl": "https://img.youtube.com/vi/onlZQ0jKUZc/hqdefault.jpg",
+    "duration": "4:02",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "ncmYqND278Q",
+    "title": "Shakira & Ed Sheeran - Underneath your Clothes (Live from LMYNL World Tour)",
+    "channelTitle": "Shakira",
+    "description": "Shakira • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:43)",
+    "thumbnailUrl": "https://img.youtube.com/vi/ncmYqND278Q/hqdefault.jpg",
+    "duration": "3:43",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "92tkZQB-Uj4",
+    "title": "Shakira - Je L'aime A Mourir (Live From Paris)",
+    "channelTitle": "Shakira",
+    "description": "Shakira • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:42)",
+    "thumbnailUrl": "https://img.youtube.com/vi/92tkZQB-Uj4/hqdefault.jpg",
+    "duration": "3:42",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "WhoPPnDiY5c",
+    "title": "Shakira - No (Official HD Video)",
+    "channelTitle": "Shakira",
+    "description": "Shakira • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:49)",
+    "thumbnailUrl": "https://img.youtube.com/vi/WhoPPnDiY5c/hqdefault.jpg",
+    "duration": "4:49",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "wTZ7A-h8yTs",
+    "title": "Shakira - Tú (Official HD Video)",
+    "channelTitle": "Shakira",
+    "description": "Shakira • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:33)",
+    "thumbnailUrl": "https://img.youtube.com/vi/wTZ7A-h8yTs/hqdefault.jpg",
+    "duration": "3:33",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "8C6xDjQ66wM",
+    "title": "Shakira - Te Aviso, Te Anuncio (Official HD Video)",
+    "channelTitle": "Shakira",
+    "description": "Shakira • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:24)",
+    "thumbnailUrl": "https://img.youtube.com/vi/8C6xDjQ66wM/hqdefault.jpg",
+    "duration": "4:24",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "ZuupMrAhGXw",
+    "title": "Mi Verdad - Maná a dueto con Shakira (Video Oficial)",
+    "channelTitle": "OficialMana",
+    "description": "OficialMana • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:34)",
+    "thumbnailUrl": "https://img.youtube.com/vi/ZuupMrAhGXw/hqdefault.jpg",
+    "duration": "4:34",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "P0iOz9xf0zY",
+    "title": "Shakira - Nothing Else Matters/Despedida Medley (Live from Paris)",
+    "channelTitle": "Shakira",
+    "description": "Shakira • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (5:54)",
+    "thumbnailUrl": "https://img.youtube.com/vi/P0iOz9xf0zY/hqdefault.jpg",
+    "duration": "5:54",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "UjX10jO-p3c",
+    "title": "Shakira - Nada (Official Video)",
+    "channelTitle": "Shakira",
+    "description": "Shakira • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:12)",
+    "thumbnailUrl": "https://img.youtube.com/vi/UjX10jO-p3c/hqdefault.jpg",
+    "duration": "3:12",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "2LrRw6AZEts",
+    "title": "ROSALÍA, Carminho - Memória (Official Lyric Video)",
+    "channelTitle": "ROSALÍA",
+    "description": "ROSALÍA • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:56)",
+    "thumbnailUrl": "https://img.youtube.com/vi/2LrRw6AZEts/hqdefault.jpg",
+    "duration": "3:56",
+    "language": "es",
+    "category": "essay_deep",
+    "tags": [
+      "스페인어",
+      "인생에세이",
+      "마인드셋",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "sRph0jV4mO4",
+    "title": "Rosalía - Di mi nombre en acústico",
+    "channelTitle": "Oscar Garcia",
+    "description": "Oscar Garcia • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:07)",
+    "thumbnailUrl": "https://img.youtube.com/vi/sRph0jV4mO4/hqdefault.jpg",
+    "duration": "3:07",
+    "language": "es",
+    "category": "essay_deep",
+    "tags": [
+      "스페인어",
+      "인생에세이",
+      "마인드셋",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "32d1bq-kG5c",
+    "title": "Rosalía canta 'Me quedo contigo' | Goya 2019",
+    "channelTitle": "RTVE Play",
+    "description": "RTVE Play • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:25)",
+    "thumbnailUrl": "https://img.youtube.com/vi/32d1bq-kG5c/hqdefault.jpg",
+    "duration": "3:25",
+    "language": "es",
+    "category": "essay_deep",
+    "tags": [
+      "스페인어",
+      "인생에세이",
+      "마인드셋",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "cQib_iUmR6c",
+    "title": "ROSALIA (AI) - SOLAMENTE TÚ",
+    "channelTitle": "Voces AI",
+    "description": "Voces AI • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:03)",
+    "thumbnailUrl": "https://img.youtube.com/vi/cQib_iUmR6c/hqdefault.jpg",
+    "duration": "4:03",
+    "language": "es",
+    "category": "pop_music",
+    "tags": [
+      "스페인어",
+      "감성발라드",
+      "스페인노래",
+      "가사쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "-YyeLtTIPSI",
+    "title": "Rosalía - Si tú supieras compañero + Catalina (en directo en la Cadena SER) | La Ventana",
+    "channelTitle": "La Ventana",
+    "description": "La Ventana • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (6:30)",
+    "thumbnailUrl": "https://img.youtube.com/vi/-YyeLtTIPSI/hqdefault.jpg",
+    "duration": "6:30",
+    "language": "es",
+    "category": "essay_deep",
+    "tags": [
+      "스페인어",
+      "인생에세이",
+      "마인드셋",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
+  },
+  {
+    "videoId": "GkTWxDB21cA",
+    "title": "ROSALÍA - La Perla (Official Video) ft. Yahritza Y Su Esencia",
+    "channelTitle": "ROSALÍA",
+    "description": "ROSALÍA • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:30)",
+    "thumbnailUrl": "https://img.youtube.com/vi/GkTWxDB21cA/hqdefault.jpg",
+    "duration": "3:30",
+    "language": "es",
+    "category": "essay_deep",
+    "tags": [
+      "스페인어",
+      "인생에세이",
+      "마인드셋",
+      "쉐도잉"
+    ],
+    "source": "curated_spanish"
+  }
 ];
 
 export const DEFAULT_JAPANESE_TRACKS = [
