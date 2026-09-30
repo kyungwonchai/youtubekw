@@ -1118,7 +1118,52 @@ export default function LanguageReactorPlayer({
     }
   };
 
-  // 11-1. Native TTS Pronunciation Audio Playback (Multi-lingual support)
+  // Helper to select clear, natural female voice for TTS
+  const getFemaleVoice = (langCode = 'en-US') => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return null;
+    const voices = window.speechSynthesis.getVoices() || [];
+    if (voices.length === 0) return null;
+
+    const prefix = langCode.split('-')[0].toLowerCase();
+    const langVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith(prefix));
+    if (langVoices.length === 0) return null;
+
+    const femaleKeywords = [
+      'female', 'woman', 'girl',
+      'samantha', 'jenny', 'aria', 'victoria', 'zira', 'karen', 'moira', 'fiona', 'tessa', 'ava', 'allison', 'susan',
+      'monica', 'paulina', 'helena', 'laura', 'sofia', 'lucia', 'dalia',
+      'tingting', 'xiaoxiao', 'xiaoyi', 'meijia', 'yaoyao', 'huihui',
+      'hoaimy', 'gadis', 'siti', 'swara', 'kavya', 'yuna', 'heami', 'sunhi', 'kyoko', 'nanami', 'ayumi'
+    ];
+
+    const maleKeywords = [
+      'male', 'man', 'boy', 'david', 'mark', 'guy', 'george', 'james', 'daniel', 'tom', 'oliver', 'stefan', 'martin', 'otoya', 'namminh', 'madhur'
+    ];
+
+    // 1. Explicit female match
+    const bestFemale = langVoices.find(v => {
+      const name = v.name.toLowerCase();
+      return femaleKeywords.some(kw => name.includes(kw)) && !maleKeywords.some(kw => name.includes(kw));
+    });
+    if (bestFemale) return bestFemale;
+
+    // 2. Google / Natural / Premium voice (excluding male)
+    const naturalVoice = langVoices.find(v => {
+      const name = v.name.toLowerCase();
+      return !maleKeywords.some(kw => name.includes(kw)) && (name.includes('google') || name.includes('natural') || name.includes('online') || name.includes('neural'));
+    });
+    if (naturalVoice) return naturalVoice;
+
+    // 3. Fallback non-male voice
+    const nonMale = langVoices.find(v => {
+      const name = v.name.toLowerCase();
+      return !maleKeywords.some(kw => name.includes(kw));
+    });
+
+    return nonMale || langVoices[0];
+  };
+
+  // 11-1. Native TTS Pronunciation Audio Playback (Multi-lingual support with Female Voice)
   const handleSpeakWord = (text, e) => {
     if (e) e.stopPropagation();
     if (!('speechSynthesis' in window)) return;
@@ -1126,27 +1171,33 @@ export default function LanguageReactorPlayer({
     const utterance = new SpeechSynthesisUtterance(text);
     const lang = currentVideo?.language || (currentVideo?.category === 'spanish' ? 'es' : 'en');
     
+    let targetLang = 'en-US';
     if (lang === 'ja' || /[\u3040-\u309F\u30A0-\u30FF]/.test(text || '')) {
-      utterance.lang = 'ja-JP';
+      targetLang = 'ja-JP';
     } else if (lang === 'zh' || /[\u4e00-\u9fa5]/.test(text || '')) {
-      utterance.lang = 'zh-CN';
+      targetLang = 'zh-CN';
     } else if (lang === 'es' || /[\u00C0-\u00FFñÑáéíóúÁÉÍÓÚ¿¡]/.test(text || '')) {
-      utterance.lang = 'es-ES';
+      targetLang = 'es-ES';
     } else if (lang === 'vi') {
-      utterance.lang = 'vi-VN';
+      targetLang = 'vi-VN';
     } else if (lang === 'id') {
-      utterance.lang = 'id-ID';
+      targetLang = 'id-ID';
     } else if (lang === 'hi' || /[\u0900-\u097F]/.test(text || '')) {
-      utterance.lang = 'hi-IN';
+      targetLang = 'hi-IN';
     } else if (lang === 'fr') {
-      utterance.lang = 'fr-FR';
+      targetLang = 'fr-FR';
     } else if (lang === 'de') {
-      utterance.lang = 'de-DE';
-    } else {
-      utterance.lang = 'en-US';
+      targetLang = 'de-DE';
+    }
+
+    utterance.lang = targetLang;
+    const femaleVoice = getFemaleVoice(targetLang);
+    if (femaleVoice) {
+      utterance.voice = femaleVoice;
     }
 
     utterance.rate = 0.9;
+    utterance.pitch = 1.06; // 밝고 또렷한 여성 톤
     window.speechSynthesis.speak(utterance);
   };
 
