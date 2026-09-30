@@ -247,9 +247,22 @@ export default function App() {
   ];
 
   const filteredItems = useMemo(() => {
-    let result = items.filter(item => {
-      if (activeTab === 'bookmarked' && !item.bookmarked) return false;
+    // ⭐ 찜 보관함 모드: 언어/주제 필터에 구애받지 않고 내가 찜한 모든 영상을 100% 무조건 노출 (검색어만 선택 적용)
+    if (activeTab === 'bookmarked') {
+      let bookmarkedList = items.filter(item => item.bookmarked);
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase().trim();
+        bookmarkedList = bookmarkedList.filter(item => {
+          const matchTitle = item.title?.toLowerCase().includes(q);
+          const matchChannel = item.channelTitle?.toLowerCase().includes(q);
+          const matchArtist = item.artist?.toLowerCase().includes(q);
+          return matchTitle || matchChannel || matchArtist;
+        });
+      }
+      return bookmarkedList;
+    }
 
+    let result = items.filter(item => {
       // Tier 1: Language Filter
       const itemLang = item.language || (item.category === 'spanish' ? 'es' : 'en');
       if (selectedLanguage !== 'all' && itemLang !== selectedLanguage) {
@@ -451,118 +464,130 @@ export default function App() {
             </div>
           </div>
 
-          {/* Tier 1: Major Language Tabs */}
-          <div className="major-lang-bar">
-            <div className="hierarchy-title-wrap">
-              <span className="hierarchy-badge">언어</span>
+          {/* Category Filters (Active in Feed mode, Disabled/Dimmed in Bookmark mode) */}
+          {activeTab === 'bookmarked' ? (
+            <div className="bookmark-all-notice-bar">
+              <span className="notice-icon">⭐</span>
+              <span className="notice-text">
+                <strong>찜 보관함 전용 모드:</strong> 필터 조건과 관계없이 내가 저장한 <strong>{bookmarkedCount}개의 찜 영상 전체</strong>를 빠짐없이 표시합니다.
+              </span>
             </div>
-            <div className="lang-pill-list">
-              {LANGUAGES.map(lang => {
-                const count = lang.id === 'all'
-                  ? (activeTab === 'bookmarked' ? bookmarkedCount : items.length)
-                  : items.filter(i => (activeTab !== 'bookmarked' || i.bookmarked) && (i.language || (i.category === 'spanish' ? 'es' : 'en')) === lang.id).length;
-                return (
-                  <button
-                    key={lang.id}
-                    className={`lang-tab-btn ${selectedLanguage === lang.id ? 'active' : ''}`}
-                    onClick={() => {
-                      setSelectedLanguage(lang.id);
-                      setPopArtistFilter('all');
-                    }}
-                  >
-                    <span className="lang-flag">{lang.flag}</span>
-                    <span className="lang-name">{lang.name}</span>
-                    <span className="lang-count">{count}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          ) : (
+            <>
+              {/* Tier 1: Major Language Tabs */}
+              <div className="major-lang-bar">
+                <div className="hierarchy-title-wrap">
+                  <span className="hierarchy-badge">언어</span>
+                </div>
+                <div className="lang-pill-list">
+                  {LANGUAGES.map(lang => {
+                    const count = lang.id === 'all'
+                      ? items.length
+                      : items.filter(i => (i.language || (i.category === 'spanish' ? 'es' : 'en')) === lang.id).length;
+                    return (
+                      <button
+                        key={lang.id}
+                        className={`lang-tab-btn ${selectedLanguage === lang.id ? 'active' : ''}`}
+                        onClick={() => {
+                          setSelectedLanguage(lang.id);
+                          setPopArtistFilter('all');
+                        }}
+                      >
+                        <span className="lang-flag">{lang.flag}</span>
+                        <span className="lang-name">{lang.name}</span>
+                        <span className="lang-count">{count}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
 
-          {/* Tier 2: Sub-category Topic Pills */}
-          <div className="sub-cat-bar">
-            <div className="hierarchy-title-wrap">
-              <span className="hierarchy-badge sub">주제</span>
-            </div>
-            <div className="sub-cat-pill-list">
-              {SUB_CATEGORIES.map(cat => (
-                <button
-                  key={cat.id}
-                  className={`sub-cat-pill ${selectedCategory === cat.id ? 'active' : ''} ${cat.id === 'pop_music' ? 'cat-pop-music' : ''}`}
-                  onClick={() => setSelectedCategory(cat.id)}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
-          </div>
+              {/* Tier 2: Sub-category Topic Pills */}
+              <div className="sub-cat-bar">
+                <div className="hierarchy-title-wrap">
+                  <span className="hierarchy-badge sub">주제</span>
+                </div>
+                <div className="sub-cat-pill-list">
+                  {SUB_CATEGORIES.map(cat => (
+                    <button
+                      key={cat.id}
+                      className={`sub-cat-pill ${selectedCategory === cat.id ? 'active' : ''} ${cat.id === 'pop_music' ? 'cat-pop-music' : ''}`}
+                      onClick={() => setSelectedCategory(cat.id)}
+                    >
+                      {cat.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-          {/* Pop Music Artist Sub-filter */}
-          {selectedCategory === 'pop_music' && (
-            <div className="pop-artist-filter-bar">
-              <button
-                className={`pop-artist-pill ${popArtistFilter === 'all' ? 'active' : ''}`}
-                onClick={() => setPopArtistFilter('all')}
-              >
-                🎵 전체 노래 ({items.filter(i => (activeTab !== 'bookmarked' || i.bookmarked) && (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (selectedLanguage === 'all' || (i.language || 'en') === selectedLanguage)).length}곡)
-              </button>
-              {(selectedLanguage === 'all' || selectedLanguage === 'en') && (
-                <>
+              {/* Pop Music Artist Sub-filter */}
+              {selectedCategory === 'pop_music' && (
+                <div className="pop-artist-filter-bar">
                   <button
-                    className={`pop-artist-pill adele ${popArtistFilter === 'Adele' ? 'active' : ''}`}
-                    onClick={() => setPopArtistFilter('Adele')}
+                    className={`pop-artist-pill ${popArtistFilter === 'all' ? 'active' : ''}`}
+                    onClick={() => setPopArtistFilter('all')}
                   >
-                    💙 아델
+                    🎵 전체 노래 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (selectedLanguage === 'all' || (i.language || 'en') === selectedLanguage)).length}곡)
                   </button>
-                  <button
-                    className={`pop-artist-pill lana ${popArtistFilter === 'Lana Del Rey' ? 'active' : ''}`}
-                    onClick={() => setPopArtistFilter('Lana Del Rey')}
-                  >
-                    🖤 라나 델 레이
-                  </button>
-                  <button
-                    className={`pop-artist-pill gracie ${popArtistFilter === 'Gracie Abrams' ? 'active' : ''}`}
-                    onClick={() => setPopArtistFilter('Gracie Abrams')}
-                  >
-                    🤍 그레이시 에이브럼스
-                  </button>
-                  <button
-                    className={`pop-artist-pill taylor ${popArtistFilter === 'Taylor Swift' ? 'active' : ''}`}
-                    onClick={() => setPopArtistFilter('Taylor Swift')}
-                  >
-                    💖 테일러 스위프트
-                  </button>
-                  <button
-                    className={`pop-artist-pill billie ${popArtistFilter === 'Billie Eilish' ? 'active' : ''}`}
-                    onClick={() => setPopArtistFilter('Billie Eilish')}
-                  >
-                    💚 빌리 아일리시
-                  </button>
-                  <button
-                    className={`pop-artist-pill olivia ${popArtistFilter === 'Olivia Rodrigo' ? 'active' : ''}`}
-                    onClick={() => setPopArtistFilter('Olivia Rodrigo')}
-                  >
-                    💜 올리비아 로드리고
-                  </button>
-                </>
+                  {(selectedLanguage === 'all' || selectedLanguage === 'en') && (
+                    <>
+                      <button
+                        className={`pop-artist-pill adele ${popArtistFilter === 'Adele' ? 'active' : ''}`}
+                        onClick={() => setPopArtistFilter('Adele')}
+                      >
+                        💙 아델
+                      </button>
+                      <button
+                        className={`pop-artist-pill lana ${popArtistFilter === 'Lana Del Rey' ? 'active' : ''}`}
+                        onClick={() => setPopArtistFilter('Lana Del Rey')}
+                      >
+                        🖤 라나 델 레이
+                      </button>
+                      <button
+                        className={`pop-artist-pill gracie ${popArtistFilter === 'Gracie Abrams' ? 'active' : ''}`}
+                        onClick={() => setPopArtistFilter('Gracie Abrams')}
+                      >
+                        🤍 그레이시 에이브럼스
+                      </button>
+                      <button
+                        className={`pop-artist-pill taylor ${popArtistFilter === 'Taylor Swift' ? 'active' : ''}`}
+                        onClick={() => setPopArtistFilter('Taylor Swift')}
+                      >
+                        💖 테일러 스위프트
+                      </button>
+                      <button
+                        className={`pop-artist-pill billie ${popArtistFilter === 'Billie Eilish' ? 'active' : ''}`}
+                        onClick={() => setPopArtistFilter('Billie Eilish')}
+                      >
+                        💚 빌리 아일리시
+                      </button>
+                      <button
+                        className={`pop-artist-pill olivia ${popArtistFilter === 'Olivia Rodrigo' ? 'active' : ''}`}
+                        onClick={() => setPopArtistFilter('Olivia Rodrigo')}
+                      >
+                        💜 올리비아 로드리고
+                      </button>
+                    </>
+                  )}
+                  {(selectedLanguage === 'all' || selectedLanguage === 'es') && (
+                    <button
+                      className={`pop-artist-pill aitana ${popArtistFilter === 'Spanish Ballads' ? 'active' : ''}`}
+                      onClick={() => setPopArtistFilter('Spanish Ballads')}
+                    >
+                      🇪🇸 아이타나 & 라틴 발라드
+                    </button>
+                  )}
+                  {(selectedLanguage === 'all' || selectedLanguage === 'zh') && (
+                    <button
+                      className={`pop-artist-pill gem ${popArtistFilter === 'G.E.M.' ? 'active' : ''}`}
+                      onClick={() => setPopArtistFilter('G.E.M.')}
+                    >
+                      🇨🇳 덩쯔치 G.E.M.
+                    </button>
+                  )}
+                </div>
               )}
-              {(selectedLanguage === 'all' || selectedLanguage === 'es') && (
-                <button
-                  className={`pop-artist-pill aitana ${popArtistFilter === 'Spanish Ballads' ? 'active' : ''}`}
-                  onClick={() => setPopArtistFilter('Spanish Ballads')}
-                >
-                  🇪🇸 아이타나 & 라틴 발라드
-                </button>
-              )}
-              {(selectedLanguage === 'all' || selectedLanguage === 'zh') && (
-                <button
-                  className={`pop-artist-pill gem ${popArtistFilter === 'G.E.M.' ? 'active' : ''}`}
-                  onClick={() => setPopArtistFilter('G.E.M.')}
-                >
-                  🇨🇳 덩쯔치 G.E.M.
-                </button>
-              )}
-            </div>
+            </>
           )}
         </div>
       )}
