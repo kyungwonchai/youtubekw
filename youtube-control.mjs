@@ -459,11 +459,16 @@ const MALE_KEYWORDS = [
   'theodore', 'wyatt', 'jayden', 'matteo', 'julian', 'leo', 'ezra', 'harrison',
   'pewdiepie', 'clint', 'steve', 'mike', 'dave', 'tom', 'chris', 'dan', 'matt', 'sam', 'ian',
   'shetty', 'abdaal', 'charles', 'moseley', 'roland frasier', 'simon sinek', 'huberman', 'peterson',
+  'alex hormozi', 'lewis howes', 'rainn wilson', 'soul boom',
   'jensen huang', 'shashi tharoor', 'konstantin kisin', 'mehdi hasan', 'raj persaud',
   'bon iver', 'rauw alejandro', 'zzoilo', 'khalid', 'vincent podcast', 'rich roll', 'doug bopst', 'viall files'
 ];
 
 const TRASH_KEYWORDS = [
+  // 마인크래프트 / 게임 / 애니메이션 / 카툰 (엄격 영구 차단)
+  'minecraft', '마인크래프트', 'gameplay', 'game', 'gaming', 'roblox', '로블록스', 'pixel art', '8-bit', '8bit',
+  'ted-ed', 'psych2go', 'animation', 'animated', 'anime', 'cartoon', '만화', '애니', '애니메이션',
+
   // 종교 / 교회 / 천주교 / 찬송가 / 찬양 (엄격 영구 차단)
   'church', 'jesus', 'christ', 'gospel', 'worship', 'pastor', 'christian', 'catholic', 'bible', 'pray',
   '찬송', '찬양', '교회', '예수', '성경', '목사', '천주교', '성당', '신부', 'hymn', 'iglesia', 'dios', 'catolica',
@@ -482,7 +487,7 @@ const TRASH_KEYWORDS = [
   'speed clean', 'clean my room', 'kitchen clean', 'bathroom clean', 'laundry', '빨래',
 
   // AI 보이스 / 버추얼
-  'ai voice', 'ai generated', 'ai avatar', 'virtual', 'vtuber', 'animation', 'anime', 'cartoon', 'synth', 'text to speech', 'tts', 'bot',
+  'ai voice', 'ai generated', 'ai avatar', 'virtual', 'vtuber', 'synth', 'text to speech', 'tts', 'bot',
   'manga', 'manhwa', 'comic', 'webtoon', 'faceless', 'no face',
 
   // 불필요한 국내 취준/먹방 잡담 브이로그
