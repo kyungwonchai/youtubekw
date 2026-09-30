@@ -131,8 +131,18 @@ export async function getTranscriptForVideo(videoId, { autoTranslate = true, lan
   }
 
   let rawList = [];
-  // Strategy: Try candidate language codes in order (Spanish, English, default without param)
-  const candidateLangs = lang ? [lang, 'es', 'en', undefined] : ['en', 'es', 'es-419', 'es-ES', undefined];
+  // Strategy: Try candidate language codes in order (target language, default, English, others)
+  let candidateLangs = [];
+  if (lang) {
+    candidateLangs.push(lang);
+    if (lang === 'ja') candidateLangs.push('ja-JP', 'ja');
+    else if (lang === 'zh') candidateLangs.push('zh-CN', 'zh-TW', 'zh-Hans', 'zh-Hant', 'zh');
+    else if (lang === 'es') candidateLangs.push('es-419', 'es-ES', 'es');
+    else if (lang === 'fr') candidateLangs.push('fr-FR', 'fr');
+    else if (lang === 'de') candidateLangs.push('de-DE', 'de');
+  }
+  candidateLangs.push(undefined, 'en', 'es', 'ja', 'zh', 'fr', 'de');
+  candidateLangs = [...new Set(candidateLangs)];
 
   for (const candidate of candidateLangs) {
     try {

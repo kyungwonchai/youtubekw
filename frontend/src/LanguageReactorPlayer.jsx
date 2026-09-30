@@ -508,7 +508,8 @@ export default function LanguageReactorPlayer({
     setActiveIndex(-1);
     setCurrentTime(0);
 
-    fetch(`${API_BASE}/transcript/${currentVideo.videoId}`)
+    const langParam = currentVideo.language ? `?lang=${encodeURIComponent(currentVideo.language)}` : '';
+    fetch(`${API_BASE}/transcript/${currentVideo.videoId}${langParam}`)
       .then(res => res.json())
       .then(data => {
         if (!isMounted) return;
@@ -526,7 +527,7 @@ export default function LanguageReactorPlayer({
       });
 
     return () => { isMounted = false; };
-  }, [currentVideo?.videoId]);
+  }, [currentVideo?.videoId, currentVideo?.language]);
 
   // 1-1. Auto-skip intro to first spoken sentence (TED & 영상 오프닝 음악/로고 자동 건너뛰기)
   useEffect(() => {
@@ -1080,14 +1081,28 @@ export default function LanguageReactorPlayer({
     }
   };
 
-  // 11-1. Native TTS Pronunciation Audio Playback (English & Spanish support)
+  // 11-1. Native TTS Pronunciation Audio Playback (Multi-lingual support)
   const handleSpeakWord = (text, e) => {
     if (e) e.stopPropagation();
     if (!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    const isSpanish = currentVideo?.category === 'spanish' || /[\u00C0-\u00FFñÑáéíóúÁÉÍÓÚ¿¡]/.test(text || '');
-    utterance.lang = isSpanish ? 'es-ES' : 'en-US';
+    const lang = currentVideo?.language || (currentVideo?.category === 'spanish' ? 'es' : 'en');
+    
+    if (lang === 'ja' || /[\u3040-\u309F\u30A0-\u30FF]/.test(text || '')) {
+      utterance.lang = 'ja-JP';
+    } else if (lang === 'zh' || /[\u4e00-\u9fa5]/.test(text || '')) {
+      utterance.lang = 'zh-CN';
+    } else if (lang === 'es' || /[\u00C0-\u00FFñÑáéíóúÁÉÍÓÚ¿¡]/.test(text || '')) {
+      utterance.lang = 'es-ES';
+    } else if (lang === 'fr') {
+      utterance.lang = 'fr-FR';
+    } else if (lang === 'de') {
+      utterance.lang = 'de-DE';
+    } else {
+      utterance.lang = 'en-US';
+    }
+
     utterance.rate = 0.9;
     window.speechSynthesis.speak(utterance);
   };

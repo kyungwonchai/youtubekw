@@ -68,9 +68,10 @@ app.post('/youtubekw/api/blacklist', handleBlockSpeaker);
 const handleGetLinks = (req, res) => {
   try {
     const filter = req.query.filter || 'all';
+    const language = req.query.language || 'all';
     const category = req.query.category || 'all';
     const search = req.query.search || '';
-    const result = getYouTubeLinks({ filter, category, search });
+    const result = getYouTubeLinks({ filter, language, category, search });
     res.json(result);
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -103,11 +104,11 @@ app.post('/youtubekw/api/links/:id/bookmark', handleBookmark);
 
 const handleAddCustomLink = async (req, res) => {
   try {
-    const { url, autoBookmark = true, category } = req.body || {};
+    const { url, autoBookmark = true, category, language } = req.body || {};
     if (!url) {
       return res.status(400).json({ error: 'URL을 입력해주세요.' });
     }
-    const result = await addYouTubeLink({ url, autoBookmark, category });
+    const result = await addYouTubeLink({ url, autoBookmark, category, language });
     res.json({ ok: true, ...result });
   } catch (e) {
     res.status(400).json({ error: e.message });
@@ -138,8 +139,9 @@ app.get('/youtubekw/api/speakers', handleGetSpeakers);
 const handleGetTranscript = async (req, res) => {
   try {
     const { videoId } = req.params;
+    const lang = req.query.lang || null;
     if (!videoId) return res.status(400).json({ ok: false, error: 'Video ID is required' });
-    const data = await getTranscriptForVideo(videoId, { autoTranslate: true });
+    const data = await getTranscriptForVideo(videoId, { autoTranslate: true, lang });
     res.json(data);
   } catch (e) {
     res.status(500).json({ ok: false, error: e.message, lines: [] });

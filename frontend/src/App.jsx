@@ -11,7 +11,8 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [runningWeekly, setRunningWeekly] = useState(false);
   const [activeTab, setActiveTab] = useState('feed'); // 'feed', 'bookmarked', 'weekly', 'speakers'
-  const [selectedCategory, setSelectedCategory] = useState('all'); // 'all', 'pop_music', 'ted_speech', 'essay_deep', 'sleep_life'
+  const [selectedLanguage, setSelectedLanguage] = useState('all'); // 'all', 'en', 'es', 'ja', 'zh', 'fr', 'de'
+  const [selectedCategory, setSelectedCategory] = useState('all'); // 'all', 'ted_speech', 'essay_deep', 'conversation', 'sleep_life', 'pop_music', 'top_trained'
   const [popArtistFilter, setPopArtistFilter] = useState('all'); // 'all', 'Olivia Rodrigo', 'Billie Eilish'
   const [searchQuery, setSearchQuery] = useState('');
   const [customUrl, setCustomUrl] = useState('');
@@ -223,23 +224,39 @@ export default function App() {
     }
   };
 
-  const categories = [
-    { id: 'all', label: '✨ 전체 추천 영상' },
-    { id: 'spanish', label: '🇪🇸 스페인어 쉐도잉 (TED·회화·명연설)' },
-    { id: 'top_trained', label: '🔥 최다 훈련순 (Top Trained)' },
-    { id: 'pop_music', label: '🎵 팝송 & 올리비아 (가사 쉐도잉)' },
+  const LANGUAGES = [
+    { id: 'all', code: 'all', name: '전체 언어', flag: '🌐', label: '🌐 전체 언어' },
+    { id: 'en', code: 'en', name: '영어', flag: '🇺🇸', label: '🇺🇸 영어 (EN)' },
+    { id: 'es', code: 'es', name: '스페인어', flag: '🇪🇸', label: '🇪🇸 스페인어 (ES)' },
+    { id: 'ja', code: 'ja', name: '일본어', flag: '🇯🇵', label: '🇯🇵 일본어 (JA)' },
+    { id: 'zh', code: 'zh', name: '중국어', flag: '🇨🇳', label: '🇨🇳 중국어 (ZH)' },
+    { id: 'fr', code: 'fr', name: '프랑스어', flag: '🇫🇷', label: '🇫🇷 프랑스어 (FR)' },
+    { id: 'de', code: 'de', name: '독일어', flag: '🇩🇪', label: '🇩🇪 독일어 (DE)' },
+  ];
+
+  const SUB_CATEGORIES = [
+    { id: 'all', label: '✨ 전체 주제' },
+    { id: 'top_trained', label: '🔥 최다 훈련순' },
     { id: 'ted_speech', label: '🎤 TED & 명품 강연' },
     { id: 'essay_deep', label: '📚 에세이 & 마인드셋' },
-    { id: 'sleep_life', label: '🌙 수면 & 인생 딥토크 (1시간+)' },
+    { id: 'conversation', label: '🗣️ 실전 회화 & 팟캐스트' },
+    { id: 'sleep_life', label: '🌙 수면 & 롱폼 딥토크 (1h+)' },
+    { id: 'pop_music', label: '🎵 노래 & 팝송' },
   ];
 
   const filteredItems = useMemo(() => {
     let result = items.filter(item => {
       if (activeTab === 'bookmarked' && !item.bookmarked) return false;
+
+      // Tier 1: Language Filter
+      const itemLang = item.language || (item.category === 'spanish' ? 'es' : 'en');
+      if (selectedLanguage !== 'all' && itemLang !== selectedLanguage) {
+        return false;
+      }
+
+      // Tier 2: Sub-category Filter
       if (selectedCategory !== 'all' && selectedCategory !== 'top_trained') {
-        if (selectedCategory === 'spanish') {
-          if (item.category !== 'spanish') return false;
-        } else if (selectedCategory === 'sleep_life') {
+        if (selectedCategory === 'sleep_life') {
           const parts = (item.duration || '').split(':').map(Number);
           let secs = 0;
           if (parts.length === 3) secs = parts[0] * 3600 + parts[1] * 60 + parts[2];
@@ -256,10 +273,14 @@ export default function App() {
               if (!matchB) return false;
             }
           }
+        } else if (selectedCategory === 'conversation') {
+          if (item.category !== 'conversation' && !item.tags?.includes('회화') && !item.tags?.includes('팟캐스트')) return false;
         } else if (item.category !== selectedCategory) {
           return false;
         }
       }
+
+      // Search Query Filter
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
         const matchTitle = item.title?.toLowerCase().includes(q);
@@ -279,7 +300,7 @@ export default function App() {
     }
 
     return result;
-  }, [items, activeTab, selectedCategory, popArtistFilter, searchQuery, listenStats]);
+  }, [items, activeTab, selectedLanguage, selectedCategory, popArtistFilter, searchQuery, listenStats]);
 
   const bookmarkedCount = items.filter(i => i.bookmarked).length;
 
@@ -365,18 +386,53 @@ export default function App() {
         </div>
       </div>
 
-      {/* Categories Focus Pills */}
+      {/* 2-Tier Category Navigation */}
       {(activeTab === 'feed' || activeTab === 'bookmarked') && (
-        <div className="yt-cat-bar">
-          {categories.map(cat => (
-            <button
-              key={cat.id}
-              className={`cat-pill ${selectedCategory === cat.id ? 'active' : ''} ${cat.id === 'pop_music' ? 'cat-pop-music' : ''}`}
-              onClick={() => setSelectedCategory(cat.id)}
-            >
-              {cat.label}
-            </button>
-          ))}
+        <div className="yt-category-hierarchy">
+          {/* Tier 1: Major Language Tabs (대카테고리: 언어별 선택) */}
+          <div className="major-lang-bar">
+            <div className="hierarchy-title-wrap">
+              <span className="hierarchy-badge">대카테고리</span>
+              <span className="hierarchy-label">🌐 학습 언어 선택</span>
+            </div>
+            <div className="lang-pill-list">
+              {LANGUAGES.map(lang => {
+                const count = lang.id === 'all'
+                  ? items.length
+                  : items.filter(i => (i.language || (i.category === 'spanish' ? 'es' : 'en')) === lang.id).length;
+                return (
+                  <button
+                    key={lang.id}
+                    className={`lang-tab-btn ${selectedLanguage === lang.id ? 'active' : ''}`}
+                    onClick={() => setSelectedLanguage(lang.id)}
+                  >
+                    <span className="lang-flag">{lang.flag}</span>
+                    <span className="lang-name">{lang.name}</span>
+                    <span className="lang-count">{count}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Tier 2: Sub-category Topic Pills (소카테고리: 주제 및 포맷) */}
+          <div className="sub-cat-bar">
+            <div className="hierarchy-title-wrap">
+              <span className="hierarchy-badge sub">소카테고리</span>
+              <span className="hierarchy-label">🎯 상세 주제 / 형식</span>
+            </div>
+            <div className="sub-cat-pill-list">
+              {SUB_CATEGORIES.map(cat => (
+                <button
+                  key={cat.id}
+                  className={`sub-cat-pill ${selectedCategory === cat.id ? 'active' : ''} ${cat.id === 'pop_music' ? 'cat-pop-music' : ''}`}
+                  onClick={() => setSelectedCategory(cat.id)}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 
@@ -563,17 +619,22 @@ export default function App() {
                         })()}
 
                         <span className="duration-tag">{item.duration || '10분+'}</span>
-                        <span className={`cat-badge ${item.category === 'pop_music' ? 'pop-badge' : item.category === 'spanish' ? 'spanish-badge' : ''}`}>
-                          {item.category === 'pop_music'
-                            ? (item.artist?.toLowerCase().includes('olivia') || item.title?.toLowerCase().includes('olivia') ? '💜 Olivia Rodrigo' : item.artist?.toLowerCase().includes('billie') || item.title?.toLowerCase().includes('billie') ? '💚 Billie Eilish' : '🎵 팝송 쉐도잉')
-                            : item.category === 'spanish'
-                            ? '🇪🇸 스페인어'
-                            : item.category === 'ted_speech'
-                            ? '🎤 TED 강연'
-                            : item.category === 'sleep_life'
-                            ? '🌙 수면&인생 (1h+)'
-                            : '📚 에세이·마인드'}
-                        </span>
+                        <div className="card-badge-group">
+                          <span className={`lang-flag-badge lang-${item.language || 'en'}`}>
+                            {item.language === 'es' ? '🇪🇸 스페인어' : item.language === 'ja' ? '🇯🇵 일본어' : item.language === 'zh' ? '🇨🇳 중국어' : item.language === 'fr' ? '🇫🇷 프랑스어' : item.language === 'de' ? '🇩🇪 독일어' : '🇺🇸 영어'}
+                          </span>
+                          <span className={`cat-badge ${item.category === 'pop_music' ? 'pop-badge' : ''}`}>
+                            {item.category === 'pop_music'
+                              ? (item.artist?.toLowerCase().includes('olivia') || item.title?.toLowerCase().includes('olivia') ? '💜 Olivia Rodrigo' : item.artist?.toLowerCase().includes('billie') || item.title?.toLowerCase().includes('billie') ? '💚 Billie Eilish' : '🎵 팝송 쉐도잉')
+                              : item.category === 'conversation'
+                              ? '🗣️ 실전 회화'
+                              : item.category === 'ted_speech'
+                              ? '🎤 TED 강연'
+                              : item.category === 'sleep_life'
+                              ? '🌙 수면&인생 (1h+)'
+                              : '📚 에세이·마인드'}
+                          </span>
+                        </div>
                         <span className="index-tag">#{index + 1}</span>
                       </div>
                       <div className="card-body">

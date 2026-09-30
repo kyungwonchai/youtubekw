@@ -128,58 +128,41 @@ export function saveCustomSpeakers(speakers) {
 }
 
 /**
- * 2 Main Categories Focus: TED 강연 vs 에세이 & 마인드셋
+ * Major Language Categories (대카테고리: 언어별 선택)
  */
+export const LANGUAGES = [
+  { id: 'all', code: 'all', name: '전체 언어', flag: '🌐', label: '🌐 전체 언어', desc: '모든 언어 쉐도잉 콘텐츠' },
+  { id: 'en', code: 'en', name: '영어', flag: '🇺🇸', label: '🇺🇸 영어 (English)', ttsLang: 'en-US', desc: '미국/영국 명사 TED 강연, 비즈니스 에세이, 팟캐스트 & 팝송' },
+  { id: 'es', code: 'es', name: '스페인어', flag: '🇪🇸', label: '🇪🇸 스페인어 (Español)', ttsLang: 'es-ES', desc: 'TED en Español, 카스티야 딕션 1타 Linguriosa, 실전 회화' },
+  { id: 'ja', code: 'ja', name: '일본어', flag: '🇯🇵', label: '🇯🇵 일본어 (日本語)', ttsLang: 'ja-JP', desc: 'TEDx 일본어 명강연, 아카네/YUYU 실전 회화 팟캐스트, 비즈니스 쉐도잉' },
+  { id: 'zh', code: 'zh', name: '중국어', flag: '🇨🇳', label: '🇨🇳 중국어 (中文)', ttsLang: 'zh-CN', desc: 'TEDx 표준 중국어 명강연, 감정 조절/뇌과학 에세이, 실전 회화' },
+  { id: 'fr', code: 'fr', name: '프랑스어', flag: '🇫🇷', label: '🇫🇷 프랑스어 (Français)', ttsLang: 'fr-FR', desc: 'TEDx 프랑스어 명연설, 파리 표준 딕션, Easy French 쉐도잉' },
+  { id: 'de', code: 'de', name: '독일어', flag: '🇩🇪', label: '🇩🇪 독일어 (Deutsch)', ttsLang: 'de-DE', desc: 'TEDx 독일어 명강연, 스토리텔링 스피치, Easy German 쉐도잉' },
+];
+
+/**
+ * Format / Topic Subcategories (소카테고리: 주제 및 포맷별 선택)
+ */
+export const SUB_CATEGORIES = [
+  { id: 'all', label: '✨ 전체 주제', icon: '✨', desc: '선택한 언어의 모든 주제' },
+  { id: 'ted_speech', label: '🎤 TED & 명품 강연', icon: '🎤', desc: '대중 스피치, TED/TEDx 명강연 및 프레젠테이션' },
+  { id: 'essay_deep', label: '📚 에세이 & 마인드셋', icon: '📚', desc: '기업가정신, 인생 가치관, 심층 대담 및 마인드셋' },
+  { id: 'sleep_life', label: '🌙 수면 & 롱폼 딥토크 (1h+)', icon: '🌙', desc: '취침·휴식 시 듣기 좋은 60분+ 차분한 롱폼 스토리텔링' },
+  { id: 'conversation', label: '🗣️ 실전 회화 & 팟캐스트', icon: '🗣️', desc: '원어민 일상 대화, 딕션 훈련 및 실전 회화 팟캐스트' },
+  { id: 'pop_music', label: '🎵 노래 & 가사 쉐도잉', icon: '🎵', desc: '음악 가사 싱크 쉐도잉 & 팝송 학습' },
+  { id: 'top_trained', label: '🔥 최다 훈련순', icon: '🔥', desc: '내가 가장 많이 집중 훈련한 영상 순서' },
+];
+
 export const CURATION_CHANNELS = [
   {
     id: 'all',
     label: '✨ 전체 추천 영상',
     shortLabel: '전체 추천',
-    target: '최근 2~3년 이내 밝고 지적인 여성 리더·명사들의 명품 TED 강연, 인생 가치관 및 수면 딥토크',
+    target: '글로벌 명사들의 명품 TED 강연, 인생 가치관 및 실전 쉐도잉',
     icon: '✨',
-    desc: '스피치 훈련 & 영어 쉐도잉에 최적화된 유창하고 또렷한 딕션의 명사 강연, 에세이 및 취침용 롱폼 토크',
+    desc: '다국어 스피치 훈련 & 쉐도잉에 최적화된 유창하고 또렷한 딕션의 명사 강연, 에세이 및 취침용 롱폼 토크',
     category: 'all',
     defaultTags: ['명품딕션', '롤모델스피치', '기업가정신', '쉐도잉최적'],
-  },
-  {
-    id: 'spanish',
-    label: '🇪🇸 스페인어 쉐도잉 (TED·회화·명연설)',
-    shortLabel: '🇪🇸 스페인어',
-    target: 'TED en Español, 스페인어 명연설, 실전 회화 팟캐스트 및 Linguriosa 딕션 마스터클래스',
-    icon: '🇪🇸',
-    desc: '또렷한 표준 카스티야 & 히스패닉 스페인어 딕션, TED 명강연 및 스페인어 회화 쉐도잉',
-    category: 'spanish',
-    defaultTags: ['스페인어', 'TEDenEspañol', '스페인어회화', '고급스페인어', '쉐도잉'],
-  },
-  {
-    id: 'ted_speech',
-    label: '🎤 TED & 명품 강연',
-    shortLabel: 'TED & 명연설',
-    target: 'TED, TEDx, 명문대 졸업사, 기조연설 등 대중 스피치 마스터클래스',
-    icon: '🎤',
-    desc: '전달력과 발음이 탁월한 젊은 여성 리더 및 명사들의 압도적인 TED/TEDx 및 대중 강연',
-    category: 'ted_speech',
-    defaultTags: ['TED강연', 'TEDx', '명연설', '스피치훈련'],
-  },
-  {
-    id: 'essay_deep',
-    label: '📚 에세이 & 마인드셋',
-    shortLabel: '에세이 & 마인드',
-    target: '기업가정신, 인생 가치관, 삶의 태도, 성공 경험담 및 심층 대담',
-    icon: '📚',
-    desc: '성공한 젊은 여성 CEO/투자자/학자들의 비즈니스 마인드셋, 3-2-1 스피치 기법, 삶을 살아가는 법',
-    category: 'essay_deep',
-    defaultTags: ['기업가정신', '인생가치관', '경험담', '고급에세이'],
-  },
-  {
-    id: 'sleep_life',
-    label: '🌙 수면 & 인생 딥토크 (1시간+)',
-    shortLabel: '수면 & 인생 (1시간+)',
-    target: '1시간 이상 잘 때 듣는 진솔한 인생 이야기, 심야 팟캐스트 & 잔잔한 롱폼 딥 인터뷰 (미녀 엄선)',
-    icon: '🌙',
-    desc: '취침·휴식 시 듣기 좋은 차분하고 또렷한 딕션의 매력적인 여성 호스트/명사들의 60분+ 인생 스토리텔링 및 딥토크',
-    category: 'sleep_life',
-    defaultTags: ['수면용팟캐스트', '1시간이상', '인생이야기', '차분한딕션', '미녀엄선'],
   },
 ];
 
@@ -514,17 +497,12 @@ export function isTrashContent(title = '', desc = '', channelTitle = '') {
   const text = `${title} ${desc} ${channelTitle}`.toLowerCase();
   const cTitle = (channelTitle || '').toLowerCase();
 
-  // 1. Check Korean Characters in Channel or Title
-  if (/[가-힣]/.test(cTitle)) return true;
+  // 1. Check Korean noise in non-Korean curation (reject generic domestic vlogs)
+  if (cTitle.includes('브이로그') || cTitle.includes('취준생') || cTitle.includes('먹방') || cTitle.includes('청소')) return true;
   const koreanCount = (title.match(/[가-힣]/g) || []).length;
-  if (koreanCount > 3) return true;
+  if (koreanCount > 10) return true;
 
-  // 2. Check Chinese & Japanese
-  if (/[\u4e00-\u9fa5]/.test(text) || /[\u3040-\u309F\u30A0-\u30FF]/.test(text)) {
-    return true;
-  }
-
-  // 3. Trash keywords
+  // 2. Trash keywords
   for (const kw of TRASH_KEYWORDS) {
     const lowerKw = kw.trim().toLowerCase();
     if (!lowerKw) continue;
@@ -765,23 +743,316 @@ export const DEFAULT_SPANISH_TRACKS = [
   },
 ];
 
-export function loadSpanishTracks() {
-  return DEFAULT_SPANISH_TRACKS.map(t => ({
-    id: `es_${t.videoId}`,
-    videoId: t.videoId,
-    title: t.title,
-    channelTitle: t.channelTitle,
-    description: t.description,
-    thumbnailUrl: t.thumbnailUrl,
-    url: `https://www.youtube.com/watch?v=${t.videoId}`,
-    duration: t.duration,
-    category: 'spanish',
-    tags: t.tags,
-    source: 'curated_spanish',
-    bookmarked: false,
-    addedAt: Date.now() - 40000,
-  }));
+export const DEFAULT_JAPANESE_TRACKS = [
+  {
+    videoId: 'iIkEj1rZWa0',
+    title: '日本語の会話が上手になる3つのポイント (일본어 회화 실력이 빠르게 느는 3가지 비결)',
+    channelTitle: 'あかね的日本語教室 (Akane Japanese)',
+    description: '원어민 아카네 선생님의 또렷한 도쿄 표준 발음으로 익히는 실전 일본어 회화 및 스피치 팁',
+    thumbnailUrl: 'https://img.youtube.com/vi/iIkEj1rZWa0/hqdefault.jpg',
+    duration: '14:57',
+    language: 'ja',
+    category: 'conversation',
+    tags: ['일본어', '회화훈련', '아카네', '표준발음', '쉐도잉'],
+    source: 'curated_japanese',
+  },
+  {
+    videoId: 'C9VabhxOPbA',
+    title: '会話のアドバイス / Get better slowly (일본어 리스닝 & 쉐도잉 팟캐스트)',
+    channelTitle: 'YUYUの日本語Podcast',
+    description: '자연스러운 일본어 구어체와 명확한 억양을 한 문장씩 따라하는 팟캐스트 쉐도잉',
+    thumbnailUrl: 'https://img.youtube.com/vi/C9VabhxOPbA/hqdefault.jpg',
+    duration: '17:13',
+    language: 'ja',
+    category: 'conversation',
+    tags: ['일본어', '팟캐스트', '일상회화', '리스닝', '쉐도잉'],
+    source: 'curated_japanese',
+  },
+  {
+    videoId: 'JMKetIc6hSg',
+    title: 'Shadowing Practice : Online Conversation (일본어 실전 대화 쉐도잉)',
+    channelTitle: 'Speak Japanese Naturally',
+    description: '일상 및 온라인에서 자연스럽게 반응하고 말하는 실전 일본어 쉐도잉 훈련',
+    thumbnailUrl: 'https://img.youtube.com/vi/JMKetIc6hSg/hqdefault.jpg',
+    duration: '11:56',
+    language: 'ja',
+    category: 'conversation',
+    tags: ['일본어', '실전회화', '자연스러운억양', '쉐도잉'],
+    source: 'curated_japanese',
+  },
+  {
+    videoId: 'PPQrkjxlpxs',
+    title: '実用ビジネス日本語 Jitsuyou Bijinesu (실용 비즈니스 일본어 집중 쉐도잉)',
+    channelTitle: '千一',
+    description: '비즈니스 실전 경어, 프레젠테이션 및 직장 내 명료한 일본어 스피치 마스터클래스',
+    thumbnailUrl: 'https://img.youtube.com/vi/PPQrkjxlpxs/hqdefault.jpg',
+    duration: '1:38:01',
+    language: 'ja',
+    category: 'essay_deep',
+    tags: ['일본어', '비즈니스', '고급일본어', '롱폼쉐도잉'],
+    source: 'curated_japanese',
+  },
+];
+
+export const DEFAULT_CHINESE_TRACKS = [
+  {
+    videoId: 'snZ811wvjjw',
+    title: '如何不讓人生留下遺憾? (인생에 후회를 남기지 않는 법) | 陳永儀 May Chen | TEDxTaipei',
+    channelTitle: 'TEDx Talks',
+    description: '임상심리학자 May Chen 교수가 전하는 완벽한 표준 중국어 발음과 죄책감 극복 인생 명강연',
+    thumbnailUrl: 'https://img.youtube.com/vi/snZ811wvjjw/hqdefault.jpg',
+    duration: '14:28',
+    language: 'zh',
+    category: 'ted_speech',
+    tags: ['중국어', 'TEDx', '심리학', '인생가치관', '명연설'],
+    source: 'curated_chinese',
+  },
+  {
+    videoId: 'uiJ4zibW8_M',
+    title: '沒有「負面能量」是好事嗎？需要重新認識的「情緒反應」| 陳永儀 May Chen | TEDxTaipei',
+    channelTitle: 'TEDx Talks',
+    description: '부정적 감정을 온전히 수용하고 다루는 법, 또렷하고 정확한 중국어 딕션 마스터',
+    thumbnailUrl: 'https://img.youtube.com/vi/uiJ4zibW8_M/hqdefault.jpg',
+    duration: '15:23',
+    language: 'zh',
+    category: 'ted_speech',
+    tags: ['중국어', 'TEDx', '감정조절', '명품딕션', '쉐도잉'],
+    source: 'curated_chinese',
+  },
+  {
+    videoId: 'wWnUczsfGv0',
+    title: '腦科學揭露女人思考的秘密 (뇌과학이 밝히는 사고의 비밀)：洪蘭 Daisy L. Hung | TEDxTaipei',
+    channelTitle: 'TEDxTaipei',
+    description: '뇌인지과학자 Daisy Hung 교수의 흥미진진한 뇌과학과 소통의 비결 스피치',
+    thumbnailUrl: 'https://img.youtube.com/vi/wWnUczsfGv0/hqdefault.jpg',
+    duration: '19:27',
+    language: 'zh',
+    category: 'essay_deep',
+    tags: ['중국어', 'TEDx', '뇌과학', '스피치훈련', '쉐도잉'],
+    source: 'curated_chinese',
+  },
+  {
+    videoId: '4BOzM0lYjMw',
+    title: '充滿鼓舞性的自由教育 (자유로운 교육의 힘)：黑嘉嘉 (Joanne Missingham) | TEDxTaipei',
+    channelTitle: 'TEDxTaipei',
+    description: '프로 바둑 기사이자 배우 Joanne Missingham의 열정과 끈기, 자기주도적 성장 연설',
+    thumbnailUrl: 'https://img.youtube.com/vi/4BOzM0lYjMw/hqdefault.jpg',
+    duration: '10:46',
+    language: 'zh',
+    category: 'ted_speech',
+    tags: ['중국어', 'TEDx', '자기계발', '마인드셋', '쉐도잉'],
+    source: 'curated_chinese',
+  },
+];
+
+export const DEFAULT_FRENCH_TRACKS = [
+  {
+    videoId: '8S8mie3bwtw',
+    title: 'Rien ne nous arrive par hasard (우연은 없다) | Nadalette La Fonta Six | TEDxChampsElyseesWomen',
+    channelTitle: 'TEDx Talks',
+    description: '파리 샹젤리제 TEDx 무대에서 전하는 삶의 역경과 회복 탄력성 프랑스어 명연설',
+    thumbnailUrl: 'https://img.youtube.com/vi/8S8mie3bwtw/hqdefault.jpg',
+    duration: '18:55',
+    language: 'fr',
+    category: 'ted_speech',
+    tags: ['프랑스어', 'TEDx', '파리딕션', '인생철학', '쉐도잉'],
+    source: 'curated_french',
+  },
+  {
+    videoId: '0qeD3P0_o08',
+    title: 'Femmes, osez être un modèle inspirant ! (영감을 주는 롤모델이 되라) | Madeline Da Silva',
+    channelTitle: 'TEDx Talks',
+    description: '자신만의 목소리로 세상을 바꾸는 여성 리더십과 카리스마 프랑스어 대중 스피치',
+    thumbnailUrl: 'https://img.youtube.com/vi/0qeD3P0_o08/hqdefault.jpg',
+    duration: '15:00',
+    language: 'fr',
+    category: 'ted_speech',
+    tags: ['프랑스어', 'TEDx', '여성리더십', '스피치마스터', '쉐도잉'],
+    source: 'curated_french',
+  },
+  {
+    videoId: '2E_Kx-MBlEA',
+    title: 'Les 6 règles pour avoir confiance en soi (자신감을 얻는 6가지 법칙) | Sally | TEDxBrussels',
+    channelTitle: 'TEDx Talks',
+    description: '자신감을 구축하고 두려움을 이겨내는 6가지 실행 전략 프랑스어 강연',
+    thumbnailUrl: 'https://img.youtube.com/vi/2E_Kx-MBlEA/hqdefault.jpg',
+    duration: '15:05',
+    language: 'fr',
+    category: 'ted_speech',
+    tags: ['프랑스어', 'TEDx', '자신감', '동기부여', '쉐도잉'],
+    source: 'curated_french',
+  },
+  {
+    videoId: 'XU2R4CjH0o4',
+    title: 'Shadowing French Speaking Practice (A2) | Simply French Podcast',
+    channelTitle: 'Simply French Podcast',
+    description: '원어민 일상 프랑스어를 한 문장씩 따라 말하며 억양과 연음을 다듬는 실전 쉐도잉',
+    thumbnailUrl: 'https://img.youtube.com/vi/XU2R4CjH0o4/hqdefault.jpg',
+    duration: '15:40',
+    language: 'fr',
+    category: 'conversation',
+    tags: ['프랑스어', '팟캐스트', '실전회화', '연음훈련', '쉐도잉'],
+    source: 'curated_french',
+  },
+];
+
+export const DEFAULT_GERMAN_TRACKS = [
+  {
+    videoId: '_ACbNYfOmB0',
+    title: 'Transformiere deine Rede: Storytelling für persönliches Wachstum | Tatjana Lackner | TEDx',
+    channelTitle: 'TEDx Talks',
+    description: '오스트리아 잘츠부르크 TEDx • 스피치 트레이너가 전하는 스토리텔링과 완벽한 독일어 딕션',
+    thumbnailUrl: 'https://img.youtube.com/vi/_ACbNYfOmB0/hqdefault.jpg',
+    duration: '18:06',
+    language: 'de',
+    category: 'ted_speech',
+    tags: ['독일어', 'TEDx', '스토리텔링', '스피치훈련', '쉐도잉'],
+    source: 'curated_german',
+  },
+  {
+    videoId: 'VJeXOTN73xk',
+    title: 'Auf der Suche nach echter Freundschaft (진정한 우정을 찾아서) | Lisa-Marie Schiffner | TEDx',
+    channelTitle: 'TEDx Talks',
+    description: '젊은 크리에이터가 전하는 진솔한 인간관계와 자기 가치관 독일어 스피치',
+    thumbnailUrl: 'https://img.youtube.com/vi/VJeXOTN73xk/hqdefault.jpg',
+    duration: '12:55',
+    language: 'de',
+    category: 'ted_speech',
+    tags: ['독일어', 'TEDx', '인간관계', '감동토크', '쉐도잉'],
+    source: 'curated_german',
+  },
+  {
+    videoId: '0G_VatoYxps',
+    title: 'Talking about my Daily Routine (B1) | Learn German with Podcast | Easy German',
+    channelTitle: 'Easy German',
+    description: 'Easy German • 하루 일과를 나누며 자연스러운 표준 독일어 회화와 억양을 익히는 팟캐스트',
+    thumbnailUrl: 'https://img.youtube.com/vi/0G_VatoYxps/hqdefault.jpg',
+    duration: '12:13',
+    language: 'de',
+    category: 'conversation',
+    tags: ['독일어', 'EasyGerman', '일상회화', '표준독일어', '쉐도잉'],
+    source: 'curated_german',
+  },
+  {
+    videoId: 'Oev31FCvm6I',
+    title: 'Learn to Speak German Without Thinking | Shadowing German Speaking Practice',
+    channelTitle: 'German Shadowing',
+    description: '생각하지 않고 바로 입에서 나오는 독일어 패턴 쉐도잉 집중 스피킹 훈련',
+    thumbnailUrl: 'https://img.youtube.com/vi/Oev31FCvm6I/hqdefault.jpg',
+    duration: '19:42',
+    language: 'de',
+    category: 'conversation',
+    tags: ['독일어', '회화훈련', '패턴쉐도잉', '스피킹마스터'],
+    source: 'curated_german',
+  },
+];
+
+export function detectItemLanguage(item) {
+  if (!item) return 'en';
+  if (item.language && item.language !== 'unknown' && item.language !== 'all') return item.language;
+  if (item.category === 'spanish' || item.source === 'curated_spanish' || item.id?.startsWith('es_')) return 'es';
+  if (item.source === 'curated_japanese' || item.id?.startsWith('ja_')) return 'ja';
+  if (item.source === 'curated_chinese' || item.id?.startsWith('zh_')) return 'zh';
+  if (item.source === 'curated_french' || item.id?.startsWith('fr_')) return 'fr';
+  if (item.source === 'curated_german' || item.id?.startsWith('de_')) return 'de';
+
+  const text = `${item.title || ''} ${item.channelTitle || ''} ${item.description || ''}`.toLowerCase();
+  if (/[\u3040-\u309F\u30A0-\u30FF]/.test(text)) return 'ja';
+  if (/[\u4e00-\u9fa5]/.test(text)) return 'zh';
+  if (text.includes('espanol') || text.includes('español') || text.includes('spanish') || text.includes('linguriosa') || text.includes('charla') || text.includes('hablar')) return 'es';
+  if (text.includes('français') || text.includes('francais') || text.includes('french') || text.includes('champselysees') || text.includes('discours')) return 'fr';
+  if (text.includes('deutsch') || text.includes('german') || text.includes('salzburg') || text.includes('stuttgart') || text.includes('rede')) return 'de';
+
+  return 'en';
 }
+
+export function loadMultiLangTracks() {
+  const all = [
+    ...DEFAULT_SPANISH_TRACKS.map(t => ({
+      id: `es_${t.videoId}`,
+      videoId: t.videoId,
+      title: t.title,
+      channelTitle: t.channelTitle,
+      description: t.description,
+      thumbnailUrl: t.thumbnailUrl,
+      url: `https://www.youtube.com/watch?v=${t.videoId}`,
+      duration: t.duration,
+      language: 'es',
+      category: t.category || 'ted_speech',
+      tags: t.tags,
+      source: 'curated_spanish',
+      bookmarked: false,
+      addedAt: Date.now() - 40000,
+    })),
+    ...DEFAULT_JAPANESE_TRACKS.map(t => ({
+      id: `ja_${t.videoId}`,
+      videoId: t.videoId,
+      title: t.title,
+      channelTitle: t.channelTitle,
+      description: t.description,
+      thumbnailUrl: t.thumbnailUrl,
+      url: `https://www.youtube.com/watch?v=${t.videoId}`,
+      duration: t.duration,
+      language: 'ja',
+      category: t.category || 'conversation',
+      tags: t.tags,
+      source: 'curated_japanese',
+      bookmarked: false,
+      addedAt: Date.now() - 35000,
+    })),
+    ...DEFAULT_CHINESE_TRACKS.map(t => ({
+      id: `zh_${t.videoId}`,
+      videoId: t.videoId,
+      title: t.title,
+      channelTitle: t.channelTitle,
+      description: t.description,
+      thumbnailUrl: t.thumbnailUrl,
+      url: `https://www.youtube.com/watch?v=${t.videoId}`,
+      duration: t.duration,
+      language: 'zh',
+      category: t.category || 'ted_speech',
+      tags: t.tags,
+      source: 'curated_chinese',
+      bookmarked: false,
+      addedAt: Date.now() - 30000,
+    })),
+    ...DEFAULT_FRENCH_TRACKS.map(t => ({
+      id: `fr_${t.videoId}`,
+      videoId: t.videoId,
+      title: t.title,
+      channelTitle: t.channelTitle,
+      description: t.description,
+      thumbnailUrl: t.thumbnailUrl,
+      url: `https://www.youtube.com/watch?v=${t.videoId}`,
+      duration: t.duration,
+      language: 'fr',
+      category: t.category || 'ted_speech',
+      tags: t.tags,
+      source: 'curated_french',
+      bookmarked: false,
+      addedAt: Date.now() - 25000,
+    })),
+    ...DEFAULT_GERMAN_TRACKS.map(t => ({
+      id: `de_${t.videoId}`,
+      videoId: t.videoId,
+      title: t.title,
+      channelTitle: t.channelTitle,
+      description: t.description,
+      thumbnailUrl: t.thumbnailUrl,
+      url: `https://www.youtube.com/watch?v=${t.videoId}`,
+      duration: t.duration,
+      language: 'de',
+      category: t.category || 'ted_speech',
+      tags: t.tags,
+      source: 'curated_german',
+      bookmarked: false,
+      addedAt: Date.now() - 20000,
+    })),
+  ];
+  return all;
+}
+
+export const loadSpanishTracks = () => loadMultiLangTracks().filter(t => t.language === 'es');
 
 /**
  * Load YouTube links data from local JSON database
@@ -803,15 +1074,22 @@ export function loadYouTubeData() {
     }
   }
 
-  // Ensure Pop Music tracks (Olivia Rodrigo 31곡 & Pop tracks) are merged
+  // Ensure items have normalized language field
+  store.items.forEach(item => {
+    item.language = detectItemLanguage(item);
+    if (item.category === 'spanish') item.category = 'ted_speech';
+  });
+
+  // Ensure Pop Music tracks & Multi-lingual tracks are merged
   const popTracks = loadPopMusicTracks();
-  const spanishTracks = loadSpanishTracks();
+  const multiTracks = loadMultiLangTracks();
   const existingVideoIds = new Set(store.items.map(i => i.videoId));
   let modified = false;
 
   if (popTracks.length > 0) {
     for (const popTrack of popTracks) {
       if (!existingVideoIds.has(popTrack.videoId)) {
+        popTrack.language = 'en';
         store.items.push(popTrack);
         existingVideoIds.add(popTrack.videoId);
         modified = true;
@@ -819,12 +1097,11 @@ export function loadYouTubeData() {
     }
   }
 
-  // Ensure Spanish Shadowing tracks are merged
-  if (spanishTracks.length > 0) {
-    for (const esTrack of spanishTracks) {
-      if (!existingVideoIds.has(esTrack.videoId)) {
-        store.items.push(esTrack);
-        existingVideoIds.add(esTrack.videoId);
+  if (multiTracks.length > 0) {
+    for (const track of multiTracks) {
+      if (!existingVideoIds.has(track.videoId)) {
+        store.items.push(track);
+        existingVideoIds.add(track.videoId);
         modified = true;
       }
     }
@@ -939,12 +1216,13 @@ export function extractYouTubeId(url) {
 /**
  * Get YouTube links with filtering and sorting
  */
-export function getYouTubeLinks({ filter = 'all', category = 'all', search = '' } = {}) {
+export function getYouTubeLinks({ filter = 'all', language = 'all', category = 'all', search = '' } = {}) {
   const store = loadYouTubeData();
   let list = store.items || [];
 
-  // Normalize existing legacy categories to the 2 main categories
+  // Normalize language for all items
   list.forEach(item => {
+    item.language = detectItemLanguage(item);
     if (item.category === 'education_sci' || item.category === 'career_mind' || item.category === 'diction_essay') {
       item.category = 'essay_deep';
     }
@@ -956,6 +1234,10 @@ export function getYouTubeLinks({ filter = 'all', category = 'all', search = '' 
     list = list.filter(item => !item.bookmarked);
   }
 
+  if (language && language !== 'all') {
+    list = list.filter(item => item.language === language);
+  }
+
   if (category && category !== 'all') {
     if (category === 'sleep_life') {
       list = list.filter(item => {
@@ -964,6 +1246,8 @@ export function getYouTubeLinks({ filter = 'all', category = 'all', search = '' 
       });
     } else if (category === 'pop_music') {
       list = list.filter(item => item.category === 'pop_music' || item.source === 'ytmusic_pop');
+    } else if (category === 'conversation') {
+      list = list.filter(item => item.category === 'conversation' || item.tags?.includes('회화') || item.tags?.includes('팟캐스트'));
     } else {
       list = list.filter(item => item.category === category);
     }
@@ -985,6 +1269,14 @@ export function getYouTubeLinks({ filter = 'all', category = 'all', search = '' 
     return (b.addedAt || 0) - (a.addedAt || 0);
   });
 
+  // Calculate language counts
+  const langCounts = { all: store.items.length };
+  LANGUAGES.forEach(l => {
+    if (l.id !== 'all') {
+      langCounts[l.id] = store.items.filter(i => (i.language || detectItemLanguage(i)) === l.id).length;
+    }
+  });
+
   return {
     items: list,
     total: store.items.length,
@@ -992,6 +1284,9 @@ export function getYouTubeLinks({ filter = 'all', category = 'all', search = '' 
     watchLaterCount: store.items.filter(i => i.bookmarked).length,
     lastCuratedAt: store.lastCuratedAt || null,
     lastQuery: store.lastQuery || '',
+    languages: LANGUAGES,
+    langCounts,
+    subCategories: SUB_CATEGORIES,
     channels: CURATION_CHANNELS,
     speakers: loadAllSpeakers(),
   };
