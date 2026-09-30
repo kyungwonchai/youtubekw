@@ -133,11 +133,11 @@ export function saveCustomSpeakers(speakers) {
 export const LANGUAGES = [
   { id: 'all', code: 'all', name: '전체 언어', flag: '🌐', label: '🌐 전체 언어', desc: '모든 언어 쉐도잉 콘텐츠' },
   { id: 'en', code: 'en', name: '영어', flag: '🇺🇸', label: '🇺🇸 영어 (English)', ttsLang: 'en-US', desc: '미국/영국 명사 TED 강연, 비즈니스 에세이, 팟캐스트 & 팝송' },
-  { id: 'es', code: 'es', name: '스페인어', flag: '🇪🇸', label: '🇪🇸 스페인어 (Español)', ttsLang: 'es-ES', desc: 'TED en Español, 카스티야 딕션 1타 Linguriosa, 실전 회화' },
-  { id: 'ja', code: 'ja', name: '일본어', flag: '🇯🇵', label: '🇯🇵 일본어 (日本語)', ttsLang: 'ja-JP', desc: 'TEDx 일본어 명강연, 아카네/YUYU 실전 회화 팟캐스트, 비즈니스 쉐도잉' },
-  { id: 'zh', code: 'zh', name: '중국어', flag: '🇨🇳', label: '🇨🇳 중국어 (中文)', ttsLang: 'zh-CN', desc: 'TEDx 표준 중국어 명강연, 감정 조절/뇌과학 에세이, 실전 회화' },
-  { id: 'fr', code: 'fr', name: '프랑스어', flag: '🇫🇷', label: '🇫🇷 프랑스어 (Français)', ttsLang: 'fr-FR', desc: 'TEDx 프랑스어 명연설, 파리 표준 딕션, Easy French 쉐도잉' },
-  { id: 'de', code: 'de', name: '독일어', flag: '🇩🇪', label: '🇩🇪 독일어 (Deutsch)', ttsLang: 'de-DE', desc: 'TEDx 독일어 명강연, 스토리텔링 스피치, Easy German 쉐도잉' },
+  { id: 'es', code: 'es', name: '스페인어', flag: '🇪🇸', label: '🇪🇸 스페인어 (Español)', ttsLang: 'es-ES', desc: 'TED en Español, 카스티야 딕션 1타 Linguriosa, 감동 에세이 & 실전 회화' },
+  { id: 'zh', code: 'zh', name: '중국어', flag: '🇨🇳', label: '🇨🇳 중국어 (中文)', ttsLang: 'zh-CN', desc: 'TEDx 표준 중국어 명강연, 감정 조절/뇌과학 에세이, 북리뷰' },
+  { id: 'vi', code: 'vi', name: '베트남어', flag: '🇻🇳', label: '🇻🇳 베트남어 (Tiếng Việt)', ttsLang: 'vi-VN', desc: 'Sunhuyn/Giang Ơi 하노이 표준 명품 딕션, 인생 철학 에세이 & 슬로우 라이프' },
+  { id: 'id', code: 'id', name: '인니어', flag: '🇮🇩', label: '🇮🇩 인니어 (Bahasa Indonesia)', ttsLang: 'id-ID', desc: 'Gita Savitri Devi/Menjadi Manusia 명품 에세이, 인생 이야기 & 힐링 팟캐스트' },
+  { id: 'hi', code: 'hi', name: '힌디어', flag: '🇮🇳', label: '🇮🇳 힌디어 (हिन्दी)', ttsLang: 'hi-IN', desc: 'Josh Talks 여성 명사 감동 실화, 인생 극복 스토리텔링 & 북리뷰' },
 ];
 
 /**
@@ -845,6 +845,171 @@ export const DEFAULT_CHINESE_TRACKS = [
   },
 ];
 
+export const DEFAULT_VIETNAMESE_TRACKS = [
+  {
+    videoId: 'O25rA7z9gaI',
+    title: 'Cách để không bị cuốn vào những kỳ vọng của người khác | Sunhuyn Podcast',
+    channelTitle: 'Sunhuyn Podcast',
+    description: 'Sunhuyn • 타인의 기대에서 벗어나 온전히 나답게 살아가는 법, 차분하고 명료한 베트남어 인생 에세이 & 팟캐스트',
+    thumbnailUrl: 'https://img.youtube.com/vi/O25rA7z9gaI/hqdefault.jpg',
+    duration: '23:18',
+    language: 'vi',
+    category: 'essay_deep',
+    tags: ['베트남어', 'Sunhuyn', '인생에세이', '마인드셋', '차분한목소리'],
+    source: 'curated_vietnamese',
+  },
+  {
+    videoId: '8YonZHuguBE',
+    title: 'Đừng để sự bận rộn đánh lừa bạn | Tự học cách sống chậm lại | Sunhuyn Podcast',
+    channelTitle: 'Sunhuyn Podcast',
+    description: 'Sunhuyn • 분주함 속에서 마음의 여유를 찾고 천천히 걷는 삶의 지혜, 또렷한 하노이 표준 발음 쉐도잉',
+    thumbnailUrl: 'https://img.youtube.com/vi/8YonZHuguBE/hqdefault.jpg',
+    duration: '21:45',
+    language: 'vi',
+    category: 'essay_deep',
+    tags: ['베트남어', 'Sunhuyn', '슬로우라이프', '마음챙김', '쉐도잉'],
+    source: 'curated_vietnamese',
+  },
+  {
+    videoId: 'noxzzmyRvSw',
+    title: 'Học cách trân trọng chính mình và buông bỏ những điều không phù hợp | Sunhuyn Podcast',
+    channelTitle: 'Sunhuyn Podcast',
+    description: 'Sunhuyn • 나 자신을 진정으로 아끼고 불필요한 감정을 내려놓는 법, 밤에 듣기 좋은 따뜻한 목소리',
+    thumbnailUrl: 'https://img.youtube.com/vi/noxzzmyRvSw/hqdefault.jpg',
+    duration: '27:12',
+    language: 'vi',
+    category: 'sleep_life',
+    tags: ['베트남어', 'Sunhuyn', '자기수용', '감동에세이', '심야토크'],
+    source: 'curated_vietnamese',
+  },
+  {
+    videoId: 'JedTFseze7o',
+    title: 'Làm thế nào để vượt qua cảm giác chông chênh tuổi 20? | Giang Ơi',
+    channelTitle: 'Giang Ơi',
+    description: 'Giang Ơi • 20대의 방황과 불확실성을 단단하게 헤쳐나가는 실행력과 솔직한 인생 조언',
+    thumbnailUrl: 'https://img.youtube.com/vi/JedTFseze7o/hqdefault.jpg',
+    duration: '18:05',
+    language: 'vi',
+    category: 'essay_deep',
+    tags: ['베트남어', 'GiangOi', '20대성장', '명품딕션', '쉐도잉'],
+    source: 'curated_vietnamese',
+  },
+];
+
+export const DEFAULT_INDONESIAN_TRACKS = [
+  {
+    videoId: 'SKAtEIcwwIE',
+    title: 'Belajar Menerima Diri dan Berhenti Membandingkan Hidup | Gita Savitri Devi',
+    channelTitle: 'Gita Savitri Devi',
+    description: 'Gita Savitri Devi • 남과의 비교를 멈추고 온전한 나를 인정하는 법, 지적이고 명확한 인니어 에세이',
+    thumbnailUrl: 'https://img.youtube.com/vi/SKAtEIcwwIE/hqdefault.jpg',
+    duration: '22:40',
+    language: 'id',
+    category: 'essay_deep',
+    tags: ['인니어', 'GitaSavitri', '자기수용', '인생에세이', '명품딕션'],
+    source: 'curated_indonesian',
+  },
+  {
+    videoId: 'Zhcy2NNQ4m0',
+    title: 'Bicara tentang Quarter Life Crisis dan Menemukan Diri Sendiri | Gita Savitri Devi',
+    channelTitle: 'Gita Savitri Devi',
+    description: 'Gita Savitri Devi • 20대 청춘의 위기와 방황 속에서 나만의 길을 찾는 솔직한 고백',
+    thumbnailUrl: 'https://img.youtube.com/vi/Zhcy2NNQ4m0/hqdefault.jpg',
+    duration: '19:15',
+    language: 'id',
+    category: 'essay_deep',
+    tags: ['인니어', 'GitaSavitri', '청춘위기', '마인드셋', '쉐도잉'],
+    source: 'curated_indonesian',
+  },
+  {
+    videoId: 'Fum1B2O_a8o',
+    title: 'Mengenal Diri Sendiri dan Seni Menerima Kegagalan | Menjadi Manusia',
+    channelTitle: 'Menjadi Manusia',
+    description: 'Menjadi Manusia • 실패를 딛고 내면을 단단하게 키우는 감동적인 인니어 심층 대담',
+    thumbnailUrl: 'https://img.youtube.com/vi/Fum1B2O_a8o/hqdefault.jpg',
+    duration: '25:30',
+    language: 'id',
+    category: 'essay_deep',
+    tags: ['인니어', 'MenjadiManusia', '실패극복', '감동인터뷰', '쉐도잉'],
+    source: 'curated_indonesian',
+  },
+  {
+    videoId: 'iuGNLLeSrXY',
+    title: 'Pentingnya Menjaga Kesehatan Mental di Usia 20-an | Menjadi Manusia',
+    channelTitle: 'Menjadi Manusia',
+    description: 'Menjadi Manusia • 20대 멘탈 관리와 따뜻한 마음 챙김, 부드럽고 차분한 대화체 인니어',
+    thumbnailUrl: 'https://img.youtube.com/vi/iuGNLLeSrXY/hqdefault.jpg',
+    duration: '24:10',
+    language: 'id',
+    category: 'sleep_life',
+    tags: ['인니어', 'MenjadiManusia', '멘탈케어', '차분한대화', '쉐도잉'],
+    source: 'curated_indonesian',
+  },
+  {
+    videoId: 'touMHgaKRZI',
+    title: 'Cara Menata Pikiran dan Hidup yang Tenang | Gita Savitri Devi Book Talk',
+    channelTitle: 'Gita Savitri Devi',
+    description: 'Gita Savitri Devi • 북토크 & 복잡한 생각을 정리하고 평온한 일상을 가꾸는 책 이야기',
+    thumbnailUrl: 'https://img.youtube.com/vi/touMHgaKRZI/hqdefault.jpg',
+    duration: '20:18',
+    language: 'id',
+    category: 'essay_deep',
+    tags: ['인니어', 'GitaSavitri', '북토크', '책읽기', '마인드셋'],
+    source: 'curated_indonesian',
+  },
+];
+
+export const DEFAULT_HINDI_TRACKS = [
+  {
+    videoId: 'A9eQHm7Y7EU',
+    title: '107 KG से 62 KG... एक बेहद भावुक Weight Loss कहानी | Anamika Salian | Josh Talks',
+    channelTitle: 'जोश Talks',
+    description: 'Anamika Salian • 아픔을 딛고 스스로를 변화시킨 감동적인 성장 드라마, 또렷하고 감동적인 힌디어 스피치',
+    thumbnailUrl: 'https://img.youtube.com/vi/A9eQHm7Y7EU/hqdefault.jpg',
+    duration: '15:20',
+    language: 'hi',
+    category: 'essay_deep',
+    tags: ['힌디어', 'JoshTalks', '감동실화', '자기변화', '명품딕션'],
+    source: 'curated_hindi',
+  },
+  {
+    videoId: 'oH3y_ibwRq8',
+    title: 'एक डरी हुई लड़की जो बनी Indian Army की Major | Major Khushboo Patani | Josh Talks',
+    channelTitle: 'जोश Talks',
+    description: 'Major Khushboo Patani • 두려움을 이겨내고 인도 육군 소령이 된 여성 리더의 당당한 힌디어 강연',
+    thumbnailUrl: 'https://img.youtube.com/vi/oH3y_ibwRq8/hqdefault.jpg',
+    duration: '18:45',
+    language: 'hi',
+    category: 'ted_speech',
+    tags: ['힌디어', 'JoshTalks', '여성리더십', '도전정신', '당당한스피치'],
+    source: 'curated_hindi',
+  },
+  {
+    videoId: 'k3GOGZK3UDQ',
+    title: 'Married at 16, Divorced After 8 Years… Then She Rebuilt Her Life | Rinki Rathore | Josh Talks',
+    channelTitle: 'Josh Talks',
+    description: 'Rinki Rathore • 역경을 극복하고 다시 일어선 인생 이야기, 명확하고 힘찬 힌디어 전달력',
+    thumbnailUrl: 'https://img.youtube.com/vi/k3GOGZK3UDQ/hqdefault.jpg',
+    duration: '17:30',
+    language: 'hi',
+    category: 'essay_deep',
+    tags: ['힌디어', 'JoshTalks', '역경극복', '인생스토리', '쉐도잉'],
+    source: 'curated_hindi',
+  },
+  {
+    videoId: 'MSbJDdjStwE',
+    title: 'जीवन बदलने वाली किताबें और विचार (인생을 바꾸는 책과 생각) | A Cup of Life',
+    channelTitle: 'A Cup of Life Hindi',
+    description: 'A Cup of Life • 따뜻한 북리뷰와 삶의 철학 에세이, 마음을 편안하게 해주는 힌디어 오디오',
+    thumbnailUrl: 'https://img.youtube.com/vi/MSbJDdjStwE/hqdefault.jpg',
+    duration: '20:15',
+    language: 'hi',
+    category: 'essay_deep',
+    tags: ['힌디어', '북리뷰', '인생철학', '차분한오디오', '쉐도잉'],
+    source: 'curated_hindi',
+  },
+];
+
 export const DEFAULT_FRENCH_TRACKS = [
   {
     videoId: '8S8mie3bwtw',
@@ -951,14 +1116,20 @@ export function detectItemLanguage(item) {
   if (!item) return 'en';
   if (item.language && item.language !== 'unknown' && item.language !== 'all') return item.language;
   if (item.category === 'spanish' || item.source === 'curated_spanish' || item.id?.startsWith('es_')) return 'es';
-  if (item.source === 'curated_japanese' || item.id?.startsWith('ja_')) return 'ja';
   if (item.source === 'curated_chinese' || item.id?.startsWith('zh_')) return 'zh';
+  if (item.source === 'curated_vietnamese' || item.id?.startsWith('vi_')) return 'vi';
+  if (item.source === 'curated_indonesian' || item.id?.startsWith('id_')) return 'id';
+  if (item.source === 'curated_hindi' || item.id?.startsWith('hi_')) return 'hi';
+  if (item.source === 'curated_japanese' || item.id?.startsWith('ja_')) return 'ja';
   if (item.source === 'curated_french' || item.id?.startsWith('fr_')) return 'fr';
   if (item.source === 'curated_german' || item.id?.startsWith('de_')) return 'de';
 
   const text = `${item.title || ''} ${item.channelTitle || ''} ${item.description || ''}`.toLowerCase();
-  if (/[\u3040-\u309F\u30A0-\u30FF]/.test(text)) return 'ja';
+  if (/[\u0900-\u097F]/.test(text) || text.includes('josh talks') || text.includes('hindi') || text.includes('kahani')) return 'hi';
+  if (text.includes('sunhuyn') || text.includes('giang ơi') || text.includes('tiếng việt') || text.includes('vietnam') || text.includes('người')) return 'vi';
+  if (text.includes('gita savitri') || text.includes('menjadi manusia') || text.includes('bahasa') || text.includes('indonesia') || text.includes('tentang')) return 'id';
   if (/[\u4e00-\u9fa5]/.test(text)) return 'zh';
+  if (/[\u3040-\u309F\u30A0-\u30FF]/.test(text)) return 'ja';
   if (text.includes('espanol') || text.includes('español') || text.includes('spanish') || text.includes('linguriosa') || text.includes('charla') || text.includes('hablar')) return 'es';
   if (text.includes('français') || text.includes('francais') || text.includes('french') || text.includes('champselysees') || text.includes('discours')) return 'fr';
   if (text.includes('deutsch') || text.includes('german') || text.includes('salzburg') || text.includes('stuttgart') || text.includes('rede')) return 'de';
@@ -984,22 +1155,6 @@ export function loadMultiLangTracks() {
       bookmarked: false,
       addedAt: Date.now() - 40000,
     })),
-    ...DEFAULT_JAPANESE_TRACKS.map(t => ({
-      id: `ja_${t.videoId}`,
-      videoId: t.videoId,
-      title: t.title,
-      channelTitle: t.channelTitle,
-      description: t.description,
-      thumbnailUrl: t.thumbnailUrl,
-      url: `https://www.youtube.com/watch?v=${t.videoId}`,
-      duration: t.duration,
-      language: 'ja',
-      category: t.category || 'conversation',
-      tags: t.tags,
-      source: 'curated_japanese',
-      bookmarked: false,
-      addedAt: Date.now() - 35000,
-    })),
     ...DEFAULT_CHINESE_TRACKS.map(t => ({
       id: `zh_${t.videoId}`,
       videoId: t.videoId,
@@ -1014,7 +1169,71 @@ export function loadMultiLangTracks() {
       tags: t.tags,
       source: 'curated_chinese',
       bookmarked: false,
+      addedAt: Date.now() - 35000,
+    })),
+    ...DEFAULT_VIETNAMESE_TRACKS.map(t => ({
+      id: `vi_${t.videoId}`,
+      videoId: t.videoId,
+      title: t.title,
+      channelTitle: t.channelTitle,
+      description: t.description,
+      thumbnailUrl: t.thumbnailUrl,
+      url: `https://www.youtube.com/watch?v=${t.videoId}`,
+      duration: t.duration,
+      language: 'vi',
+      category: t.category || 'essay_deep',
+      tags: t.tags,
+      source: 'curated_vietnamese',
+      bookmarked: false,
       addedAt: Date.now() - 30000,
+    })),
+    ...DEFAULT_INDONESIAN_TRACKS.map(t => ({
+      id: `id_${t.videoId}`,
+      videoId: t.videoId,
+      title: t.title,
+      channelTitle: t.channelTitle,
+      description: t.description,
+      thumbnailUrl: t.thumbnailUrl,
+      url: `https://www.youtube.com/watch?v=${t.videoId}`,
+      duration: t.duration,
+      language: 'id',
+      category: t.category || 'essay_deep',
+      tags: t.tags,
+      source: 'curated_indonesian',
+      bookmarked: false,
+      addedAt: Date.now() - 25000,
+    })),
+    ...DEFAULT_HINDI_TRACKS.map(t => ({
+      id: `hi_${t.videoId}`,
+      videoId: t.videoId,
+      title: t.title,
+      channelTitle: t.channelTitle,
+      description: t.description,
+      thumbnailUrl: t.thumbnailUrl,
+      url: `https://www.youtube.com/watch?v=${t.videoId}`,
+      duration: t.duration,
+      language: 'hi',
+      category: t.category || 'essay_deep',
+      tags: t.tags,
+      source: 'curated_hindi',
+      bookmarked: false,
+      addedAt: Date.now() - 20000,
+    })),
+    ...DEFAULT_JAPANESE_TRACKS.map(t => ({
+      id: `ja_${t.videoId}`,
+      videoId: t.videoId,
+      title: t.title,
+      channelTitle: t.channelTitle,
+      description: t.description,
+      thumbnailUrl: t.thumbnailUrl,
+      url: `https://www.youtube.com/watch?v=${t.videoId}`,
+      duration: t.duration,
+      language: 'ja',
+      category: t.category || 'conversation',
+      tags: t.tags,
+      source: 'curated_japanese',
+      bookmarked: false,
+      addedAt: Date.now() - 15000,
     })),
     ...DEFAULT_FRENCH_TRACKS.map(t => ({
       id: `fr_${t.videoId}`,
@@ -1030,7 +1249,7 @@ export function loadMultiLangTracks() {
       tags: t.tags,
       source: 'curated_french',
       bookmarked: false,
-      addedAt: Date.now() - 25000,
+      addedAt: Date.now() - 10000,
     })),
     ...DEFAULT_GERMAN_TRACKS.map(t => ({
       id: `de_${t.videoId}`,
@@ -1046,7 +1265,7 @@ export function loadMultiLangTracks() {
       tags: t.tags,
       source: 'curated_german',
       bookmarked: false,
-      addedAt: Date.now() - 20000,
+      addedAt: Date.now() - 5000,
     })),
   ];
   return all;

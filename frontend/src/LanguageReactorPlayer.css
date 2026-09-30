@@ -254,6 +254,14 @@
   font-weight: 700;
 }
 
+.lr-smart-gap-btn.active {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(245, 158, 11, 0.35));
+  border-color: #f59e0b;
+  color: #fef08a;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+  font-weight: 700;
+}
+
 .text-only-active {
   background: rgba(16, 185, 129, 0.25) !important;
   border-color: #10b981 !important;

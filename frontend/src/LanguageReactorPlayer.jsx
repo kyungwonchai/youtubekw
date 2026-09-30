@@ -461,6 +461,31 @@ export default function LanguageReactorPlayer({
     showVocabToast(next ? '⚡ 첫 자막(인트로 건너뛰기) 자동 시작 ON' : '⏸️ 인트로 건너뛰기 OFF (0초부터 시작)', 'info');
   };
 
+  // Smart Gap Skip (대화 사이의 긴 포즈/무음 자동 건너뛰기 - 딕션 훈련 최적화)
+  const [smartGapSkip, setSmartGapSkip] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ytkw_smart_gap_skip');
+      return saved !== null ? saved === 'true' : true; // Default ON
+    } catch (e) {
+      return true;
+    }
+  });
+  const smartGapSkipRef = useRef(smartGapSkip);
+  const lastGapSkipRef = useRef(0);
+  useEffect(() => {
+    smartGapSkipRef.current = smartGapSkip;
+  }, [smartGapSkip]);
+
+  const handleToggleSmartGapSkip = () => {
+    const next = !smartGapSkip;
+    setSmartGapSkip(next);
+    smartGapSkipRef.current = next;
+    try {
+      localStorage.setItem('ytkw_smart_gap_skip', String(next));
+    } catch (e) {}
+    showVocabToast(next ? '⚡ 긴 포즈/무음 자동 건너뛰기 ON (대화 연속 재생)' : '⏸️ 포즈 자동 건너뛰기 OFF', 'info');
+  };
+
   const [loopMode, setLoopMode] = useState('none'); // 'none', 'single_loop', 'pause_after_sentence'
   const [loopingIndex, setLoopingIndex] = useState(null);
 
@@ -725,6 +750,18 @@ export default function LanguageReactorPlayer({
                     if (bgAudioMode && audioRef.current) audioRef.current.pause();
                     else if (player) player.pauseVideo();
                     setLoopingIndex(null);
+                  }
+                }
+
+                // ⚡ Smart Gap Skip: 대사 종료 후 다음 대사까지 0.8초 이상 긴 무음/포즈 시 자동으로 다음 대사로 즉시 점프
+                if (smartGapSkipRef.current && loopMode === 'none' && activeIndex >= 0 && transcript[activeIndex] && transcript[activeIndex + 1]) {
+                  const curLine = transcript[activeIndex];
+                  const nextLine = transcript[activeIndex + 1];
+                  const now = Date.now();
+                  if (t >= curLine.end + 0.1 && (nextLine.start - t) >= 0.8 && (now - lastGapSkipRef.current > 700)) {
+                    lastGapSkipRef.current = now;
+                    handleSeekTo(Math.max(0, nextLine.start - 0.05), activeIndex + 1, true);
+                    return;
                   }
                 }
               }
@@ -1095,6 +1132,12 @@ export default function LanguageReactorPlayer({
       utterance.lang = 'zh-CN';
     } else if (lang === 'es' || /[\u00C0-\u00FFñÑáéíóúÁÉÍÓÚ¿¡]/.test(text || '')) {
       utterance.lang = 'es-ES';
+    } else if (lang === 'vi') {
+      utterance.lang = 'vi-VN';
+    } else if (lang === 'id') {
+      utterance.lang = 'id-ID';
+    } else if (lang === 'hi' || /[\u0900-\u097F]/.test(text || '')) {
+      utterance.lang = 'hi-IN';
     } else if (lang === 'fr') {
       utterance.lang = 'fr-FR';
     } else if (lang === 'de') {
@@ -1397,6 +1440,15 @@ export default function LanguageReactorPlayer({
                 {compactVideo ? '📱 20% 콤팩트' : '🗖 영상확대'}
               </button>
             )}
+
+            {/* 2-2. 스마트 포즈/무음 건너뛰기 토글 */}
+            <button
+              className={`lr-icon-btn lr-smart-gap-btn ${smartGapSkip ? 'active' : ''}`}
+              onClick={handleToggleSmartGapSkip}
+              title={smartGapSkip ? "⚡ 긴 포즈/무음 자동 건너뛰기 ON (대화만 연속 재생)" : "⏸️ 포즈 자동 건너뛰기 OFF"}
+            >
+              {smartGapSkip ? '⚡ 포즈스킵 ON' : '⏸️ 포즈스킵 OFF'}
+            </button>
 
             {/* 3. 자막 표시 모드 (듀얼 -> 영문만 -> 한글만) */}
             <button

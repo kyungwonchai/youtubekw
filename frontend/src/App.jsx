@@ -228,10 +228,10 @@ export default function App() {
     { id: 'all', code: 'all', name: '전체 언어', flag: '🌐', label: '🌐 전체 언어' },
     { id: 'en', code: 'en', name: '영어', flag: '🇺🇸', label: '🇺🇸 영어 (EN)' },
     { id: 'es', code: 'es', name: '스페인어', flag: '🇪🇸', label: '🇪🇸 스페인어 (ES)' },
-    { id: 'ja', code: 'ja', name: '일본어', flag: '🇯🇵', label: '🇯🇵 일본어 (JA)' },
     { id: 'zh', code: 'zh', name: '중국어', flag: '🇨🇳', label: '🇨🇳 중국어 (ZH)' },
-    { id: 'fr', code: 'fr', name: '프랑스어', flag: '🇫🇷', label: '🇫🇷 프랑스어 (FR)' },
-    { id: 'de', code: 'de', name: '독일어', flag: '🇩🇪', label: '🇩🇪 독일어 (DE)' },
+    { id: 'vi', code: 'vi', name: '베트남어', flag: '🇻🇳', label: '🇻🇳 베트남어 (VI)' },
+    { id: 'id', code: 'id', name: '인니어', flag: '🇮🇩', label: '🇮🇩 인니어 (ID)' },
+    { id: 'hi', code: 'hi', name: '힌디어', flag: '🇮🇳', label: '🇮🇳 힌디어 (HI)' },
   ];
 
   const SUB_CATEGORIES = [
@@ -621,7 +621,15 @@ export default function App() {
                         <span className="duration-tag">{item.duration || '10분+'}</span>
                         <div className="card-badge-group">
                           <span className={`lang-flag-badge lang-${item.language || 'en'}`}>
-                            {item.language === 'es' ? '🇪🇸 스페인어' : item.language === 'ja' ? '🇯🇵 일본어' : item.language === 'zh' ? '🇨🇳 중국어' : item.language === 'fr' ? '🇫🇷 프랑스어' : item.language === 'de' ? '🇩🇪 독일어' : '🇺🇸 영어'}
+                            {item.language === 'es' ? '🇪🇸 스페인어' :
+                             item.language === 'zh' ? '🇨🇳 중국어' :
+                             item.language === 'vi' ? '🇻🇳 베트남어' :
+                             item.language === 'id' ? '🇮🇩 인니어' :
+                             item.language === 'hi' ? '🇮🇳 힌디어' :
+                             item.language === 'ja' ? '🇯🇵 일본어' :
+                             item.language === 'fr' ? '🇫🇷 프랑스어' :
+                             item.language === 'de' ? '🇩🇪 독일어' :
+                             '🇺🇸 영어'}
                           </span>
                           <span className={`cat-badge ${item.category === 'pop_music' ? 'pop-badge' : ''}`}>
                             {item.category === 'pop_music'
