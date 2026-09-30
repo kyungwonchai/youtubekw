@@ -76,7 +76,56 @@ export function blockVideoOrSpeaker({ videoId, channelTitle, title, speakerName 
 /**
  * Check if an item matches the permanent blacklist (영상 ID 기반 절대안봄 + 수동 지정 키워드)
  */
+export const BAD_VIDEO_IDS = new Set([
+  '30ai5Pf1Z94',
+  'rWP7OYwHCEk',
+  'Jr5oLnADfaQ',
+  'zHEEWvjSvRs',
+  'HxfwkzsZtkg',
+  'QRotNEuaCEs',
+  'CcN4ByLBa60',
+  '1zlNC2CJ-GA',
+  'Y-cHbf-WGiI',
+  '685K2BYA184',
+  'zPayJHaosLg',
+  'doDRobQA5Fk',
+  '66cxG1XQjpI',
+  '8Q1omTAxSPs',
+  'm0xOa1XFE_w',
+  'gvKL2-MW4Do',
+  'N8Nzb-oc8XA',
+  'TCsIrIFNBRI',
+  '6PJBxWsEzUo',
+  '5R1RGl4WQP8',
+  'WX-f_pbo5jc',
+  'xD27uAJUMIo',
+  'skyk3T7Hu1g',
+  'rF2Bn-qmM1s',
+  'P8ZVtEDn0PM',
+  'pmbcl0YN4lg',
+  'Bwvmi-0SRQ8',
+  'nYbcVK2jjXc',
+  'pWgVRK_Ggww',
+  'onlZQ0jKUZc',
+  'ncmYqND278Q',
+  '92tkZQB-Uj4',
+  'WhoPPnDiY5c',
+  'wTZ7A-h8yTs',
+  '8C6xDjQ66wM',
+  'P0iOz9xf0zY',
+  'sRph0jV4mO4',
+  '32d1bq-kG5c',
+  'GkTWxDB21cA',
+  'mjcX-5lKdeg',
+  'BDHM8cyJQa8',
+  'wMpqCRF7TKg',
+  'osdoLjUNFnA',
+  'BZ-rLBkUZf4',
+  'viimfQi_pUw',
+]);
+
 export function isBlacklisted(title = '', desc = '', channelTitle = '', videoId = '') {
+  if (videoId && BAD_VIDEO_IDS.has(videoId)) return true;
   const bl = loadBlacklist();
   if (videoId && bl.videoIds.includes(videoId)) return true;
 
@@ -704,24 +753,6 @@ export const DEFAULT_NEWS_INTERVIEW_TRACKS = [
     "source": "curated_news"
   },
   {
-    "videoId": "HxfwkzsZtkg",
-    "title": "Bloomberg Studio 1.0: The Social Solution",
-    "channelTitle": "Bloomberg Tech",
-    "description": "Bloomberg Tech • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (24:07)",
-    "thumbnailUrl": "https://img.youtube.com/vi/HxfwkzsZtkg/hqdefault.jpg",
-    "duration": "24:07",
-    "language": "en",
-    "category": "news_interview",
-    "tags": [
-      "뉴스초대석",
-      "여성명사",
-      "심층인터뷰",
-      "고급딕션",
-      "쉐도잉"
-    ],
-    "source": "curated_news"
-  },
-  {
     "videoId": "7wd95YYEQ0E",
     "title": "Bloomberg Studio 1.0 - Zoox CEO Aicha Evans",
     "channelTitle": "Bloomberg Tech",
@@ -1070,24 +1101,6 @@ export const DEFAULT_NEWS_INTERVIEW_TRACKS = [
     "description": "FranklinCovey • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (38:30)",
     "thumbnailUrl": "https://img.youtube.com/vi/mc-p1MFci-Q/hqdefault.jpg",
     "duration": "38:30",
-    "language": "en",
-    "category": "news_interview",
-    "tags": [
-      "뉴스초대석",
-      "여성명사",
-      "심층인터뷰",
-      "고급딕션",
-      "쉐도잉"
-    ],
-    "source": "curated_news"
-  },
-  {
-    "videoId": "QRotNEuaCEs",
-    "title": "Episode 337: CNBC’s Julia Boorstin Weighs In on “When Women Lead”",
-    "channelTitle": "New York Stock Exchange",
-    "description": "New York Stock Exchange • 최고 음질 & 또렷한 딕션의 여성 앵커/명사 1:1 심층 초대석 인터뷰 (56:11)",
-    "thumbnailUrl": "https://img.youtube.com/vi/QRotNEuaCEs/hqdefault.jpg",
-    "duration": "56:11",
     "language": "en",
     "category": "news_interview",
     "tags": [
@@ -1769,24 +1782,6 @@ export const DEFAULT_MOVIE_DRAMA_TRACKS = [
     "source": "curated_movie_drama"
   },
   {
-    "videoId": "30ai5Pf1Z94",
-    "title": "Easy A 2010 Full Movie in English Teen Romantic Comedy",
-    "channelTitle": "Learn English Easy ",
-    "description": "Learn English Easy  • 풀버전 고화질 로맨스/드라마 영화 (1:32:25)",
-    "thumbnailUrl": "https://img.youtube.com/vi/30ai5Pf1Z94/hqdefault.jpg",
-    "duration": "1:32:25",
-    "language": "en",
-    "category": "movie_drama",
-    "tags": [
-      "영화쉐도잉",
-      "풀버전영화",
-      "로맨스",
-      "드라마",
-      "장편쉐도잉"
-    ],
-    "source": "curated_movie_drama"
-  },
-  {
     "videoId": "rkGwLyxNzhQ",
     "title": "😂❤️ A Crazy Romantic Comedy for an Evening Full of Laughter! | Free Full Movie in English",
     "channelTitle": "Movie Marathon",
@@ -2417,48 +2412,12 @@ export const DEFAULT_MOVIE_DRAMA_TRACKS = [
     "source": "curated_movie_drama"
   },
   {
-    "videoId": "rWP7OYwHCEk",
-    "title": "Anime love story full movie english sub [HD]",
-    "channelTitle": "Nightcore & amv",
-    "description": "Nightcore & amv • 풀버전 고화질 로맨스/드라마 영화 (1:17:37)",
-    "thumbnailUrl": "https://img.youtube.com/vi/rWP7OYwHCEk/hqdefault.jpg",
-    "duration": "1:17:37",
-    "language": "en",
-    "category": "movie_drama",
-    "tags": [
-      "영화쉐도잉",
-      "풀버전영화",
-      "로맨스",
-      "드라마",
-      "장편쉐도잉"
-    ],
-    "source": "curated_movie_drama"
-  },
-  {
     "videoId": "GG8EdIZ8zSI",
     "title": "Healing Hearts on Cedar Valley Ranch | Full Romantic Drama 2026",
     "channelTitle": "LoveLoom Films",
     "description": "LoveLoom Films • 풀버전 고화질 로맨스/드라마 영화 (1:25:30)",
     "thumbnailUrl": "https://img.youtube.com/vi/GG8EdIZ8zSI/hqdefault.jpg",
     "duration": "1:25:30",
-    "language": "en",
-    "category": "movie_drama",
-    "tags": [
-      "영화쉐도잉",
-      "풀버전영화",
-      "로맨스",
-      "드라마",
-      "장편쉐도잉"
-    ],
-    "source": "curated_movie_drama"
-  },
-  {
-    "videoId": "Jr5oLnADfaQ",
-    "title": "Chinese romantic comedy movie 2019 | With English Subtitles | Full Movie | Very Funny",
-    "channelTitle": "MoviToonZ",
-    "description": "MoviToonZ • 풀버전 고화질 로맨스/드라마 영화 (1:43:35)",
-    "thumbnailUrl": "https://img.youtube.com/vi/Jr5oLnADfaQ/hqdefault.jpg",
-    "duration": "1:43:35",
     "language": "en",
     "category": "movie_drama",
     "tags": [
@@ -2507,24 +2466,6 @@ export const DEFAULT_MOVIE_DRAMA_TRACKS = [
     "source": "curated_movie_drama"
   },
   {
-    "videoId": "zHEEWvjSvRs",
-    "title": "Japanese love story full movie",
-    "channelTitle": "めいめい",
-    "description": "めいめい • 풀버전 고화질 로맨스/드라마 영화 (1:54:34)",
-    "thumbnailUrl": "https://img.youtube.com/vi/zHEEWvjSvRs/hqdefault.jpg",
-    "duration": "1:54:34",
-    "language": "en",
-    "category": "movie_drama",
-    "tags": [
-      "영화쉐도잉",
-      "풀버전영화",
-      "로맨스",
-      "드라마",
-      "장편쉐도잉"
-    ],
-    "source": "curated_movie_drama"
-  },
-  {
     "videoId": "udNCrXdLBNM",
     "title": "An Eternal Love - English Dubbed Full Movie | A School Love Story | Triangle Love Story | Subtitles",
     "channelTitle": "New Generation",
@@ -2545,775 +2486,1311 @@ export const DEFAULT_MOVIE_DRAMA_TRACKS = [
 ];
 
 export const DEFAULT_ENGLISH_CURATED_TRACKS = [
-  // 🎓 Legendary Commencement Speeches & Masterclasses
   {
-    videoId: 'jDaZu_KEMCY',
-    title: 'Natalie Portman Harvard Commencement Speech (Full Speech | 20m)',
-    channelTitle: 'Harvard University',
-    description: 'Natalie Portman (하버드대 졸업 / 아카데미 여우주연상) • 나만의 자신감을 찾고 두려움을 이겨내는 감동적인 명연설 (20분, 완벽한 하버드 딕션)',
-    thumbnailUrl: 'https://img.youtube.com/vi/jDaZu_KEMCY/hqdefault.jpg',
-    duration: '20:16',
-    language: 'en',
-    category: 'ted_speech',
-    tags: ['영어스피치', 'NataliePortman', '하버드졸업연설', '명품딕션', '자신감'],
-    source: 'curated_english',
+    "videoId": "jDaZu_KEMCY",
+    "title": "Natalie Portman Harvard Commencement Speech (Full Speech | 20m)",
+    "channelTitle": "Harvard University",
+    "description": "Natalie Portman (하버드대 졸업 / 아카데미 여우주연상) • 나만의 자신감을 찾고 두려움을 이겨내는 감동적인 명연설 (20분, 완벽한 하버드 딕션)",
+    "thumbnailUrl": "https://img.youtube.com/vi/jDaZu_KEMCY/hqdefault.jpg",
+    "duration": "20:16",
+    "language": "en",
+    "category": "ted_speech",
+    "tags": [
+      "영어스피치",
+      "NataliePortman",
+      "하버드졸업연설",
+      "명품딕션",
+      "자신감"
+    ],
+    "source": "curated_english"
   },
   {
-    videoId: 'OBG50aoUwlI',
-    title: "Taylor Swift NYU Commencement Speech (Full Official Speech | 28m)",
-    channelTitle: 'New York University',
-    description: 'Taylor Swift • 뉴욕대 명예박사 학위 수락 연설, 유쾌하고 지혜로운 인생 조언 (28분 풀연설)',
-    thumbnailUrl: 'https://img.youtube.com/vi/OBG50aoUwlI/hqdefault.jpg',
-    duration: '28:05',
-    language: 'en',
-    category: 'ted_speech',
-    tags: ['영어스피치', 'TaylorSwift', 'NYU졸업연설', '인생조언', '명품스피치'],
-    source: 'curated_english',
-  },
-
-  // 📚 Aesthetic Life Philosophy & High Diction Essays
-  {
-    videoId: 'CcN4ByLBa60',
-    title: "Why I'm Sick Of 'Self-Care': A Rant | The Financial Diet (Chelsea Fagan)",
-    channelTitle: 'The Financial Diet',
-    description: 'Chelsea Fagan • 가짜 자기관리 문화에 대한 통쾌하고 지적인 비판과 진짜 삶을 가꾸는 법 (12분 에세이)',
-    thumbnailUrl: 'https://img.youtube.com/vi/CcN4ByLBa60/hqdefault.jpg',
-    duration: '12:33',
-    language: 'en',
-    category: 'essay_deep',
-    tags: ['TheFinancialDiet', 'ChelseaFagan', '마인드셋', '고급영어', '에세이'],
-    source: 'curated_english',
+    "videoId": "OBG50aoUwlI",
+    "title": "Taylor Swift NYU Commencement Speech (Full Official Speech | 28m)",
+    "channelTitle": "New York University",
+    "description": "Taylor Swift • 뉴욕대 명예박사 학위 수락 연설, 유쾌하고 지혜로운 인생 조언 (28분 풀연설)",
+    "thumbnailUrl": "https://img.youtube.com/vi/OBG50aoUwlI/hqdefault.jpg",
+    "duration": "28:05",
+    "language": "en",
+    "category": "ted_speech",
+    "tags": [
+      "영어스피치",
+      "TaylorSwift",
+      "NYU졸업연설",
+      "인생조언",
+      "명품스피치"
+    ],
+    "source": "curated_english"
   },
   {
-    videoId: 'R6mCwMbJDFs',
-    title: '7 Insane Life & Money Lessons | The Financial Diet (Chelsea Fagan)',
-    channelTitle: 'The Financial Diet',
-    description: 'Chelsea Fagan • 현실적인 2030 라이프스타일과 돈, 인간관계의 지혜 (21분)',
-    thumbnailUrl: 'https://img.youtube.com/vi/R6mCwMbJDFs/hqdefault.jpg',
-    duration: '21:28',
-    language: 'en',
-    category: 'essay_deep',
-    tags: ['TheFinancialDiet', 'ChelseaFagan', '라이프스타일', '명품딕션'],
-    source: 'curated_english',
+    "videoId": "R6mCwMbJDFs",
+    "title": "7 Insane Life & Money Lessons | The Financial Diet (Chelsea Fagan)",
+    "channelTitle": "The Financial Diet",
+    "description": "Chelsea Fagan • 현실적인 2030 라이프스타일과 돈, 인간관계의 지혜 (21분)",
+    "thumbnailUrl": "https://img.youtube.com/vi/R6mCwMbJDFs/hqdefault.jpg",
+    "duration": "21:28",
+    "language": "en",
+    "category": "essay_deep",
+    "tags": [
+      "TheFinancialDiet",
+      "ChelseaFagan",
+      "라이프스타일",
+      "명품딕션"
+    ],
+    "source": "curated_english"
   },
   {
-    videoId: 'ehUqBLf8XI4',
-    title: 'How To Stop Being Cheap & Upgrade Your Everyday Life | The Financial Diet',
-    channelTitle: 'The Financial Diet',
-    description: 'Chelsea Fagan • 삶의 품격을 높이고 나를 아끼는 태도에 관한 22분 심층 에세이',
-    thumbnailUrl: 'https://img.youtube.com/vi/ehUqBLf8XI4/hqdefault.jpg',
-    duration: '21:59',
-    language: 'en',
-    category: 'essay_deep',
-    tags: ['TheFinancialDiet', 'ChelseaFagan', '자기성장', '명품딕션'],
-    source: 'curated_english',
+    "videoId": "ehUqBLf8XI4",
+    "title": "How To Stop Being Cheap & Upgrade Your Everyday Life | The Financial Diet",
+    "channelTitle": "The Financial Diet",
+    "description": "Chelsea Fagan • 삶의 품격을 높이고 나를 아끼는 태도에 관한 22분 심층 에세이",
+    "thumbnailUrl": "https://img.youtube.com/vi/ehUqBLf8XI4/hqdefault.jpg",
+    "duration": "21:59",
+    "language": "en",
+    "category": "essay_deep",
+    "tags": [
+      "TheFinancialDiet",
+      "ChelseaFagan",
+      "자기성장",
+      "명품딕션"
+    ],
+    "source": "curated_english"
   },
   {
-    videoId: '_AclJGh1XcU',
-    title: 'Coffee Talks | How I Build Self-Confidence & Overcome Doubt | Sanne Vloet',
-    channelTitle: 'Sanne Vloet',
-    description: 'Sanne Vloet • 따뜻한 커피 한 잔과 함께 나누는 자기 확신과 자존감 회복 이야기 (16분)',
-    thumbnailUrl: 'https://img.youtube.com/vi/_AclJGh1XcU/hqdefault.jpg',
-    duration: '15:50',
-    language: 'en',
-    category: 'essay_deep',
-    tags: ['SanneVloet', '자존감', '자기확신', '차분한대화', '쉐도잉'],
-    source: 'curated_english',
+    "videoId": "_AclJGh1XcU",
+    "title": "Coffee Talks | How I Build Self-Confidence & Overcome Doubt | Sanne Vloet",
+    "channelTitle": "Sanne Vloet",
+    "description": "Sanne Vloet • 따뜻한 커피 한 잔과 함께 나누는 자기 확신과 자존감 회복 이야기 (16분)",
+    "thumbnailUrl": "https://img.youtube.com/vi/_AclJGh1XcU/hqdefault.jpg",
+    "duration": "15:50",
+    "language": "en",
+    "category": "essay_deep",
+    "tags": [
+      "SanneVloet",
+      "자존감",
+      "자기확신",
+      "차분한대화",
+      "쉐도잉"
+    ],
+    "source": "curated_english"
   },
   {
-    videoId: 'FmBRB2Wq8VU',
-    title: '7 Life Changing Mindset Habits to Soothe the Anxious Soul | Rowena Tsai',
-    channelTitle: 'Rowena Tsai',
-    description: 'Rowena Tsai • 불안한 마음을 다스리고 평온을 되찾는 7가지 마인드셋 습관 (16분)',
-    thumbnailUrl: 'https://img.youtube.com/vi/FmBRB2Wq8VU/hqdefault.jpg',
-    duration: '16:17',
-    language: 'en',
-    category: 'essay_deep',
-    tags: ['RowenaTsai', '마음챙김', '습관형성', '차분한목소리'],
-    source: 'curated_english',
+    "videoId": "FmBRB2Wq8VU",
+    "title": "7 Life Changing Mindset Habits to Soothe the Anxious Soul | Rowena Tsai",
+    "channelTitle": "Rowena Tsai",
+    "description": "Rowena Tsai • 불안한 마음을 다스리고 평온을 되찾는 7가지 마인드셋 습관 (16분)",
+    "thumbnailUrl": "https://img.youtube.com/vi/FmBRB2Wq8VU/hqdefault.jpg",
+    "duration": "16:17",
+    "language": "en",
+    "category": "essay_deep",
+    "tags": [
+      "RowenaTsai",
+      "마음챙김",
+      "습관형성",
+      "차분한목소리"
+    ],
+    "source": "curated_english"
   },
   {
-    videoId: '_Yj8nHQeZjk',
-    title: '7 Mindset Habits That Helped Me Get My Life Together | Rowena Tsai',
-    channelTitle: 'Rowena Tsai',
-    description: 'Rowena Tsai • 내면을 정돈하고 삶의 방향을 바로잡는 실천적 마인드셋 (19분)',
-    thumbnailUrl: 'https://img.youtube.com/vi/_Yj8nHQeZjk/hqdefault.jpg',
-    duration: '18:55',
-    language: 'en',
-    category: 'essay_deep',
-    tags: ['RowenaTsai', '자기계발', '마인드셋', '명품딕션'],
-    source: 'curated_english',
+    "videoId": "_Yj8nHQeZjk",
+    "title": "7 Mindset Habits That Helped Me Get My Life Together | Rowena Tsai",
+    "channelTitle": "Rowena Tsai",
+    "description": "Rowena Tsai • 내면을 정돈하고 삶의 방향을 바로잡는 실천적 마인드셋 (19분)",
+    "thumbnailUrl": "https://img.youtube.com/vi/_Yj8nHQeZjk/hqdefault.jpg",
+    "duration": "18:55",
+    "language": "en",
+    "category": "essay_deep",
+    "tags": [
+      "RowenaTsai",
+      "자기계발",
+      "마인드셋",
+      "명품딕션"
+    ],
+    "source": "curated_english"
   },
   {
-    videoId: 'nAK9UCjrdi4',
-    title: 'Life Changing Soft Habits for a More Mindful Existence | Rowena Tsai',
-    channelTitle: 'Rowena Tsai',
-    description: 'Rowena Tsai • 부드럽지만 단단한 일상을 만드는 작은 습관들 (15분)',
-    thumbnailUrl: 'https://img.youtube.com/vi/nAK9UCjrdi4/hqdefault.jpg',
-    duration: '14:38',
-    language: 'en',
-    category: 'essay_deep',
-    tags: ['RowenaTsai', '슬로우라이프', '마음챙김', '쉐도잉'],
-    source: 'curated_english',
-  },
-
-  // 🎤 TED / TEDx Psychology & Resilience
-  {
-    videoId: '0gks6ceq4eQ',
-    title: "You aren't at the mercy of your emotions — your brain creates them | Dr. Lisa Feldman Barrett",
-    channelTitle: 'TED',
-    description: 'Dr. Lisa Feldman Barrett (세계적 뇌과학자) • 뇌가 감정을 만드는 과학적 원리와 감정 조절 비결 (18분 명강연)',
-    thumbnailUrl: 'https://img.youtube.com/vi/0gks6ceq4eQ/hqdefault.jpg',
-    duration: '18:29',
-    language: 'en',
-    category: 'ted_speech',
-    tags: ['TED', '뇌과학', '감정조절', '명품강연', 'LisaFeldmanBarrett'],
-    source: 'curated_english',
+    "videoId": "nAK9UCjrdi4",
+    "title": "Life Changing Soft Habits for a More Mindful Existence | Rowena Tsai",
+    "channelTitle": "Rowena Tsai",
+    "description": "Rowena Tsai • 부드럽지만 단단한 일상을 만드는 작은 습관들 (15분)",
+    "thumbnailUrl": "https://img.youtube.com/vi/nAK9UCjrdi4/hqdefault.jpg",
+    "duration": "14:38",
+    "language": "en",
+    "category": "essay_deep",
+    "tags": [
+      "RowenaTsai",
+      "슬로우라이프",
+      "마음챙김",
+      "쉐도잉"
+    ],
+    "source": "curated_english"
   },
   {
-    videoId: 'LNHBMFCzznE',
-    title: 'After watching this, your brain will not be the same | Dr. Lara Boyd | TEDx',
-    channelTitle: 'TEDx Talks',
-    description: 'Dr. Lara Boyd • 신경가소성과 뇌 훈련을 통한 놀라운 자기 변화 (14분)',
-    thumbnailUrl: 'https://img.youtube.com/vi/LNHBMFCzznE/hqdefault.jpg',
-    duration: '14:24',
-    language: 'en',
-    category: 'ted_speech',
-    tags: ['TEDx', '신경과학', '뇌가소성', '스피치마스터'],
-    source: 'curated_english',
+    "videoId": "0gks6ceq4eQ",
+    "title": "You aren't at the mercy of your emotions — your brain creates them | Dr. Lisa Feldman Barrett",
+    "channelTitle": "TED",
+    "description": "Dr. Lisa Feldman Barrett (세계적 뇌과학자) • 뇌가 감정을 만드는 과학적 원리와 감정 조절 비결 (18분 명강연)",
+    "thumbnailUrl": "https://img.youtube.com/vi/0gks6ceq4eQ/hqdefault.jpg",
+    "duration": "18:29",
+    "language": "en",
+    "category": "ted_speech",
+    "tags": [
+      "TED",
+      "뇌과학",
+      "감정조절",
+      "명품강연",
+      "LisaFeldmanBarrett"
+    ],
+    "source": "curated_english"
   },
   {
-    videoId: 'NWH8N-BvhAw',
-    title: 'The three secrets of resilient people | Lucy Hone | TEDx',
-    channelTitle: 'TEDx Talks',
-    description: 'Lucy Hone • 큰 상실과 슬픔 속에서도 다시 일어나는 3가지 회복 탄력성의 비밀 (16분)',
-    thumbnailUrl: 'https://img.youtube.com/vi/NWH8N-BvhAw/hqdefault.jpg',
-    duration: '16:21',
-    language: 'en',
-    category: 'ted_speech',
-    tags: ['TEDx', '회복탄력성', '감동연설', '스피치훈련'],
-    source: 'curated_english',
+    "videoId": "LNHBMFCzznE",
+    "title": "After watching this, your brain will not be the same | Dr. Lara Boyd | TEDx",
+    "channelTitle": "TEDx Talks",
+    "description": "Dr. Lara Boyd • 신경가소성과 뇌 훈련을 통한 놀라운 자기 변화 (14분)",
+    "thumbnailUrl": "https://img.youtube.com/vi/LNHBMFCzznE/hqdefault.jpg",
+    "duration": "14:24",
+    "language": "en",
+    "category": "ted_speech",
+    "tags": [
+      "TEDx",
+      "신경과학",
+      "뇌가소성",
+      "스피치마스터"
+    ],
+    "source": "curated_english"
   },
   {
-    videoId: 'TFbv757kup4',
-    title: 'The Secret of Becoming Mentally Strong | Amy Morin | TEDx',
-    channelTitle: 'TEDx Talks',
-    description: 'Amy Morin • 멘탈이 강한 사람들의 핵심 습관과 마인드셋 훈련 (15분)',
-    thumbnailUrl: 'https://img.youtube.com/vi/TFbv757kup4/hqdefault.jpg',
-    duration: '15:02',
-    language: 'en',
-    category: 'ted_speech',
-    tags: ['TEDx', '멘탈관리', '자기통제', '동기부여'],
-    source: 'curated_english',
-  },
-
-  // 🌙 1-Hour+ Long-Form Podcasts & Conversations
-  {
-    videoId: 'L44p6oul8T4',
-    title: 'How to Live Intentionally with Malama Life | The Lavendaire Lifestyle (55m)',
-    channelTitle: 'The Lavendaire Lifestyle',
-    description: 'Aileen Xu & Malama Life • 심플라이프와 마음 챙김, 나다운 삶을 설계하는 55분 차분한 롱폼 팟캐스트',
-    thumbnailUrl: 'https://img.youtube.com/vi/L44p6oul8T4/hqdefault.jpg',
-    duration: '55:11',
-    language: 'en',
-    category: 'sleep_life',
-    tags: ['TheLavendaireLifestyle', '심플라이프', '55분팟캐스트', '수면오디오'],
-    source: 'curated_english',
+    "videoId": "NWH8N-BvhAw",
+    "title": "The three secrets of resilient people | Lucy Hone | TEDx",
+    "channelTitle": "TEDx Talks",
+    "description": "Lucy Hone • 큰 상실과 슬픔 속에서도 다시 일어나는 3가지 회복 탄력성의 비밀 (16분)",
+    "thumbnailUrl": "https://img.youtube.com/vi/NWH8N-BvhAw/hqdefault.jpg",
+    "duration": "16:21",
+    "language": "en",
+    "category": "ted_speech",
+    "tags": [
+      "TEDx",
+      "회복탄력성",
+      "감동연설",
+      "스피치훈련"
+    ],
+    "source": "curated_english"
   },
   {
-    videoId: 'Nw8QF229UKU',
-    title: 'Exit Your Lazy Era & Enter Productive Era | A Better You Podcast (43m)',
-    channelTitle: 'Fernanda Ramirez (A Better You)',
-    description: 'Fernanda Ramirez • 20대 여성의 현실적인 갓생 루틴과 자기 통제력 43분 딥토크',
-    thumbnailUrl: 'https://img.youtube.com/vi/Nw8QF229UKU/hqdefault.jpg',
-    duration: '42:38',
-    language: 'en',
-    category: 'sleep_life',
-    tags: ['ABetterYou', '생산성', '20대성장', '43분토크'],
-    source: 'curated_english',
+    "videoId": "TFbv757kup4",
+    "title": "The Secret of Becoming Mentally Strong | Amy Morin | TEDx",
+    "channelTitle": "TEDx Talks",
+    "description": "Amy Morin • 멘탈이 강한 사람들의 핵심 습관과 마인드셋 훈련 (15분)",
+    "thumbnailUrl": "https://img.youtube.com/vi/TFbv757kup4/hqdefault.jpg",
+    "duration": "15:02",
+    "language": "en",
+    "category": "ted_speech",
+    "tags": [
+      "TEDx",
+      "멘탈관리",
+      "자기통제",
+      "동기부여"
+    ],
+    "source": "curated_english"
   },
   {
-    videoId: 'ZCj2y95-Db8',
-    title: 'Making Space with Hoda Kotb: Savannah Guthrie (49m Full Episode)',
-    channelTitle: 'NBC TODAY',
-    description: 'Hoda Kotb & Savannah Guthrie • 두 여성 탑 앵커의 49분 풀버전 인생 대담 & 진솔한 고백',
-    thumbnailUrl: 'https://img.youtube.com/vi/ZCj2y95-Db8/hqdefault.jpg',
-    duration: '48:41',
-    language: 'en',
-    category: 'news_interview',
-    tags: ['뉴스초대석', 'NBCTODAY', 'HodaKotb', 'SavannahGuthrie', '49분대담'],
-    source: 'curated_english',
-  },
-
-  // 🎬 Romance & Drama Full Movies (1h 30m+)
-  {
-    videoId: 'XH-FDfbRmuI',
-    title: 'Campus Encounter | ROMANCE, COMEDY | Full Movie in English (1h 33m)',
-    channelTitle: 'Boxoffice TV Movies',
-    description: '캠퍼스에서 시작되는 달콤하고 유쾌한 로맨스 코미디 & 드라마 풀무비 쉐도잉 (1시간 33분)',
-    thumbnailUrl: 'https://img.youtube.com/vi/XH-FDfbRmuI/hqdefault.jpg',
-    duration: '1:32:52',
-    language: 'en',
-    category: 'movie_drama',
-    tags: ['영화쉐도잉', '로맨스영화', '풀버전영화', '영어듣기'],
-    source: 'curated_english',
+    "videoId": "L44p6oul8T4",
+    "title": "How to Live Intentionally with Malama Life | The Lavendaire Lifestyle (55m)",
+    "channelTitle": "The Lavendaire Lifestyle",
+    "description": "Aileen Xu & Malama Life • 심플라이프와 마음 챙김, 나다운 삶을 설계하는 55분 차분한 롱폼 팟캐스트",
+    "thumbnailUrl": "https://img.youtube.com/vi/L44p6oul8T4/hqdefault.jpg",
+    "duration": "55:11",
+    "language": "en",
+    "category": "sleep_life",
+    "tags": [
+      "TheLavendaireLifestyle",
+      "심플라이프",
+      "55분팟캐스트",
+      "수면오디오"
+    ],
+    "source": "curated_english"
   },
   {
-    videoId: 'Q6WJE0A43ps',
-    title: 'Hallmark Romantic Full Movie | She Had Given Up on Romance (1h 28m)',
-    channelTitle: 'Romantic Movie Hub',
-    description: '상처를 딛고 새로운 사랑을 찾아가는 따뜻한 홀마크 스타일 로맨스 풀버전 영화 (1시간 28분)',
-    thumbnailUrl: 'https://img.youtube.com/vi/Q6WJE0A43ps/hqdefault.jpg',
-    duration: '1:27:58',
-    language: 'en',
-    category: 'movie_drama',
-    tags: ['영화쉐도잉', '홀마크로맨스', '풀버전영화', '감성드라마'],
-    source: 'curated_english',
+    "videoId": "Nw8QF229UKU",
+    "title": "Exit Your Lazy Era & Enter Productive Era | A Better You Podcast (43m)",
+    "channelTitle": "Fernanda Ramirez (A Better You)",
+    "description": "Fernanda Ramirez • 20대 여성의 현실적인 갓생 루틴과 자기 통제력 43분 딥토크",
+    "thumbnailUrl": "https://img.youtube.com/vi/Nw8QF229UKU/hqdefault.jpg",
+    "duration": "42:38",
+    "language": "en",
+    "category": "sleep_life",
+    "tags": [
+      "ABetterYou",
+      "생산성",
+      "20대성장",
+      "43분토크"
+    ],
+    "source": "curated_english"
   },
+  {
+    "videoId": "ZCj2y95-Db8",
+    "title": "Making Space with Hoda Kotb: Savannah Guthrie (49m Full Episode)",
+    "channelTitle": "NBC TODAY",
+    "description": "Hoda Kotb & Savannah Guthrie • 두 여성 탑 앵커의 49분 풀버전 인생 대담 & 진솔한 고백",
+    "thumbnailUrl": "https://img.youtube.com/vi/ZCj2y95-Db8/hqdefault.jpg",
+    "duration": "48:41",
+    "language": "en",
+    "category": "news_interview",
+    "tags": [
+      "뉴스초대석",
+      "NBCTODAY",
+      "HodaKotb",
+      "SavannahGuthrie",
+      "49분대담"
+    ],
+    "source": "curated_english"
+  },
+  {
+    "videoId": "XH-FDfbRmuI",
+    "title": "Campus Encounter | ROMANCE, COMEDY | Full Movie in English (1h 33m)",
+    "channelTitle": "Boxoffice TV Movies",
+    "description": "캠퍼스에서 시작되는 달콤하고 유쾌한 로맨스 코미디 & 드라마 풀무비 쉐도잉 (1시간 33분)",
+    "thumbnailUrl": "https://img.youtube.com/vi/XH-FDfbRmuI/hqdefault.jpg",
+    "duration": "1:32:52",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "로맨스영화",
+      "풀버전영화",
+      "영어듣기"
+    ],
+    "source": "curated_english"
+  },
+  {
+    "videoId": "Q6WJE0A43ps",
+    "title": "Hallmark Romantic Full Movie | She Had Given Up on Romance (1h 28m)",
+    "channelTitle": "Romantic Movie Hub",
+    "description": "상처를 딛고 새로운 사랑을 찾아가는 따뜻한 홀마크 스타일 로맨스 풀버전 영화 (1시간 28분)",
+    "thumbnailUrl": "https://img.youtube.com/vi/Q6WJE0A43ps/hqdefault.jpg",
+    "duration": "1:27:58",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "홀마크로맨스",
+      "풀버전영화",
+      "감성드라마"
+    ],
+    "source": "curated_english"
+  }
 ];
 
 export const DEFAULT_ENGLISH_POP_TRACKS = [
-  // Adele (Emotional Ballads)
   {
-    videoId: 'YQHsXMglC9A',
-    title: 'Adele - Hello (Official Music Video)',
-    channelTitle: 'Adele',
-    artist: 'Adele',
-    album: '25',
-    description: 'Adele • 깊은 감정선과 완벽한 영국식 발음의 불후의 명품 발라드 & 가사 싱크 쉐도잉',
-    thumbnailUrl: 'https://img.youtube.com/vi/YQHsXMglC9A/hqdefault.jpg',
-    duration: '6:07',
-    category: 'pop_music',
-    tags: ['영어발라드', 'Adele', '명품보컬', '감성팝', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "YQHsXMglC9A",
+    "title": "Adele - Hello (Official Music Video)",
+    "channelTitle": "Adele",
+    "artist": "Adele",
+    "description": "Adele - Hello (Official Music Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (6:07)",
+    "thumbnailUrl": "https://img.youtube.com/vi/YQHsXMglC9A/hqdefault.jpg",
+    "duration": "6:07",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "Adele",
+      "명품보컬",
+      "감성팝",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'hLQl3WQQoQ0',
-    title: 'Adele - Someone Like You (Official Music Video)',
-    channelTitle: 'Adele',
-    artist: 'Adele',
-    album: '21',
-    description: 'Adele • 피아노 선율과 호소력 짙은 보컬, 전 세계를 울린 감성 발라드',
-    thumbnailUrl: 'https://img.youtube.com/vi/hLQl3WQQoQ0/hqdefault.jpg',
-    duration: '4:45',
-    category: 'pop_music',
-    tags: ['영어발라드', 'Adele', '피아노발라드', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "hLQl3WQQoQ0",
+    "title": "Adele - Someone Like You (Official Music Video)",
+    "channelTitle": "Adele",
+    "artist": "Adele",
+    "description": "Adele - Someone Like You (Official Music Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (4:45)",
+    "thumbnailUrl": "https://img.youtube.com/vi/hLQl3WQQoQ0/hqdefault.jpg",
+    "duration": "4:45",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "Adele",
+      "피아노발라드",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'ffcitRgiNDs',
-    title: 'Adele - Easy On Me (Live NRJ Awards)',
-    channelTitle: 'Adele',
-    artist: 'Adele',
-    album: '30',
-    description: 'Adele • 부드럽고 차분한 라이브 어쿠스틱 발라드 & 섬세한 딕션 훈련',
-    thumbnailUrl: 'https://img.youtube.com/vi/ffcitRgiNDs/hqdefault.jpg',
-    duration: '3:48',
-    category: 'pop_music',
-    tags: ['영어발라드', 'Adele', 'EasyOnMe', '어쿠스틱'],
-    source: 'curated_pop',
+    "videoId": "RDRwqTNLGDs",
+    "title": "Adele - Don't You Remember (Live at Largo)",
+    "channelTitle": "Adele",
+    "artist": "Adele",
+    "description": "Adele - Don't You Remember (Live at Largo) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (4:16)",
+    "thumbnailUrl": "https://img.youtube.com/vi/RDRwqTNLGDs/hqdefault.jpg",
+    "duration": "4:16",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "Adele",
+      "어쿠스틱라이브",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'RDRwqTNLGDs',
-    title: "Adele - Don't You Remember (Live at Largo)",
-    channelTitle: 'Adele',
-    artist: 'Adele',
-    album: '21',
-    description: 'Adele • 어쿠스틱 기타와 애절한 음색이 돋보이는 라이브 발라드 명곡',
-    thumbnailUrl: 'https://img.youtube.com/vi/RDRwqTNLGDs/hqdefault.jpg',
-    duration: '4:16',
-    category: 'pop_music',
-    tags: ['영어발라드', 'Adele', '어쿠스틱라이브', '가사쉐도잉'],
-    source: 'curated_pop',
-  },
-
-  // Lana Del Rey (Cinematic & Melancholic Ballads)
-  {
-    videoId: 'mjcX-5lKdeg',
-    title: 'Lana Del Rey - Young and Beautiful (The Great Gatsby Soundtrack)',
-    channelTitle: 'Lana Del Rey',
-    artist: 'Lana Del Rey',
-    album: 'The Great Gatsby',
-    description: 'Lana Del Rey • 영화 위대한 개츠비 OST & 몽환적이고 아름다운 시네마틱 발라드',
-    thumbnailUrl: 'https://img.youtube.com/vi/mjcX-5lKdeg/hqdefault.jpg',
-    duration: '3:57',
-    category: 'pop_music',
-    tags: ['영어발라드', 'LanaDelRey', '영화OST', '몽환적발라드', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "TdrL3QxjyVw",
+    "title": "Lana Del Rey - Summertime Sadness (Official Music Video)",
+    "channelTitle": "Lana Del Rey",
+    "artist": "Lana Del Rey",
+    "description": "Lana Del Rey - Summertime Sadness (Official Music Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (4:26)",
+    "thumbnailUrl": "https://img.youtube.com/vi/TdrL3QxjyVw/hqdefault.jpg",
+    "duration": "4:26",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "LanaDelRey",
+      "감성팝",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'TdrL3QxjyVw',
-    title: 'Lana Del Rey - Summertime Sadness (Official Music Video)',
-    channelTitle: 'Lana Del Rey',
-    artist: 'Lana Del Rey',
-    album: 'Born to Die',
-    description: 'Lana Del Rey • 서정적인 멜로디와 독보적인 빈티지 감성의 명곡',
-    thumbnailUrl: 'https://img.youtube.com/vi/TdrL3QxjyVw/hqdefault.jpg',
-    duration: '4:26',
-    category: 'pop_music',
-    tags: ['영어발라드', 'LanaDelRey', '감성팝', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "uxjhN_Donfw",
+    "title": "Gracie Abrams - I Love You, I’m Sorry (Official Music Video)",
+    "channelTitle": "Gracie Abrams",
+    "artist": "Gracie Abrams",
+    "description": "Gracie Abrams - I Love You, I’m Sorry (Official Music Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:54)",
+    "thumbnailUrl": "https://img.youtube.com/vi/uxjhN_Donfw/hqdefault.jpg",
+    "duration": "3:54",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "GracieAbrams",
+      "어쿠스틱",
+      "감성팝",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'cE6wxDqdOV0',
-    title: 'Lana Del Rey - Video Games (Official Music Video)',
-    channelTitle: 'Lana Del Rey',
-    artist: 'Lana Del Rey',
-    album: 'Born to Die',
-    description: 'Lana Del Rey • 라나 델 레이를 세상에 알린 서정적인 클래식 발라드',
-    thumbnailUrl: 'https://img.youtube.com/vi/cE6wxDqdOV0/hqdefault.jpg',
-    duration: '4:47',
-    category: 'pop_music',
-    tags: ['영어발라드', 'LanaDelRey', '클래식발라드', '가사쉐도잉'],
-    source: 'curated_pop',
-  },
-
-  // Gracie Abrams (Heartfelt Acoustic Ballads)
-  {
-    videoId: 'uxjhN_Donfw',
-    title: 'Gracie Abrams - I Love You, I’m Sorry (Official Music Video)',
-    channelTitle: 'Gracie Abrams',
-    artist: 'Gracie Abrams',
-    album: 'The Secret of Us',
-    description: 'Gracie Abrams • 감미롭고 속삭이듯 부르는 어쿠스틱 감성 발라드 & 선명한 영어 발음',
-    thumbnailUrl: 'https://img.youtube.com/vi/uxjhN_Donfw/hqdefault.jpg',
-    duration: '3:54',
-    category: 'pop_music',
-    tags: ['영어발라드', 'GracieAbrams', '어쿠스틱', '감성팝', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "eVli-tstM5E",
+    "title": "Sabrina Carpenter - Espresso (Official Music Video)",
+    "channelTitle": "Sabrina Carpenter",
+    "artist": "Sabrina Carpenter",
+    "description": "Sabrina Carpenter - Espresso (Official Music Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:19)",
+    "thumbnailUrl": "https://img.youtube.com/vi/eVli-tstM5E/hqdefault.jpg",
+    "duration": "3:19",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "SabrinaCarpenter",
+      "Espresso",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'BDHM8cyJQa8',
-    title: 'Gracie Abrams - That’s So True (Official Lyric Video)',
-    channelTitle: 'Gracie Abrams',
-    artist: 'Gracie Abrams',
-    album: 'The Secret of Us',
-    description: 'Gracie Abrams • 진솔하고 서정적인 가사 & 따뜻한 어쿠스틱 사운드',
-    thumbnailUrl: 'https://img.youtube.com/vi/BDHM8cyJQa8/hqdefault.jpg',
-    duration: '2:47',
-    category: 'pop_music',
-    tags: ['영어발라드', 'GracieAbrams', '가사쉐도잉', '어쿠스틱'],
-    source: 'curated_pop',
-  },
-
-  // Taylor Swift (Ballads & Folk Masterpieces)
-  {
-    videoId: 'wMpqCRF7TKg',
-    title: 'Taylor Swift - champagne problems (Official Lyric Video)',
-    channelTitle: 'Taylor Swift',
-    artist: 'Taylor Swift',
-    album: 'evermore',
-    description: 'Taylor Swift • 피아노 선율과 시적인 스토리텔링이 어우러진 최고 명품 발라드',
-    thumbnailUrl: 'https://img.youtube.com/vi/wMpqCRF7TKg/hqdefault.jpg',
-    duration: '4:08',
-    category: 'pop_music',
-    tags: ['영어발라드', 'TaylorSwift', 'champagneproblems', '피아노발라드', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "cF1Na4AIecM",
+    "title": "Sabrina Carpenter - Please Please Please (Official Video)",
+    "channelTitle": "Sabrina Carpenter",
+    "artist": "Sabrina Carpenter",
+    "description": "Sabrina Carpenter - Please Please Please (Official Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:30)",
+    "thumbnailUrl": "https://img.youtube.com/vi/cF1Na4AIecM/hqdefault.jpg",
+    "duration": "3:30",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "SabrinaCarpenter",
+      "PleasePleasePlease",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'osdoLjUNFnA',
-    title: 'Taylor Swift – exile (feat. Bon Iver) (Official Lyric Video)',
-    channelTitle: 'Taylor Swift',
-    artist: 'Taylor Swift',
-    album: 'folklore',
-    description: 'Taylor Swift & Bon Iver • 깊은 감정의 대화를 담은 서정적인 듀엣 발라드',
-    thumbnailUrl: 'https://img.youtube.com/vi/osdoLjUNFnA/hqdefault.jpg',
-    duration: '4:47',
-    category: 'pop_music',
-    tags: ['영어발라드', 'TaylorSwift', 'BonIver', '포크발라드', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "TUVcZfQe-Kw",
+    "title": "Dua Lipa - Levitating (Official Music Video)",
+    "channelTitle": "Dua Lipa",
+    "artist": "Dua Lipa",
+    "description": "Dua Lipa - Levitating (Official Music Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:23)",
+    "thumbnailUrl": "https://img.youtube.com/vi/TUVcZfQe-Kw/hqdefault.jpg",
+    "duration": "3:23",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "DuaLipa",
+      "Levitating",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'BZ-rLBkUZf4',
-    title: "Taylor Swift - All Too Well (10 Minute Version) (Taylor's Version) Lyric Video",
-    channelTitle: 'Taylor Swift',
-    artist: 'Taylor Swift',
-    album: 'Red (Taylor Version)',
-    description: 'Taylor Swift • 10분간 이어지는 문학적인 가사와 서사적인 빌드업 마스터피스',
-    thumbnailUrl: 'https://img.youtube.com/vi/BZ-rLBkUZf4/hqdefault.jpg',
-    duration: '10:13',
-    category: 'pop_music',
-    tags: ['영어발라드', 'TaylorSwift', 'AllTooWell', '10분발라드', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "2Vv-BfVoq4g",
+    "title": "Ed Sheeran - Perfect (Official Music Video)",
+    "channelTitle": "Ed Sheeran",
+    "artist": "Ed Sheeran",
+    "description": "Ed Sheeran - Perfect (Official Music Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (4:23)",
+    "thumbnailUrl": "https://img.youtube.com/vi/2Vv-BfVoq4g/hqdefault.jpg",
+    "duration": "4:23",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "EdSheeran",
+      "Perfect",
+      "어쿠스틱",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'Kwlb3orsJYU',
-    title: 'Taylor Swift - Lover (Official Music Video)',
-    channelTitle: 'Taylor Swift',
-    artist: 'Taylor Swift',
-    album: 'Lover',
-    description: 'Taylor Swift • 따뜻하고 로맨틱한 멜로디 & 차분하고 부드러운 어쿠스틱 보컬 쉐도잉',
-    thumbnailUrl: 'https://img.youtube.com/vi/Kwlb3orsJYU/hqdefault.jpg',
-    duration: '3:58',
-    category: 'pop_music',
-    tags: ['영어발라드', 'TaylorSwift', 'Lover', '감성팝'],
-    source: 'curated_pop',
+    "videoId": "lp-EO5I60KA",
+    "title": "Ed Sheeran - Thinking Out Loud (Official Music Video)",
+    "channelTitle": "Ed Sheeran",
+    "artist": "Ed Sheeran",
+    "description": "Ed Sheeran - Thinking Out Loud (Official Music Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (4:41)",
+    "thumbnailUrl": "https://img.youtube.com/vi/lp-EO5I60KA/hqdefault.jpg",
+    "duration": "4:41",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "EdSheeran",
+      "ThinkingOutLoud",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'K-a8s8OLBSE',
-    title: 'Taylor Swift - cardigan (Official Music Video)',
-    channelTitle: 'Taylor Swift',
-    artist: 'Taylor Swift',
-    album: 'folklore',
-    description: 'Taylor Swift • 그래미 올해의 앨범상 수상작 & 깊은 서정성과 시적인 영어 가사',
-    thumbnailUrl: 'https://img.youtube.com/vi/K-a8s8OLBSE/hqdefault.jpg',
-    duration: '4:35',
-    category: 'pop_music',
-    tags: ['영어발라드', 'TaylorSwift', 'Cardigan', '포크팝', '감성에세이'],
-    source: 'curated_pop',
-  },
-
-  // Billie Eilish (Slow & Acoustic Ballads)
-  {
-    videoId: 'cW8VLC9nnTo',
-    title: 'Billie Eilish - What Was I Made For? (From Barbie The Album)',
-    channelTitle: 'Billie Eilish',
-    artist: 'Billie Eilish',
-    album: 'Barbie The Album',
-    description: 'Billie Eilish • 오스카 & 그래미 올해의 노래상 수상 & 속삭이는 듯 맑고 섬세한 피아노 발라드',
-    thumbnailUrl: 'https://img.youtube.com/vi/cW8VLC9nnTo/hqdefault.jpg',
-    duration: '4:09',
-    category: 'pop_music',
-    tags: ['영어발라드', 'BillieEilish', 'WhatWasIMadeFor', '오스카수상', '피아노발라드'],
-    source: 'curated_pop',
+    "videoId": "Oa_RSwwpPaA",
+    "title": "Benson Boone - Beautiful Things (Official Music Video)",
+    "channelTitle": "Benson Boone",
+    "artist": "Benson Boone",
+    "description": "Benson Boone - Beautiful Things (Official Music Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:00)",
+    "thumbnailUrl": "https://img.youtube.com/vi/Oa_RSwwpPaA/hqdefault.jpg",
+    "duration": "3:00",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "BensonBoone",
+      "BeautifulThings",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'viimfQi_pUw',
-    title: 'Billie Eilish - ocean eyes (Official Music Video)',
-    channelTitle: 'Billie Eilish',
-    artist: 'Billie Eilish',
-    album: 'dont smile at me',
-    description: 'Billie Eilish • 맑고 서정적인 음색과 꿈결 같은 보컬 쉐도잉',
-    thumbnailUrl: 'https://img.youtube.com/vi/viimfQi_pUw/hqdefault.jpg',
-    duration: '3:21',
-    category: 'pop_music',
-    tags: ['영어발라드', 'BillieEilish', 'oceaneyes', '서정적발라드'],
-    source: 'curated_pop',
+    "videoId": "k4V3Mo61fJM",
+    "title": "Coldplay - Fix You (Official Video)",
+    "channelTitle": "Coldplay",
+    "artist": "Coldplay",
+    "description": "Coldplay - Fix You (Official Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (4:55)",
+    "thumbnailUrl": "https://img.youtube.com/vi/k4V3Mo61fJM/hqdefault.jpg",
+    "duration": "4:55",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "Coldplay",
+      "FixYou",
+      "위로발라드",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'pbMwTqkKSps',
-    title: "Billie Eilish - when the party's over (Official Music Video)",
-    channelTitle: 'Billie Eilish',
-    artist: 'Billie Eilish',
-    album: 'WHEN WE ALL FALL ASLEEP, WHERE DO WE GO?',
-    description: 'Billie Eilish • 피아노와 화음만으로 공간을 채우는 압도적 감성의 발라드',
-    thumbnailUrl: 'https://img.youtube.com/vi/pbMwTqkKSps/hqdefault.jpg',
-    duration: '3:14',
-    category: 'pop_music',
-    tags: ['영어발라드', 'BillieEilish', 'whenthepartysover', '피아노발라드'],
-    source: 'curated_pop',
+    "videoId": "yKNxeF4KMsY",
+    "title": "Coldplay - Yellow (Official Video)",
+    "channelTitle": "Coldplay",
+    "artist": "Coldplay",
+    "description": "Coldplay - Yellow (Official Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (4:29)",
+    "thumbnailUrl": "https://img.youtube.com/vi/yKNxeF4KMsY/hqdefault.jpg",
+    "duration": "4:29",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "Coldplay",
+      "Yellow",
+      "어쿠스틱",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'eVli-tstM5E',
-    title: 'Sabrina Carpenter - Espresso (Official Music Video)',
-    channelTitle: 'Sabrina Carpenter',
-    artist: 'Sabrina Carpenter',
-    album: 'Short n\' Sweet',
-    description: 'Sabrina Carpenter • 전 세계를 사로잡은 레트로 감성 팝 & 위트 넘치는 가사 쉐도잉',
-    thumbnailUrl: 'https://img.youtube.com/vi/eVli-tstM5E/hqdefault.jpg',
-    duration: '3:19',
-    category: 'pop_music',
-    tags: ['영어팝송', 'SabrinaCarpenter', 'Espresso', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "RB-RcX5DS5A",
+    "title": "Coldplay - The Scientist (Official 4K Video)",
+    "channelTitle": "Coldplay",
+    "artist": "Coldplay",
+    "description": "Coldplay - The Scientist (Official 4K Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (4:26)",
+    "thumbnailUrl": "https://img.youtube.com/vi/RB-RcX5DS5A/hqdefault.jpg",
+    "duration": "4:26",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "Coldplay",
+      "TheScientist",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'cF1Na4AIecM',
-    title: 'Sabrina Carpenter - Please Please Please (Official Video)',
-    channelTitle: 'Sabrina Carpenter',
-    artist: 'Sabrina Carpenter',
-    album: 'Short n\' Sweet',
-    description: 'Sabrina Carpenter • 차분하고 매력적인 보컬 & 정확한 원어민 딕션 훈련',
-    thumbnailUrl: 'https://img.youtube.com/vi/cF1Na4AIecM/hqdefault.jpg',
-    duration: '3:30',
-    category: 'pop_music',
-    tags: ['영어팝송', 'SabrinaCarpenter', 'PleasePleasePlease', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "5vheNbQlsyU",
+    "title": "Lady Gaga - Always Remember Us This Way (From A Star Is Born)",
+    "channelTitle": "Lady Gaga",
+    "artist": "Lady Gaga",
+    "description": "Lady Gaga - Always Remember Us This Way (From A Star Is Born) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:30)",
+    "thumbnailUrl": "https://img.youtube.com/vi/5vheNbQlsyU/hqdefault.jpg",
+    "duration": "3:30",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "LadyGaga",
+      "스타이즈본",
+      "피아노발라드",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'TUVcZfQe-Kw',
-    title: 'Dua Lipa - Levitating (Official Music Video)',
-    channelTitle: 'Dua Lipa',
-    artist: 'Dua Lipa',
-    album: 'Future Nostalgia',
-    description: 'Dua Lipa • 리드미컬하고 선명한 영국식 발음의 디스코 팝 & 영어 쉐도잉',
-    thumbnailUrl: 'https://img.youtube.com/vi/TUVcZfQe-Kw/hqdefault.jpg',
-    duration: '3:23',
-    category: 'pop_music',
-    tags: ['영어팝송', 'DuaLipa', 'Levitating', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "pB-5XG-DbAA",
+    "title": "Sam Smith - Stay With Me (Official Music Video)",
+    "channelTitle": "Sam Smith",
+    "artist": "Sam Smith",
+    "description": "Sam Smith - Stay With Me (Official Music Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:00)",
+    "thumbnailUrl": "https://img.youtube.com/vi/pB-5XG-DbAA/hqdefault.jpg",
+    "duration": "3:00",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "SamSmith",
+      "StayWithMe",
+      "소울발라드",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: '2Vv-BfVoq4g',
-    title: 'Ed Sheeran - Perfect (Official Music Video)',
-    channelTitle: 'Ed Sheeran',
-    artist: 'Ed Sheeran',
-    album: '÷ (Divide)',
-    description: 'Ed Sheeran • 전 세계적인 웨딩송 & 로맨틱하고 따뜻한 어쿠스틱 발라드',
-    thumbnailUrl: 'https://img.youtube.com/vi/2Vv-BfVoq4g/hqdefault.jpg',
-    duration: '4:23',
-    category: 'pop_music',
-    tags: ['영어발라드', 'EdSheeran', 'Perfect', '어쿠스틱', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "nCkpzqqog4k",
+    "title": "Sam Smith - I'm Not The Only One (Official Music Video)",
+    "channelTitle": "Sam Smith",
+    "artist": "Sam Smith",
+    "description": "Sam Smith - I'm Not The Only One (Official Music Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:59)",
+    "thumbnailUrl": "https://img.youtube.com/vi/nCkpzqqog4k/hqdefault.jpg",
+    "duration": "3:59",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "SamSmith",
+      "ImNotTheOnlyOne",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'lp-EO5I60KA',
-    title: 'Ed Sheeran - Thinking Out Loud (Official Music Video)',
-    channelTitle: 'Ed Sheeran',
-    artist: 'Ed Sheeran',
-    album: 'x (Multiply)',
-    description: 'Ed Sheeran • 감미로운 기타와 소울풀한 보컬이 어우러진 불후의 명곡',
-    thumbnailUrl: 'https://img.youtube.com/vi/lp-EO5I60KA/hqdefault.jpg',
-    duration: '4:41',
-    category: 'pop_music',
-    tags: ['영어발라드', 'EdSheeran', 'ThinkingOutLoud', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "zABLecsR5UE",
+    "title": "Lewis Capaldi - Someone You Loved (Official Video)",
+    "channelTitle": "Lewis Capaldi",
+    "artist": "Lewis Capaldi",
+    "description": "Lewis Capaldi - Someone You Loved (Official Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:02)",
+    "thumbnailUrl": "https://img.youtube.com/vi/zABLecsR5UE/hqdefault.jpg",
+    "duration": "3:02",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "LewisCapaldi",
+      "SomeoneYouLoved",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'Oa_RSwwpPaA',
-    title: 'Benson Boone - Beautiful Things (Official Music Video)',
-    channelTitle: 'Benson Boone',
-    artist: 'Benson Boone',
-    album: 'Fireworks & Rollerblades',
-    description: 'Benson Boone • 폭발적인 가창력과 감성적인 멜로디의 팝 발라드',
-    thumbnailUrl: 'https://img.youtube.com/vi/Oa_RSwwpPaA/hqdefault.jpg',
-    duration: '3:00',
-    category: 'pop_music',
-    tags: ['영어발라드', 'BensonBoone', 'BeautifulThings', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "ZmDBbnmKpqQ",
+    "title": "Olivia Rodrigo - drivers license (Official Video)",
+    "channelTitle": "Olivia Rodrigo",
+    "artist": "Olivia Rodrigo",
+    "description": "Olivia Rodrigo - drivers license (Official Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (4:07)",
+    "thumbnailUrl": "https://img.youtube.com/vi/ZmDBbnmKpqQ/hqdefault.jpg",
+    "duration": "4:07",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "OliviaRodrigo",
+      "driverslicense",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'k4V3Mo61fJM',
-    title: 'Coldplay - Fix You (Official Video)',
-    channelTitle: 'Coldplay',
-    artist: 'Coldplay',
-    album: 'X&Y',
-    description: 'Coldplay • 마음을 위로하는 따뜻한 오르간과 감동적인 브리티시 락 발라드',
-    thumbnailUrl: 'https://img.youtube.com/vi/k4V3Mo61fJM/hqdefault.jpg',
-    duration: '4:55',
-    category: 'pop_music',
-    tags: ['영어발라드', 'Coldplay', 'FixYou', '위로발라드', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "cii6ruuycQA",
+    "title": "Olivia Rodrigo - deja vu (Official Video)",
+    "channelTitle": "Olivia Rodrigo",
+    "artist": "Olivia Rodrigo",
+    "description": "Olivia Rodrigo - deja vu (Official Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:51)",
+    "thumbnailUrl": "https://img.youtube.com/vi/cii6ruuycQA/hqdefault.jpg",
+    "duration": "3:51",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "OliviaRodrigo",
+      "dejavu",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'yKNxeF4KMsY',
-    title: 'Coldplay - Yellow (Official Video)',
-    channelTitle: 'Coldplay',
-    artist: 'Coldplay',
-    album: 'Parachutes',
-    description: 'Coldplay • 콜드플레이의 시그니처 & 서정적이고 아련한 명품 어쿠스틱 발라드',
-    thumbnailUrl: 'https://img.youtube.com/vi/yKNxeF4KMsY/hqdefault.jpg',
-    duration: '4:29',
-    category: 'pop_music',
-    tags: ['영어발라드', 'Coldplay', 'Yellow', '어쿠스틱', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "CRrf3h9vhp8",
+    "title": "Olivia Rodrigo - traitor (Official Video)",
+    "channelTitle": "Olivia Rodrigo",
+    "artist": "Olivia Rodrigo",
+    "description": "Olivia Rodrigo - traitor (Official Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:58)",
+    "thumbnailUrl": "https://img.youtube.com/vi/CRrf3h9vhp8/hqdefault.jpg",
+    "duration": "3:58",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "OliviaRodrigo",
+      "traitor",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'RB-RcX5DS5A',
-    title: 'Coldplay - The Scientist (Official 4K Video)',
-    channelTitle: 'Coldplay',
-    artist: 'Coldplay',
-    album: 'A Rush of Blood to the Head',
-    description: 'Coldplay • 피아노 선율과 깊은 애절함이 담긴 세계적인 명품 팝',
-    thumbnailUrl: 'https://img.youtube.com/vi/RB-RcX5DS5A/hqdefault.jpg',
-    duration: '4:26',
-    category: 'pop_music',
-    tags: ['영어발라드', 'Coldplay', 'TheScientist', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "V1Pl8CzNzCw",
+    "title": "Billie Eilish, Khalid - lovely",
+    "channelTitle": "Billie Eilish & Khalid",
+    "artist": "Billie Eilish & Khalid",
+    "description": "Billie Eilish, Khalid - lovely • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:20)",
+    "thumbnailUrl": "https://img.youtube.com/vi/V1Pl8CzNzCw/hqdefault.jpg",
+    "duration": "3:20",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "BillieEilish",
+      "Khalid",
+      "lovely",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: '5vheNbQlsyU',
-    title: 'Lady Gaga - Always Remember Us This Way (From A Star Is Born)',
-    channelTitle: 'Lady Gaga',
-    artist: 'Lady Gaga',
-    album: 'A Star Is Born',
-    description: 'Lady Gaga • 영화 스타 이즈 본 OST & 폭발적인 감성의 피아노 발라드',
-    thumbnailUrl: 'https://img.youtube.com/vi/5vheNbQlsyU/hqdefault.jpg',
-    duration: '3:30',
-    category: 'pop_music',
-    tags: ['영어발라드', 'LadyGaga', '스타이즈본', '피아노발라드', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "-tn2S3kJlyU",
+    "title": "Billie Eilish - idontwannabeyouanymore (Official Video)",
+    "channelTitle": "Billie Eilish",
+    "artist": "Billie Eilish",
+    "description": "Billie Eilish - idontwannabeyouanymore (Official Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:24)",
+    "thumbnailUrl": "https://img.youtube.com/vi/-tn2S3kJlyU/hqdefault.jpg",
+    "duration": "3:24",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "BillieEilish",
+      "idontwannabeyouanymore",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'pB-5XG-DbAA',
-    title: 'Sam Smith - Stay With Me (Official Music Video)',
-    channelTitle: 'Sam Smith',
-    artist: 'Sam Smith',
-    album: 'In the Lonely Hour',
-    description: 'Sam Smith • 소울풀한 가스펠 화음과 애절한 목소리의 그래미 수상작',
-    thumbnailUrl: 'https://img.youtube.com/vi/pB-5XG-DbAA/hqdefault.jpg',
-    duration: '3:00',
-    category: 'pop_music',
-    tags: ['영어발라드', 'SamSmith', 'StayWithMe', '소울발라드', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "b1kbLwvqugk",
+    "title": "Taylor Swift - Anti-Hero (Official Music Video)",
+    "channelTitle": "Taylor Swift",
+    "artist": "Taylor Swift",
+    "description": "Taylor Swift - Anti-Hero (Official Music Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (5:09)",
+    "thumbnailUrl": "https://img.youtube.com/vi/b1kbLwvqugk/hqdefault.jpg",
+    "duration": "5:09",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "TaylorSwift",
+      "AntiHero",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'nCkpzqqog4k',
-    title: 'Sam Smith - I\'m Not The Only One (Official Music Video)',
-    channelTitle: 'Sam Smith',
-    artist: 'Sam Smith',
-    album: 'In the Lonely Hour',
-    description: 'Sam Smith • 서정적인 멜로디와 차분한 딕션이 돋보이는 소울 발라드',
-    thumbnailUrl: 'https://img.youtube.com/vi/nCkpzqqog4k/hqdefault.jpg',
-    duration: '3:59',
-    category: 'pop_music',
-    tags: ['영어발라드', 'SamSmith', 'ImNotTheOnlyOne', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "RsEZmictANA",
+    "title": "Taylor Swift - willow (Official Music Video)",
+    "channelTitle": "Taylor Swift",
+    "artist": "Taylor Swift",
+    "description": "Taylor Swift - willow (Official Music Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (4:13)",
+    "thumbnailUrl": "https://img.youtube.com/vi/RsEZmictANA/hqdefault.jpg",
+    "duration": "4:13",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "TaylorSwift",
+      "willow",
+      "포크팝",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'zABLecsR5UE',
-    title: 'Lewis Capaldi - Someone You Loved (Official Video)',
-    channelTitle: 'Lewis Capaldi',
-    artist: 'Lewis Capaldi',
-    album: 'Divinely Uninspired to a Hellish Extent',
-    description: 'Lewis Capaldi • 거친 허스키 보이스와 진한 감동의 피아노 발라드',
-    thumbnailUrl: 'https://img.youtube.com/vi/zABLecsR5UE/hqdefault.jpg',
-    duration: '3:02',
-    category: 'pop_music',
-    tags: ['영어발라드', 'LewisCapaldi', 'SomeoneYouLoved', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "DDWKuo3gXMQ",
+    "title": "Adele - When We Were Young (Live at The Church Studios)",
+    "channelTitle": "Adele",
+    "artist": "Adele",
+    "description": "Adele - When We Were Young (Live at The Church Studios) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (5:43)",
+    "thumbnailUrl": "https://img.youtube.com/vi/DDWKuo3gXMQ/hqdefault.jpg",
+    "duration": "5:43",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "Adele",
+      "WhenWeWereYoung",
+      "라이브명곡",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'ZmDBbnmKpqQ',
-    title: 'Olivia Rodrigo - drivers license (Official Video)',
-    channelTitle: 'Olivia Rodrigo',
-    artist: 'Olivia Rodrigo',
-    album: 'SOUR',
-    description: 'Olivia Rodrigo • 전 세계를 뒤흔든 데뷔 싱글 & 폭발적인 감정선의 틴 발라드',
-    thumbnailUrl: 'https://img.youtube.com/vi/ZmDBbnmKpqQ/hqdefault.jpg',
-    duration: '4:07',
-    category: 'pop_music',
-    tags: ['영어발라드', 'OliviaRodrigo', 'driverslicense', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "0put0_a--Ng",
+    "title": "Adele - Make You Feel My Love (Official Video)",
+    "channelTitle": "Adele",
+    "artist": "Adele",
+    "description": "Adele - Make You Feel My Love (Official Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:32)",
+    "thumbnailUrl": "https://img.youtube.com/vi/0put0_a--Ng/hqdefault.jpg",
+    "duration": "3:32",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "Adele",
+      "MakeYouFeelMyLove",
+      "피아노발라드",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'cii6ruuycQA',
-    title: 'Olivia Rodrigo - deja vu (Official Video)',
-    channelTitle: 'Olivia Rodrigo',
-    artist: 'Olivia Rodrigo',
-    album: 'SOUR',
-    description: 'Olivia Rodrigo • 몽환적인 신스 사운드와 세밀한 가사 스토리텔링',
-    thumbnailUrl: 'https://img.youtube.com/vi/cii6ruuycQA/hqdefault.jpg',
-    duration: '3:51',
-    category: 'pop_music',
-    tags: ['영어팝송', 'OliviaRodrigo', 'dejavu', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "ekzHIouo8Q4",
+    "title": "Bruno Mars - When I Was Your Man (Official Music Video)",
+    "channelTitle": "Bruno Mars",
+    "artist": "Bruno Mars",
+    "description": "Bruno Mars - When I Was Your Man (Official Music Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:55)",
+    "thumbnailUrl": "https://img.youtube.com/vi/ekzHIouo8Q4/hqdefault.jpg",
+    "duration": "3:55",
+    "category": "pop_music",
+    "tags": [
+      "영어발라드",
+      "BrunoMars",
+      "WhenIWasYourMan",
+      "피아노발라드",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'CRrf3h9vhp8',
-    title: 'Olivia Rodrigo - traitor (Official Video)',
-    channelTitle: 'Olivia Rodrigo',
-    artist: 'Olivia Rodrigo',
-    album: 'SOUR',
-    description: 'Olivia Rodrigo • 차분한 기타 아르페지오와 슬픈 멜로디의 어쿠스틱 발라드',
-    thumbnailUrl: 'https://img.youtube.com/vi/CRrf3h9vhp8/hqdefault.jpg',
-    duration: '3:58',
-    category: 'pop_music',
-    tags: ['영어발라드', 'OliviaRodrigo', 'traitor', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "5GJWxDKyk3A",
+    "title": "Billie Eilish - Happier Than Ever",
+    "channelTitle": "Billie Eilish",
+    "artist": "Billie Eilish",
+    "description": "Billie Eilish - Happier Than Ever • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (5:16)",
+    "thumbnailUrl": "https://img.youtube.com/vi/5GJWxDKyk3A/hqdefault.jpg",
+    "duration": "5:16",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'V1Pl8CzNzCw',
-    title: 'Billie Eilish, Khalid - lovely',
-    channelTitle: 'Billie Eilish',
-    artist: 'Billie Eilish & Khalid',
-    album: '13 Reasons Why',
-    description: 'Billie Eilish & Khalid • 현악기와 두 보컬의 하모니가 만들어내는 서정미',
-    thumbnailUrl: 'https://img.youtube.com/vi/V1Pl8CzNzCw/hqdefault.jpg',
-    duration: '3:20',
-    category: 'pop_music',
-    tags: ['영어발라드', 'BillieEilish', 'Khalid', 'lovely', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "BY_XwvKogC8",
+    "title": "Billie Eilish - CHIHIRO",
+    "channelTitle": "Billie Eilish",
+    "artist": "Billie Eilish",
+    "description": "Billie Eilish - CHIHIRO • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (5:24)",
+    "thumbnailUrl": "https://img.youtube.com/vi/BY_XwvKogC8/hqdefault.jpg",
+    "duration": "5:24",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: '-tn2S3kJlyU',
-    title: 'Billie Eilish - idontwannabeyouanymore (Official Video)',
-    channelTitle: 'Billie Eilish',
-    artist: 'Billie Eilish',
-    album: 'dont smile at me',
-    description: 'Billie Eilish • 재즈 감성의 코드와 부드러운 중저음 보컬 쉐도잉',
-    thumbnailUrl: 'https://img.youtube.com/vi/-tn2S3kJlyU/hqdefault.jpg',
-    duration: '3:24',
-    category: 'pop_music',
-    tags: ['영어발라드', 'BillieEilish', 'idontwannabeyouanymore', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "gNi_6U5Pm_o",
+    "title": "Olivia Rodrigo - good 4 u",
+    "channelTitle": "Olivia Rodrigo",
+    "artist": "Olivia Rodrigo",
+    "description": "Olivia Rodrigo - good 4 u • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:19)",
+    "thumbnailUrl": "https://img.youtube.com/vi/gNi_6U5Pm_o/hqdefault.jpg",
+    "duration": "3:19",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'b1kbLwvqugk',
-    title: 'Taylor Swift - Anti-Hero (Official Music Video)',
-    channelTitle: 'Taylor Swift',
-    artist: 'Taylor Swift',
-    album: 'Midnights',
-    description: 'Taylor Swift • 솔직하고 성찰적인 가사와 중독적인 신스 팝',
-    thumbnailUrl: 'https://img.youtube.com/vi/b1kbLwvqugk/hqdefault.jpg',
-    duration: '5:09',
-    category: 'pop_music',
-    tags: ['영어팝송', 'TaylorSwift', 'AntiHero', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "Dj9qJsJTsjQ",
+    "title": "Olivia Rodrigo - bad idea right?",
+    "channelTitle": "Olivia Rodrigo",
+    "artist": "Olivia Rodrigo",
+    "description": "Olivia Rodrigo - bad idea right? • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:11)",
+    "thumbnailUrl": "https://img.youtube.com/vi/Dj9qJsJTsjQ/hqdefault.jpg",
+    "duration": "3:11",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'RsEZmictANA',
-    title: 'Taylor Swift - willow (Official Music Video)',
-    channelTitle: 'Taylor Swift',
-    artist: 'Taylor Swift',
-    album: 'evermore',
-    description: 'Taylor Swift • 마법 같은 동화적 포크 멜로디 & 우아한 어쿠스틱 사운드',
-    thumbnailUrl: 'https://img.youtube.com/vi/RsEZmictANA/hqdefault.jpg',
-    duration: '4:13',
-    category: 'pop_music',
-    tags: ['영어발라드', 'TaylorSwift', 'willow', '포크팝', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "RlPNh_PBZb4",
+    "title": "Olivia Rodrigo - vampire",
+    "channelTitle": "Olivia Rodrigo",
+    "artist": "Olivia Rodrigo",
+    "description": "Olivia Rodrigo - vampire • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (4:05)",
+    "thumbnailUrl": "https://img.youtube.com/vi/RlPNh_PBZb4/hqdefault.jpg",
+    "duration": "4:05",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'DDWKuo3gXMQ',
-    title: 'Adele - When We Were Young (Live at The Church Studios)',
-    channelTitle: 'Adele',
-    artist: 'Adele',
-    album: '25',
-    description: 'Adele • 추억과 청춘을 노래하는 압도적인 가창력의 라이브 명품 발라드',
-    thumbnailUrl: 'https://img.youtube.com/vi/DDWKuo3gXMQ/hqdefault.jpg',
-    duration: '5:43',
-    category: 'pop_music',
-    tags: ['영어발라드', 'Adele', 'WhenWeWereYoung', '라이브명곡', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "ZsJ-BHohXRI",
+    "title": "Olivia Rodrigo - get him back!",
+    "channelTitle": "Olivia Rodrigo",
+    "artist": "Olivia Rodrigo",
+    "description": "Olivia Rodrigo - get him back! • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:30)",
+    "thumbnailUrl": "https://img.youtube.com/vi/ZsJ-BHohXRI/hqdefault.jpg",
+    "duration": "3:30",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: '0put0_a--Ng',
-    title: 'Adele - Make You Feel My Love (Official Video)',
-    channelTitle: 'Adele',
-    artist: 'Adele',
-    album: '19',
-    description: 'Adele • 밥 딜런 원곡의 따뜻하고 감미로운 피아노 커버 발라드',
-    thumbnailUrl: 'https://img.youtube.com/vi/0put0_a--Ng/hqdefault.jpg',
-    duration: '3:32',
-    category: 'pop_music',
-    tags: ['영어발라드', 'Adele', 'MakeYouFeelMyLove', '피아노발라드', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "GlM6lcFbLSg",
+    "title": "Olivia Rodrigo - Can't Catch Me Now",
+    "channelTitle": "Olivia Rodrigo",
+    "artist": "Olivia Rodrigo",
+    "description": "Olivia Rodrigo - Can't Catch Me Now • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:37)",
+    "thumbnailUrl": "https://img.youtube.com/vi/GlM6lcFbLSg/hqdefault.jpg",
+    "duration": "3:37",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
   {
-    videoId: 'ekzHIouo8Q4',
-    title: 'Bruno Mars - When I Was Your Man (Official Music Video)',
-    channelTitle: 'Bruno Mars',
-    artist: 'Bruno Mars',
-    album: 'Unorthodox Jukebox',
-    description: 'Bruno Mars • 오직 피아노와 목소리만으로 전 세계를 울린 감성 발라드',
-    thumbnailUrl: 'https://img.youtube.com/vi/ekzHIouo8Q4/hqdefault.jpg',
-    duration: '3:55',
-    category: 'pop_music',
-    tags: ['영어발라드', 'BrunoMars', 'WhenIWasYourMan', '피아노발라드', '가사쉐도잉'],
-    source: 'curated_pop',
+    "videoId": "OOgvDiXl6hA",
+    "title": "Olivia Rodrigo - All I Want",
+    "channelTitle": "Olivia Rodrigo",
+    "artist": "Olivia Rodrigo",
+    "description": "Olivia Rodrigo - All I Want • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:05)",
+    "thumbnailUrl": "https://img.youtube.com/vi/OOgvDiXl6hA/hqdefault.jpg",
+    "duration": "3:05",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
   },
+  {
+    "videoId": "7yVpzzqA3q0",
+    "title": "Olivia Rodrigo - The Rose Song",
+    "channelTitle": "Olivia Rodrigo",
+    "artist": "Olivia Rodrigo",
+    "description": "Olivia Rodrigo - The Rose Song • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (2:58)",
+    "thumbnailUrl": "https://img.youtube.com/vi/7yVpzzqA3q0/hqdefault.jpg",
+    "duration": "2:58",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "ebb5AinKxWI",
+    "title": "Billie Eilish - copycat",
+    "channelTitle": "Billie Eilish",
+    "artist": "Billie Eilish",
+    "description": "Billie Eilish - copycat • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:18)",
+    "thumbnailUrl": "https://img.youtube.com/vi/ebb5AinKxWI/hqdefault.jpg",
+    "duration": "3:18",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "G_BhUxx-cwk",
+    "title": "Billie Eilish - Male Fantasy",
+    "channelTitle": "Billie Eilish",
+    "artist": "Billie Eilish",
+    "description": "Billie Eilish - Male Fantasy • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:39)",
+    "thumbnailUrl": "https://img.youtube.com/vi/G_BhUxx-cwk/hqdefault.jpg",
+    "duration": "3:39",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "o0YWOA-kkiU",
+    "title": "아이유 - 금요일에 만나요",
+    "channelTitle": "아이유",
+    "artist": "아이유",
+    "description": "아이유 - 금요일에 만나요 • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:50)",
+    "thumbnailUrl": "https://img.youtube.com/vi/o0YWOA-kkiU/hqdefault.jpg",
+    "duration": "3:50",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "nn1pbxe8bAI",
+    "title": "아이유 - 아이와 나의 바다",
+    "channelTitle": "아이유",
+    "artist": "아이유",
+    "description": "아이유 - 아이와 나의 바다 • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (6:44)",
+    "thumbnailUrl": "https://img.youtube.com/vi/nn1pbxe8bAI/hqdefault.jpg",
+    "duration": "6:44",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "jJKHTJy_eek",
+    "title": "태연 - 만약에",
+    "channelTitle": "태연",
+    "artist": "태연",
+    "description": "태연 - 만약에 • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (5:20)",
+    "thumbnailUrl": "https://img.youtube.com/vi/jJKHTJy_eek/hqdefault.jpg",
+    "duration": "5:20",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "59vVTPAARuM",
+    "title": "태연 - 그대라는 시",
+    "channelTitle": "태연",
+    "artist": "태연",
+    "description": "태연 - 그대라는 시 • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:29)",
+    "thumbnailUrl": "https://img.youtube.com/vi/59vVTPAARuM/hqdefault.jpg",
+    "duration": "3:29",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "zM8txXJSpQs",
+    "title": "태연 - 악몽 (Nightmare)",
+    "channelTitle": "태연",
+    "artist": "태연",
+    "description": "태연 - 악몽 (Nightmare) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:02)",
+    "thumbnailUrl": "https://img.youtube.com/vi/zM8txXJSpQs/hqdefault.jpg",
+    "duration": "3:02",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "YW0doOWokVU",
+    "title": "양요섭 - 별",
+    "channelTitle": "양요섭",
+    "artist": "양요섭",
+    "description": "양요섭 - 별 • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (4:06)",
+    "thumbnailUrl": "https://img.youtube.com/vi/YW0doOWokVU/hqdefault.jpg",
+    "duration": "4:06",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "SxsBRTzfOJw",
+    "title": "양요섭 - 위로",
+    "channelTitle": "양요섭",
+    "artist": "양요섭",
+    "description": "양요섭 - 위로 • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (5:00)",
+    "thumbnailUrl": "https://img.youtube.com/vi/SxsBRTzfOJw/hqdefault.jpg",
+    "duration": "5:00",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "JGwWNGJdvx8",
+    "title": "Ed Sheeran - Shape of You",
+    "channelTitle": "Ed Sheeran",
+    "artist": "Ed Sheeran",
+    "description": "Ed Sheeran - Shape of You • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (4:23)",
+    "thumbnailUrl": "https://img.youtube.com/vi/JGwWNGJdvx8/hqdefault.jpg",
+    "duration": "4:23",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "Ed Sheeran",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "3AtDnEC4zak",
+    "title": "Charlie Puth - We Don't Talk Anymore (feat. Selena Gomez)",
+    "channelTitle": "Charlie Puth",
+    "artist": "Charlie Puth",
+    "description": "Charlie Puth - We Don't Talk Anymore (feat. Selena Gomez) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:50)",
+    "thumbnailUrl": "https://img.youtube.com/vi/3AtDnEC4zak/hqdefault.jpg",
+    "duration": "3:50",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "Charlie Puth",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "lY2yjAdbvdQ",
+    "title": "Shawn Mendes - Treat You Better",
+    "channelTitle": "Shawn Mendes",
+    "artist": "Shawn Mendes",
+    "description": "Shawn Mendes - Treat You Better • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (4:16)",
+    "thumbnailUrl": "https://img.youtube.com/vi/lY2yjAdbvdQ/hqdefault.jpg",
+    "duration": "4:16",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "Shawn Mendes",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "HUHC9tYz8ik",
+    "title": "Billie Eilish - bury a friend",
+    "channelTitle": "Billie Eilish",
+    "artist": "Billie Eilish",
+    "description": "Billie Eilish - bury a friend • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:32)",
+    "thumbnailUrl": "https://img.youtube.com/vi/HUHC9tYz8ik/hqdefault.jpg",
+    "duration": "3:32",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "Billie Eilish",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "gl1aHhXnN1k",
+    "title": "Ariana Grande - thank u, next",
+    "channelTitle": "Ariana Grande",
+    "artist": "Ariana Grande",
+    "description": "Ariana Grande - thank u, next • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (5:30)",
+    "thumbnailUrl": "https://img.youtube.com/vi/gl1aHhXnN1k/hqdefault.jpg",
+    "duration": "5:30",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "Ariana Grande",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "vNoKguSdy4Y",
+    "title": "Taylor Swift - I Can Do It With a Broken Heart (Official Lyric Video)",
+    "channelTitle": "Taylor Swift",
+    "artist": "Taylor Swift",
+    "description": "Taylor Swift - I Can Do It With a Broken Heart (Official Lyric Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:38)",
+    "thumbnailUrl": "https://img.youtube.com/vi/vNoKguSdy4Y/hqdefault.jpg",
+    "duration": "3:38",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "Taylor Swift",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "PMivT7MJ41M",
+    "title": "Bruno Mars - That’s What I Like (Official Music Video)",
+    "channelTitle": "Bruno Mars",
+    "artist": "Bruno Mars",
+    "description": "Bruno Mars - That’s What I Like (Official Music Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:30)",
+    "thumbnailUrl": "https://img.youtube.com/vi/PMivT7MJ41M/hqdefault.jpg",
+    "duration": "3:30",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "Bruno Mars",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "UqyT8IEBkvY",
+    "title": "Bruno Mars - 24K Magic (Official Music Video)",
+    "channelTitle": "Bruno Mars",
+    "artist": "Bruno Mars",
+    "description": "Bruno Mars - 24K Magic (Official Music Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:46)",
+    "thumbnailUrl": "https://img.youtube.com/vi/UqyT8IEBkvY/hqdefault.jpg",
+    "duration": "3:46",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "Bruno Mars",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "d2smz_1L2_0",
+    "title": "Bruno Mars, Anderson .Paak, Silk Sonic - Leave the Door Open",
+    "channelTitle": "Bruno Mars",
+    "artist": "Bruno Mars",
+    "description": "Bruno Mars, Anderson .Paak, Silk Sonic - Leave the Door Open • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (4:08)",
+    "thumbnailUrl": "https://img.youtube.com/vi/d2smz_1L2_0/hqdefault.jpg",
+    "duration": "4:08",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "Bruno Mars",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "450p7goxZqg",
+    "title": "John Legend - All of Me (Official Video)",
+    "channelTitle": "John Legend",
+    "artist": "John Legend",
+    "description": "John Legend - All of Me (Official Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (5:07)",
+    "thumbnailUrl": "https://img.youtube.com/vi/450p7goxZqg/hqdefault.jpg",
+    "duration": "5:07",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "John Legend",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "kffacxfA7G4",
+    "title": "Justin Bieber - Baby (Official Music Video)",
+    "channelTitle": "Justin Bieber",
+    "artist": "Justin Bieber",
+    "description": "Justin Bieber - Baby (Official Music Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:44)",
+    "thumbnailUrl": "https://img.youtube.com/vi/kffacxfA7G4/hqdefault.jpg",
+    "duration": "3:44",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "Justin Bieber",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "tQ0yjYUFKAE",
+    "title": "Justin Bieber - Peaches ft. Daniel Caesar, Giveon",
+    "channelTitle": "Justin Bieber",
+    "artist": "Justin Bieber",
+    "description": "Justin Bieber - Peaches ft. Daniel Caesar, Giveon • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:17)",
+    "thumbnailUrl": "https://img.youtube.com/vi/tQ0yjYUFKAE/hqdefault.jpg",
+    "duration": "3:17",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "Justin Bieber",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "W-TE_Ys4iwM",
+    "title": "Maroon 5 - Girls Like You ft. Cardi B (Official Music Video)",
+    "channelTitle": "Maroon 5",
+    "artist": "Maroon 5",
+    "description": "Maroon 5 - Girls Like You ft. Cardi B (Official Music Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (4:30)",
+    "thumbnailUrl": "https://img.youtube.com/vi/W-TE_Ys4iwM/hqdefault.jpg",
+    "duration": "4:30",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "Maroon 5",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "a5uQMwRMHcs",
+    "title": "Maroon 5 - Maps (Official Music Video)",
+    "channelTitle": "Maroon 5",
+    "artist": "Maroon 5",
+    "description": "Maroon 5 - Maps (Official Music Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:39)",
+    "thumbnailUrl": "https://img.youtube.com/vi/a5uQMwRMHcs/hqdefault.jpg",
+    "duration": "3:39",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "Maroon 5",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  },
+  {
+    "videoId": "wXhTHyIgQ_U",
+    "title": "Post Malone - Circles (Official Music Video)",
+    "channelTitle": "Post Malone",
+    "artist": "Post Malone",
+    "description": "Post Malone - Circles (Official Music Video) • 팝송 가사 싱크 쉐도잉 & 영어 딕션 훈련 (3:37)",
+    "thumbnailUrl": "https://img.youtube.com/vi/wXhTHyIgQ_U/hqdefault.jpg",
+    "duration": "3:37",
+    "category": "pop_music",
+    "tags": [
+      "영어팝송",
+      "Post Malone",
+      "가사쉐도잉"
+    ],
+    "source": "curated_pop"
+  }
 ];
 
 /**
- * Load pop music tracks (Olivia Rodrigo, Billie Eilish, Dua Lipa, Sabrina Carpenter, Taylor Swift)
+ * Load pop music tracks (Verified English and Korean Ballads with CC subtitles)
  */
 export function loadPopMusicTracks() {
   const tracks = [];
   const seen = new Set();
-
-  // 1. Curated English Pop Queens (Dua Lipa, Sabrina Carpenter, Taylor Swift)
   for (const t of DEFAULT_ENGLISH_POP_TRACKS) {
-    if (!t.videoId || seen.has(t.videoId)) continue;
+    if (!t.videoId || seen.has(t.videoId) || BAD_VIDEO_IDS.has(t.videoId)) continue;
     seen.add(t.videoId);
     tracks.push({
       id: `pop_${t.videoId}`,
@@ -3334,51 +3811,8 @@ export function loadPopMusicTracks() {
       addedAt: Date.now() - 50000,
     });
   }
-
-  // 2. Load Olivia Rodrigo & Billie Eilish from ytmusic
-  if (existsSync(MUSIC_FILE)) {
-    try {
-      const raw = readFileSync(MUSIC_FILE, 'utf8');
-      const data = JSON.parse(raw);
-      const playlists = data.playlists || [];
-
-      const popPlaylists = [
-        ...playlists.filter(p => p.id === 'artist_olivia_rodrigo'),
-        ...playlists.filter(p => p.id === 'artist_billie_eilish'),
-        ...playlists.filter(p => p.id && p.id.startsWith('artist_') && !['artist_olivia_rodrigo', 'artist_billie_eilish', 'artist_iu', 'artist_taeyeon', 'yang_yoseob_cat'].includes(p.id))
-      ];
-
-      for (const pl of popPlaylists) {
-        for (const t of (pl.tracks || [])) {
-          if (!t.videoId || seen.has(t.videoId)) continue;
-          seen.add(t.videoId);
-          const artist = t.artist || (pl.id === 'artist_olivia_rodrigo' ? 'Olivia Rodrigo' : 'Billie Eilish');
-          tracks.push({
-            id: `pop_${t.id || t.videoId}`,
-            videoId: t.videoId,
-            title: `${artist} - ${t.title || 'Track'}`,
-            channelTitle: artist,
-            description: `${t.album || 'Pop Album'} | 가사 한줄 싱크 쉐도잉 & 팝송 영어 학습`,
-            thumbnailUrl: t.thumbnailUrl || `https://i.ytimg.com/vi/${t.videoId}/hqdefault.jpg`,
-            url: `https://www.youtube.com/watch?v=${t.videoId}`,
-            duration: t.duration || '3:30',
-            category: 'pop_music',
-            artist: artist,
-            album: t.album || '',
-            language: 'en',
-            source: 'ytmusic_pop',
-            bookmarked: false,
-            addedAt: Date.now() - 48000,
-          });
-        }
-      }
-    } catch (e) {
-      console.error('[YouTube Control] Error loading music.json pop tracks:', e.message);
-    }
-  }
-
   return tracks;
-}
+};
 
 export const DEFAULT_SPANISH_TRACKS = [
   {
@@ -3580,24 +4014,6 @@ export const DEFAULT_SPANISH_TRACKS = [
     "source": "curated_spanish"
   },
   {
-    "videoId": "1zlNC2CJ-GA",
-    "title": "Nuevos líderes para un nuevo mundo | Beatriz Navarro | TEDxGracia",
-    "channelTitle": "TEDx Talks",
-    "description": "TEDx Talks • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (11:50)",
-    "thumbnailUrl": "https://img.youtube.com/vi/1zlNC2CJ-GA/hqdefault.jpg",
-    "duration": "11:50",
-    "language": "es",
-    "category": "ted_speech",
-    "tags": [
-      "스페인어",
-      "TEDx",
-      "여성리더십",
-      "명품스피치",
-      "쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
     "videoId": "LZhXeDbyvMo",
     "title": "¿Cómo tener juntas efectivas? | Elvira Toba | TEDxCalzadaDeLosHéroes",
     "channelTitle": "TEDx Talks",
@@ -3778,23 +4194,6 @@ export const DEFAULT_SPANISH_TRACKS = [
     "source": "curated_spanish"
   },
   {
-    "videoId": "Y-cHbf-WGiI",
-    "title": "Aitana - La Última (De \"La Última\"/Banda Sonora Original)",
-    "channelTitle": "HollywoodRecordsVEVO",
-    "description": "HollywoodRecordsVEVO • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:46)",
-    "thumbnailUrl": "https://img.youtube.com/vi/Y-cHbf-WGiI/hqdefault.jpg",
-    "duration": "3:46",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
     "videoId": "DUyQqjnsWoI",
     "title": "Aitana - Vas A Quedarte (Letra)",
     "channelTitle": "Marinosaurio",
@@ -3846,199 +4245,12 @@ export const DEFAULT_SPANISH_TRACKS = [
     "source": "curated_spanish"
   },
   {
-    "videoId": "685K2BYA184",
-    "title": "Aitana - “Vas A Quedarte” (Acústico) LaLiga Santander Fest",
-    "channelTitle": "NEWS AITANA",
-    "description": "NEWS AITANA • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:20)",
-    "thumbnailUrl": "https://img.youtube.com/vi/685K2BYA184/hqdefault.jpg",
-    "duration": "4:20",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "zPayJHaosLg",
-    "title": "Aitana - Vas A Quedarte (En Directo En El Palau Sant Jordi / 2019)",
-    "channelTitle": "Aitana",
-    "description": "Aitana • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:54)",
-    "thumbnailUrl": "https://img.youtube.com/vi/zPayJHaosLg/hqdefault.jpg",
-    "duration": "3:54",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
     "videoId": "7csX6CfgMoo",
     "title": "Aitana - 6 DE FEBRERO (Video Oficial)",
     "channelTitle": "Aitana",
     "description": "Aitana • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:11)",
     "thumbnailUrl": "https://img.youtube.com/vi/7csX6CfgMoo/hqdefault.jpg",
     "duration": "3:11",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "doDRobQA5Fk",
-    "title": "Aitana - Luna (Amazon Music Performance)",
-    "channelTitle": "Aitana",
-    "description": "Aitana • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:50)",
-    "thumbnailUrl": "https://img.youtube.com/vi/doDRobQA5Fk/hqdefault.jpg",
-    "duration": "3:50",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "66cxG1XQjpI",
-    "title": "“SUPERESTRELLA” - AITANA | LOS40 Music Awards Santander 2025 (Roig Arena)",
-    "channelTitle": "AITANA TODAY",
-    "description": "AITANA TODAY • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:05)",
-    "thumbnailUrl": "https://img.youtube.com/vi/66cxG1XQjpI/hqdefault.jpg",
-    "duration": "3:05",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "8Q1omTAxSPs",
-    "title": "Aitana & Dani Martín - “Puede ser” (+Aitana 2021)",
-    "channelTitle": "RTVE Música",
-    "description": "RTVE Música • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:35)",
-    "thumbnailUrl": "https://img.youtube.com/vi/8Q1omTAxSPs/hqdefault.jpg",
-    "duration": "3:35",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "m0xOa1XFE_w",
-    "title": "Vas A Quedarte - Aitana - (Karaoke Instrumental con coros)",
-    "channelTitle": "KaraokeMedia",
-    "description": "KaraokeMedia • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:12)",
-    "thumbnailUrl": "https://img.youtube.com/vi/m0xOa1XFE_w/hqdefault.jpg",
-    "duration": "4:12",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "gvKL2-MW4Do",
-    "title": "Aitana - Ni Una Más (INSTRUMENTAL KARAOKE)",
-    "channelTitle": "KaraokeMedia",
-    "description": "KaraokeMedia • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:35)",
-    "thumbnailUrl": "https://img.youtube.com/vi/gvKL2-MW4Do/hqdefault.jpg",
-    "duration": "3:35",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "N8Nzb-oc8XA",
-    "title": "Abraham Mateo, Ana Mena - Quiero Decirte 💔 (Letra) || Track Culpa Nuestra",
-    "channelTitle": "LowDrow",
-    "description": "LowDrow • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:43)",
-    "thumbnailUrl": "https://img.youtube.com/vi/N8Nzb-oc8XA/hqdefault.jpg",
-    "duration": "3:43",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "TCsIrIFNBRI",
-    "title": "Mon Laferte - Tu Falta De Querer (Acoustic)",
-    "channelTitle": "Mon Laferte",
-    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (5:29)",
-    "thumbnailUrl": "https://img.youtube.com/vi/TCsIrIFNBRI/hqdefault.jpg",
-    "duration": "5:29",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "6PJBxWsEzUo",
-    "title": "Mon Laferte - Placer Hollywood (Tiny Desk (Home) Live)",
-    "channelTitle": "Mon Laferte",
-    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:15)",
-    "thumbnailUrl": "https://img.youtube.com/vi/6PJBxWsEzUo/hqdefault.jpg",
-    "duration": "4:15",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "5R1RGl4WQP8",
-    "title": "Mon Laferte - Tu Falta De Querer (En Vivo)",
-    "channelTitle": "Mon Laferte",
-    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:37)",
-    "thumbnailUrl": "https://img.youtube.com/vi/5R1RGl4WQP8/hqdefault.jpg",
-    "duration": "4:37",
     "language": "es",
     "category": "pop_music",
     "tags": [
@@ -4101,57 +4313,6 @@ export const DEFAULT_SPANISH_TRACKS = [
     "source": "curated_spanish"
   },
   {
-    "videoId": "WX-f_pbo5jc",
-    "title": "Mon Laferte - Te Ví (En Vivo)",
-    "channelTitle": "Mon Laferte",
-    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:56)",
-    "thumbnailUrl": "https://img.youtube.com/vi/WX-f_pbo5jc/hqdefault.jpg",
-    "duration": "3:56",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "xD27uAJUMIo",
-    "title": "Mon Laferte - Mi Buen Amor (En Vivo)",
-    "channelTitle": "Mon Laferte",
-    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:45)",
-    "thumbnailUrl": "https://img.youtube.com/vi/xD27uAJUMIo/hqdefault.jpg",
-    "duration": "3:45",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "skyk3T7Hu1g",
-    "title": "Mon Laferte - Supermercado (Visualizer)",
-    "channelTitle": "Mon Laferte",
-    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:36)",
-    "thumbnailUrl": "https://img.youtube.com/vi/skyk3T7Hu1g/hqdefault.jpg",
-    "duration": "3:36",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
     "videoId": "PQlG1gznMBE",
     "title": "Mon Laferte - Amor Completo",
     "channelTitle": "Mon Laferte",
@@ -4175,57 +4336,6 @@ export const DEFAULT_SPANISH_TRACKS = [
     "description": "TodosSomosMASVEVO • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:37)",
     "thumbnailUrl": "https://img.youtube.com/vi/viELAGDXqH0/hqdefault.jpg",
     "duration": "3:37",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "rF2Bn-qmM1s",
-    "title": "Mon Laferte - Chilango Blues",
-    "channelTitle": "Mon Laferte",
-    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:47)",
-    "thumbnailUrl": "https://img.youtube.com/vi/rF2Bn-qmM1s/hqdefault.jpg",
-    "duration": "3:47",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "P8ZVtEDn0PM",
-    "title": "Mon Laferte - Paisaje Japonés",
-    "channelTitle": "Mon Laferte",
-    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:26)",
-    "thumbnailUrl": "https://img.youtube.com/vi/P8ZVtEDn0PM/hqdefault.jpg",
-    "duration": "3:26",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "pmbcl0YN4lg",
-    "title": "Mon Laferte - Aunque Te Mueras Por Volver (Video Oficial)",
-    "channelTitle": "Mon Laferte",
-    "description": "Mon Laferte • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:28)",
-    "thumbnailUrl": "https://img.youtube.com/vi/pmbcl0YN4lg/hqdefault.jpg",
-    "duration": "4:28",
     "language": "es",
     "category": "pop_music",
     "tags": [
@@ -4271,40 +4381,6 @@ export const DEFAULT_SPANISH_TRACKS = [
     "source": "curated_spanish"
   },
   {
-    "videoId": "Bwvmi-0SRQ8",
-    "title": "Shakira & Laura Pausini - Antología (Live from LMYNL World Tour)",
-    "channelTitle": "Shakira",
-    "description": "Shakira • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:56)",
-    "thumbnailUrl": "https://img.youtube.com/vi/Bwvmi-0SRQ8/hqdefault.jpg",
-    "duration": "4:56",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "nYbcVK2jjXc",
-    "title": "Shakira - Inevitable (Official HD Video)",
-    "channelTitle": "Shakira",
-    "description": "Shakira • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:21)",
-    "thumbnailUrl": "https://img.youtube.com/vi/nYbcVK2jjXc/hqdefault.jpg",
-    "duration": "3:21",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
     "videoId": "d6BvXSPScI4",
     "title": "Shakira — Inevitable [Letra]",
     "channelTitle": "armxndo",
@@ -4322,148 +4398,12 @@ export const DEFAULT_SPANISH_TRACKS = [
     "source": "curated_spanish"
   },
   {
-    "videoId": "pWgVRK_Ggww",
-    "title": "Shakira - Antología (Official Live Video)",
-    "channelTitle": "Shakira",
-    "description": "Shakira • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:52)",
-    "thumbnailUrl": "https://img.youtube.com/vi/pWgVRK_Ggww/hqdefault.jpg",
-    "duration": "4:52",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "onlZQ0jKUZc",
-    "title": "Shakira - Antología (El Dorado World Tour - Live)",
-    "channelTitle": "Shakira",
-    "description": "Shakira • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:02)",
-    "thumbnailUrl": "https://img.youtube.com/vi/onlZQ0jKUZc/hqdefault.jpg",
-    "duration": "4:02",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "ncmYqND278Q",
-    "title": "Shakira & Ed Sheeran - Underneath your Clothes (Live from LMYNL World Tour)",
-    "channelTitle": "Shakira",
-    "description": "Shakira • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:43)",
-    "thumbnailUrl": "https://img.youtube.com/vi/ncmYqND278Q/hqdefault.jpg",
-    "duration": "3:43",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "92tkZQB-Uj4",
-    "title": "Shakira - Je L'aime A Mourir (Live From Paris)",
-    "channelTitle": "Shakira",
-    "description": "Shakira • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:42)",
-    "thumbnailUrl": "https://img.youtube.com/vi/92tkZQB-Uj4/hqdefault.jpg",
-    "duration": "3:42",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "WhoPPnDiY5c",
-    "title": "Shakira - No (Official HD Video)",
-    "channelTitle": "Shakira",
-    "description": "Shakira • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:49)",
-    "thumbnailUrl": "https://img.youtube.com/vi/WhoPPnDiY5c/hqdefault.jpg",
-    "duration": "4:49",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "wTZ7A-h8yTs",
-    "title": "Shakira - Tú (Official HD Video)",
-    "channelTitle": "Shakira",
-    "description": "Shakira • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:33)",
-    "thumbnailUrl": "https://img.youtube.com/vi/wTZ7A-h8yTs/hqdefault.jpg",
-    "duration": "3:33",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "8C6xDjQ66wM",
-    "title": "Shakira - Te Aviso, Te Anuncio (Official HD Video)",
-    "channelTitle": "Shakira",
-    "description": "Shakira • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:24)",
-    "thumbnailUrl": "https://img.youtube.com/vi/8C6xDjQ66wM/hqdefault.jpg",
-    "duration": "4:24",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
     "videoId": "ZuupMrAhGXw",
     "title": "Mi Verdad - Maná a dueto con Shakira (Video Oficial)",
     "channelTitle": "OficialMana",
     "description": "OficialMana • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:34)",
     "thumbnailUrl": "https://img.youtube.com/vi/ZuupMrAhGXw/hqdefault.jpg",
     "duration": "4:34",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "P0iOz9xf0zY",
-    "title": "Shakira - Nothing Else Matters/Despedida Medley (Live from Paris)",
-    "channelTitle": "Shakira",
-    "description": "Shakira • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (5:54)",
-    "thumbnailUrl": "https://img.youtube.com/vi/P0iOz9xf0zY/hqdefault.jpg",
-    "duration": "5:54",
     "language": "es",
     "category": "pop_music",
     "tags": [
@@ -4509,40 +4449,6 @@ export const DEFAULT_SPANISH_TRACKS = [
     "source": "curated_spanish"
   },
   {
-    "videoId": "sRph0jV4mO4",
-    "title": "Rosalía - Di mi nombre en acústico",
-    "channelTitle": "Oscar Garcia",
-    "description": "Oscar Garcia • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:07)",
-    "thumbnailUrl": "https://img.youtube.com/vi/sRph0jV4mO4/hqdefault.jpg",
-    "duration": "3:07",
-    "language": "es",
-    "category": "essay_deep",
-    "tags": [
-      "스페인어",
-      "인생에세이",
-      "마인드셋",
-      "쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "32d1bq-kG5c",
-    "title": "Rosalía canta 'Me quedo contigo' | Goya 2019",
-    "channelTitle": "RTVE Play",
-    "description": "RTVE Play • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:25)",
-    "thumbnailUrl": "https://img.youtube.com/vi/32d1bq-kG5c/hqdefault.jpg",
-    "duration": "3:25",
-    "language": "es",
-    "category": "essay_deep",
-    "tags": [
-      "스페인어",
-      "인생에세이",
-      "마인드셋",
-      "쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
     "videoId": "cQib_iUmR6c",
     "title": "ROSALIA (AI) - SOLAMENTE TÚ",
     "channelTitle": "Voces AI",
@@ -4566,23 +4472,6 @@ export const DEFAULT_SPANISH_TRACKS = [
     "description": "La Ventana • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (6:30)",
     "thumbnailUrl": "https://img.youtube.com/vi/-YyeLtTIPSI/hqdefault.jpg",
     "duration": "6:30",
-    "language": "es",
-    "category": "essay_deep",
-    "tags": [
-      "스페인어",
-      "인생에세이",
-      "마인드셋",
-      "쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "GkTWxDB21cA",
-    "title": "ROSALÍA - La Perla (Official Video) ft. Yahritza Y Su Esencia",
-    "channelTitle": "ROSALÍA",
-    "description": "ROSALÍA • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (3:30)",
-    "thumbnailUrl": "https://img.youtube.com/vi/GkTWxDB21cA/hqdefault.jpg",
-    "duration": "3:30",
     "language": "es",
     "category": "essay_deep",
     "tags": [
@@ -5533,7 +5422,7 @@ export function loadYouTubeData() {
     if (item.category === 'spanish') item.category = 'ted_speech';
   });
 
-  // Ensure Pop Music tracks & Multi-lingual tracks are merged (strictly >= 5 minutes)
+  // Ensure Pop Music tracks & Multi-lingual tracks are merged
   const popTracks = loadPopMusicTracks();
   const multiTracks = loadMultiLangTracks();
   const existingVideoIds = new Set(store.items.map(i => i.videoId));
@@ -5541,7 +5430,7 @@ export function loadYouTubeData() {
 
   if (popTracks.length > 0) {
     for (const popTrack of popTracks) {
-      if (!existingVideoIds.has(popTrack.videoId) && parseDurationInSeconds(popTrack.duration) >= 120) {
+      if (!existingVideoIds.has(popTrack.videoId) && parseDurationInSeconds(popTrack.duration) >= 120 && !BAD_VIDEO_IDS.has(popTrack.videoId)) {
         popTrack.language = 'en';
         store.items.push(popTrack);
         existingVideoIds.add(popTrack.videoId);
@@ -5552,12 +5441,27 @@ export function loadYouTubeData() {
 
   if (multiTracks.length > 0) {
     for (const track of multiTracks) {
-      if (!existingVideoIds.has(track.videoId) && parseDurationInSeconds(track.duration) >= 300) {
+      if (!existingVideoIds.has(track.videoId) && parseDurationInSeconds(track.duration) >= 300 && !BAD_VIDEO_IDS.has(track.videoId)) {
         store.items.push(track);
         existingVideoIds.add(track.videoId);
         modified = true;
       }
     }
+  }
+
+  // Strictly filter out any bad IDs (no subtitles), blacklisted items, or shorts
+  const beforeFilterLen = store.items.length;
+  store.items = store.items.filter(item => {
+    if (BAD_VIDEO_IDS.has(item.videoId)) return false;
+    if (isBlacklisted(item.title, item.description, item.channelTitle, item.videoId)) return false;
+    const s = parseDurationInSeconds(item.duration);
+    if (item.category === 'pop_music' || item.source === 'curated_pop' || item.source === 'ytmusic_pop') {
+      return s >= 120;
+    }
+    return s >= 300;
+  });
+  if (store.items.length !== beforeFilterLen) {
+    modified = true;
   }
 
   if (modified) {
