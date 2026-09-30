@@ -1003,9 +1003,10 @@
 .line-en {
   font-size: calc(1.12rem * var(--sub-font-scale, 1));
   font-weight: 500;
-  line-height: 1.5;
+  line-height: 1.6;
   color: #e2e8f0;
-  word-break: break-word;
+  word-break: normal;
+  overflow-wrap: break-word;
 }
 
 .lr-sub-line.active .line-en {
@@ -1017,9 +1018,13 @@
 .clickable-word {
   display: inline-block;
   border-radius: 4px;
-  padding: 0 2px;
+  padding: 1px 3px;
+  margin-right: 0.36em;
+  margin-bottom: 2px;
   transition: all 0.12s;
   cursor: pointer;
+  vertical-align: baseline;
+  letter-spacing: normal;
 }
 
 .clickable-word:hover {
@@ -1918,8 +1923,10 @@
   margin: 0;
   font-size: calc(clamp(1.0rem, 1.2vw + 0.7rem, 1.25rem) * var(--sub-font-scale, 1));
   color: #f1f5f9;
-  line-height: 1.45;
+  line-height: 1.6;
   font-weight: 500;
+  word-break: normal;
+  overflow-wrap: break-word;
 }
 
 .focus-ko-sub {
@@ -2077,10 +2084,11 @@
 .focus-main-en {
   font-size: calc(clamp(1.36rem, 2.2vw + 0.95rem, 2.3rem) * var(--sub-font-scale, 1));
   font-weight: 700;
-  line-height: 1.55;
+  line-height: 1.65;
   color: #ffffff;
-  word-break: break-word;
-  letter-spacing: -0.2px;
+  word-break: normal;
+  overflow-wrap: break-word;
+  letter-spacing: 0;
 }
 
 /* 동적 확장 한글 번역 폰트 */

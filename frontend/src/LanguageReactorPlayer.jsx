@@ -2169,7 +2169,8 @@ export default function LanguageReactorPlayer({
                       <div className="focus-card-text">
                         {(displayMode === 'dual' || displayMode === 'en_only') && (
                           <div className="focus-en-sub">
-                            {transcript[activeIndex - 1].text.split(' ').map((word, wIdx) => {
+                            {transcript[activeIndex - 1].text.split(/\s+/).map((word, wIdx) => {
+                              if (!word) return null;
                               const posClass = getWordPosClass(word);
                               return (
                                 <span
@@ -2181,7 +2182,7 @@ export default function LanguageReactorPlayer({
                                   }}
                                   title="단어 사전 & 발음 듣기"
                                 >
-                                  {word}{' '}
+                                  {word}
                                 </span>
                               );
                             })}
@@ -2245,7 +2246,8 @@ export default function LanguageReactorPlayer({
                         <div className="focus-main-content">
                           {(displayMode === 'dual' || displayMode === 'en_only') && (
                             <div className="focus-main-en">
-                              {line.text.split(' ').map((word, wIdx) => {
+                              {line.text.split(/\s+/).map((word, wIdx) => {
+                                if (!word) return null;
                                 const posClass = getWordPosClass(word);
                                 return (
                                   <span
@@ -2254,7 +2256,7 @@ export default function LanguageReactorPlayer({
                                     onClick={(e) => handleWordClick(word, e, line)}
                                     title="단어 사전 & 발음 듣기"
                                   >
-                                    {word}{' '}
+                                    {word}
                                   </span>
                                 );
                               })}
@@ -2286,7 +2288,8 @@ export default function LanguageReactorPlayer({
                       <div className="focus-card-text">
                         {(displayMode === 'dual' || displayMode === 'en_only') && (
                           <div className="focus-en-sub">
-                            {transcript[activeIndex + 1].text.split(' ').map((word, wIdx) => {
+                            {transcript[activeIndex + 1].text.split(/\s+/).map((word, wIdx) => {
+                              if (!word) return null;
                               const posClass = getWordPosClass(word);
                               return (
                                 <span
@@ -2298,7 +2301,7 @@ export default function LanguageReactorPlayer({
                                   }}
                                   title="단어 사전 & 발음 듣기"
                                 >
-                                  {word}{' '}
+                                  {word}
                                 </span>
                               );
                             })}
@@ -2366,7 +2369,8 @@ export default function LanguageReactorPlayer({
                           {/* ENGLISH TEXT WITH POS HIGHLIGHTING */}
                           {(displayMode === 'dual' || displayMode === 'en_only') && (
                             <div className="line-en">
-                              {line.text.split(' ').map((word, wIdx) => {
+                              {line.text.split(/\s+/).map((word, wIdx) => {
+                                if (!word) return null;
                                 const posClass = getWordPosClass(word);
                                 return (
                                   <span
@@ -2375,7 +2379,7 @@ export default function LanguageReactorPlayer({
                                     onClick={(e) => handleWordClick(word, e, line)}
                                     title="단어 사전 & 발음 듣기"
                                   >
-                                    {word}{' '}
+                                    {word}
                                   </span>
                                 );
                               })}
