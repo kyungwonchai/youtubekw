@@ -178,22 +178,30 @@ export default function LanguageReactorPlayer({
     }
   };
   
-  // Video Compact Mode (영상 20% 축소 vs 50% 확대)
-  const [compactVideo, setCompactVideo] = useState(() => {
+  // Video Layout Mode: 'theater' (100% 영상 전체보기) | 'half' (50% 분할) | 'compact' (20% 축소)
+  const [videoLayout, setVideoLayout] = useState(() => {
     try {
-      const saved = localStorage.getItem('ytkw_compact_video');
-      return saved !== null ? saved === 'true' : true;
+      const saved = localStorage.getItem('ytkw_video_layout');
+      if (saved) return saved;
+      const oldCompact = localStorage.getItem('ytkw_compact_video');
+      return oldCompact === 'false' ? 'half' : 'theater';
     } catch (e) {
-      return true;
+      return 'theater';
     }
   });
 
-  const handleToggleCompactVideo = () => {
-    const next = !compactVideo;
-    setCompactVideo(next);
+  const handleSetVideoLayout = (mode) => {
+    setVideoLayout(mode);
     try {
-      localStorage.setItem('ytkw_compact_video', String(next));
+      localStorage.setItem('ytkw_video_layout', mode);
+      localStorage.setItem('ytkw_compact_video', String(mode === 'compact'));
     } catch (e) {}
+  };
+
+  // Legacy compactVideo getter for compatibility
+  const compactVideo = videoLayout === 'compact';
+  const handleToggleCompactVideo = () => {
+    handleSetVideoLayout(videoLayout === 'compact' ? 'theater' : 'compact');
   };
 
   // Video Hide Mode: 영상 숨기고 글자만 화면 전체 점유 (체크박스/토글)
@@ -212,6 +220,42 @@ export default function LanguageReactorPlayer({
     try {
       localStorage.setItem('ytkw_hide_video', String(next));
     } catch (e) {}
+  };
+
+  // HTML5 Fullscreen Mode state & ref
+  const videoWrapperRef = useRef(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
+  const handleToggleFullscreen = () => {
+    const target = videoWrapperRef.current;
+    if (!target) return;
+    if (!document.fullscreenElement) {
+      if (target.requestFullscreen) {
+        target.requestFullscreen().catch(() => {
+          document.querySelector('.lr-studio-container')?.requestFullscreen().catch(() => {});
+        });
+      } else if (target.webkitRequestFullscreen) {
+        target.webkitRequestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+    }
   };
 
   // Background Audio Mode (화면 꺼짐 / 잠금화면 1~2시간 연속 재생 모드)
@@ -631,9 +675,20 @@ export default function LanguageReactorPlayer({
           modestbranding: 1,
           enablejsapi: 1,
           origin: window.location.origin,
+          fs: 1,
+          playsinline: 1,
         },
         events: {
           onReady: (event) => {
+            try {
+              const iframe = event.target.getIframe();
+              if (iframe) {
+                iframe.setAttribute('allowfullscreen', 'true');
+                iframe.setAttribute('webkitallowfullscreen', 'true');
+                iframe.setAttribute('mozallowfullscreen', 'true');
+                iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen');
+              }
+            } catch (e) {}
             setPlayer(event.target);
             setPlayerReady(true);
             setDuration(event.target.getDuration() || 0);
@@ -1328,16 +1383,28 @@ export default function LanguageReactorPlayer({
         if (activeIndex !== -1 && transcript[activeIndex]) {
           handleSeekTo(transcript[activeIndex].start, activeIndex);
         }
+      } else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        handleToggleFullscreen();
+      } else if (e.key === 't' || e.key === 'T') {
+        e.preventDefault();
+        handleSetVideoLayout(videoLayout === 'theater' ? 'half' : 'theater');
       } else if (e.key === 'Escape') {
-        if (showPlaylistDrawer) setShowPlaylistDrawer(false);
-        else if (showSettings) setShowSettings(false);
-        else onClose();
+        if (document.fullscreenElement) {
+          if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+        } else if (showPlaylistDrawer) {
+          setShowPlaylistDrawer(false);
+        } else if (showSettings) {
+          setShowSettings(false);
+        } else {
+          onClose();
+        }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [player, isPlaying, bgAudioMode, activeIndex, transcript, showSettings, showPlaylistDrawer, onClose, currentIndex, effectivePlaylist]);
+  }, [player, isPlaying, bgAudioMode, activeIndex, transcript, showSettings, showPlaylistDrawer, onClose, currentIndex, effectivePlaylist, videoLayout]);
 
   // Format seconds to mm:ss
   const formatTime = (secs) => {
@@ -1381,7 +1448,7 @@ export default function LanguageReactorPlayer({
   return (
     <div className="lr-modal-backdrop" onClick={onClose}>
       <div
-        className={`lr-studio-container ${hideVideo ? 'layout-text_only' : compactVideo ? 'compact-video-mode layout-compact' : 'layout-expanded'} ${bgAudioMode ? 'bg-audio-active' : ''} ${posHighlight ? 'pos-highlight-enabled' : ''} border-theme-${activeBorderColor} highlight-style-${highlightStyle}`}
+        className={`lr-studio-container ${hideVideo ? 'layout-text_only' : videoLayout === 'theater' ? 'layout-video_full' : videoLayout === 'compact' ? 'compact-video-mode layout-compact' : 'layout-expanded'} ${bgAudioMode ? 'bg-audio-active' : ''} ${posHighlight ? 'pos-highlight-enabled' : ''} border-theme-${activeBorderColor} highlight-style-${highlightStyle} ${isFullscreen ? 'is-fullscreen' : ''}`}
         style={{ '--sub-font-scale': fontScale }}
         onClick={e => e.stopPropagation()}
       >
@@ -1470,25 +1537,58 @@ export default function LanguageReactorPlayer({
               {repeatMode === 'playlist' ? '🔁 순차 무한반복' : repeatMode === 'single' ? '🔂 1개 반복' : '➡️ 1회 순차'}
             </button>
 
-            {/* 1. 영상 숨김 & 글자만 전체점유 체크박스 버튼 */}
+            {/* 1. 영상 100% 전체보기 (시어터 모드) */}
+            {!bgAudioMode && !hideVideo && (
+              <button
+                className={`lr-icon-btn ${videoLayout === 'theater' ? 'active video-full-active' : ''}`}
+                onClick={() => handleSetVideoLayout('theater')}
+                title="🖥️ 영상 100% 전체보기 (시어터 모드 - 잘림 없는 전체 화면)"
+              >
+                🖥️ 영상전체
+              </button>
+            )}
+
+            {/* 2. 50:50 분할 모드 */}
+            {!bgAudioMode && !hideVideo && (
+              <button
+                className={`lr-icon-btn ${videoLayout === 'half' ? 'active' : ''}`}
+                onClick={() => handleSetVideoLayout('half')}
+                title="🗖 영상과 자막 50:50 나란히 보기"
+              >
+                🗖 50% 분할
+              </button>
+            )}
+
+            {/* 3. 20% 축소 모드 */}
+            {!bgAudioMode && !hideVideo && (
+              <button
+                className={`lr-icon-btn ${videoLayout === 'compact' ? 'active' : ''}`}
+                onClick={() => handleSetVideoLayout('compact')}
+                title="📱 영상 20% 축소 (자막 스크롤 집중)"
+              >
+                📱 20% 축소
+              </button>
+            )}
+
+            {/* 4. 브라우저 전체화면 (HTML5 Fullscreen [F]) */}
+            {!bgAudioMode && !hideVideo && (
+              <button
+                className={`lr-icon-btn ${isFullscreen ? 'active fs-active' : ''}`}
+                onClick={handleToggleFullscreen}
+                title="⛶ 모니터 100% 전체화면 (단축키: F)"
+              >
+                {isFullscreen ? '✕ 화면복귀' : '⛶ 전체화면'}
+              </button>
+            )}
+
+            {/* 5. 영상 숨김 & 글자만 전체점유 체크박스 버튼 */}
             {!bgAudioMode && (
               <button
                 className={`lr-icon-btn ${hideVideo ? 'active text-only-active' : ''}`}
                 onClick={handleToggleHideVideo}
                 title={hideVideo ? "영상 숨김 해제 (영상 다시 보기)" : "영상 없이 글자(자막)만 화면 전체 점유 모드"}
               >
-                {hideVideo ? '☑️ 영상숨김 (글자전체)' : '🔲 영상숨김'}
-              </button>
-            )}
-
-            {/* 2. 기존 영상 확대 / 20% 축소 토글 버튼 */}
-            {!bgAudioMode && !hideVideo && (
-              <button
-                className={`lr-icon-btn ${compactVideo ? 'active' : ''}`}
-                onClick={handleToggleCompactVideo}
-                title={compactVideo ? '영상 50% 기본 크기로 확대' : '영상 상단 20% 최소화 (자막 공간 극대화)'}
-              >
-                {compactVideo ? '📱 20% 콤팩트' : '🗖 영상확대'}
+                {hideVideo ? '☑️ 영상숨김' : '🔲 영상숨김'}
               </button>
             )}
 
@@ -1737,7 +1837,7 @@ export default function LanguageReactorPlayer({
 
                 {/* VIDEO & SCREEN LAYOUT (화면 레이아웃 모드) */}
                 <div className="settings-section">
-                  <span className="section-title">🖥️ 화면 구성 및 영상 숨김</span>
+                  <span className="section-title">🖥️ 화면 구성 및 영상 크기</span>
                   <button
                     className={`set-toggle-btn ${hideVideo ? 'active' : ''}`}
                     onClick={handleToggleHideVideo}
@@ -1747,16 +1847,28 @@ export default function LanguageReactorPlayer({
                   {!hideVideo && (
                     <div className="settings-btn-grid" style={{ marginTop: '4px' }}>
                       <button
-                        className={`set-choice-btn ${compactVideo ? 'active' : ''}`}
-                        onClick={() => setCompactVideo(true)}
+                        className={`set-choice-btn ${videoLayout === 'theater' ? 'active' : ''}`}
+                        onClick={() => handleSetVideoLayout('theater')}
+                      >
+                        🖥️ 100% 영상 전체보기
+                      </button>
+                      <button
+                        className={`set-choice-btn ${videoLayout === 'half' ? 'active' : ''}`}
+                        onClick={() => handleSetVideoLayout('half')}
+                      >
+                        🗖 50% 반반 분할
+                      </button>
+                      <button
+                        className={`set-choice-btn ${videoLayout === 'compact' ? 'active' : ''}`}
+                        onClick={() => handleSetVideoLayout('compact')}
                       >
                         📱 20% 콤팩트 축소
                       </button>
                       <button
-                        className={`set-choice-btn ${!compactVideo ? 'active' : ''}`}
-                        onClick={() => setCompactVideo(false)}
+                        className={`set-choice-btn ${isFullscreen ? 'active' : ''}`}
+                        onClick={handleToggleFullscreen}
                       >
-                        🗖 50% 영상 확대
+                        ⛶ 전체화면 [F]
                       </button>
                     </div>
                   )}
@@ -2062,8 +2174,30 @@ export default function LanguageReactorPlayer({
                 </div>
               </div>
             ) : (
-              <div className="lr-video-wrapper">
+              <div className="lr-video-wrapper" ref={videoWrapperRef}>
                 <div id="lr-yt-embed"></div>
+                {/* Fullscreen Overlay HUD (Exit button & Floating subtitle) */}
+                {isFullscreen && (
+                  <div className="lr-fullscreen-hud">
+                    <button
+                      className="lr-fs-exit-btn"
+                      onClick={handleToggleFullscreen}
+                      title="전체화면 종료 (Esc / F)"
+                    >
+                      ✕ 전체화면 종료 (Esc/F)
+                    </button>
+                    {activeIndex >= 0 && transcript[activeIndex] && (
+                      <div className="lr-fs-sub-overlay">
+                        {(displayMode === 'dual' || displayMode === 'en_only') && (
+                          <div className="fs-sub-en">{transcript[activeIndex].text}</div>
+                        )}
+                        {(displayMode === 'dual' || displayMode === 'ko_only') && transcript[activeIndex].translation && (
+                          <div className="fs-sub-ko">{transcript[activeIndex].translation}</div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
@@ -2170,6 +2304,22 @@ export default function LanguageReactorPlayer({
                   title={`재생 반복 모드 토글 (현재: ${repeatMode === 'playlist' ? '전체 순차 무한반복' : repeatMode === 'single' ? '영상 1개 무한반복' : '1회 순차재생'})`}
                 >
                   🔁
+                </button>
+
+                {/* THEATER & FULLSCREEN BUTTONS IN CONTROL DECK */}
+                <button
+                  className={`lr-icon-action-btn ${videoLayout === 'theater' ? 'loop-active' : ''}`}
+                  onClick={() => handleSetVideoLayout(videoLayout === 'theater' ? 'half' : 'theater')}
+                  title="영상 전체보기 시어터 모드 [T]"
+                >
+                  🖥️
+                </button>
+                <button
+                  className={`lr-icon-action-btn ${isFullscreen ? 'loop-active' : ''}`}
+                  onClick={handleToggleFullscreen}
+                  title="전체화면 [F]"
+                >
+                  ⛶
                 </button>
               </div>
             </div>
