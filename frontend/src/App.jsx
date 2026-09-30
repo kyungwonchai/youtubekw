@@ -508,15 +508,46 @@ export default function App() {
                   <span className="hierarchy-badge sub">주제</span>
                 </div>
                 <div className="sub-cat-pill-list">
-                  {SUB_CATEGORIES.map(cat => (
-                    <button
-                      key={cat.id}
-                      className={`sub-cat-pill ${selectedCategory === cat.id ? 'active' : ''} ${cat.id === 'pop_music' ? 'cat-pop-music' : ''}`}
-                      onClick={() => setSelectedCategory(cat.id)}
-                    >
-                      {cat.label}
-                    </button>
-                  ))}
+                  {SUB_CATEGORIES.map(cat => {
+                    // Calculate count for this subcategory under the currently selected language
+                    let count = 0;
+                    const langFiltered = selectedLanguage === 'all'
+                      ? items
+                      : items.filter(i => (i.language || (i.category === 'spanish' ? 'es' : 'en')) === selectedLanguage);
+
+                    if (cat.id === 'all' || cat.id === 'top_trained') {
+                      count = langFiltered.length;
+                    } else if (cat.id === 'news_interview') {
+                      count = langFiltered.filter(i => i.category === 'news_interview' || i.tags?.includes('뉴스초대석')).length;
+                    } else if (cat.id === 'movie_drama') {
+                      count = langFiltered.filter(i => i.category === 'movie_drama' || i.tags?.includes('영화쉐도잉') || i.tags?.includes('풀버전영화')).length;
+                    } else if (cat.id === 'pop_music') {
+                      count = langFiltered.filter(i => i.category === 'pop_music' || i.source === 'ytmusic_pop').length;
+                    } else if (cat.id === 'sleep_life') {
+                      count = langFiltered.filter(i => {
+                        const parts = (i.duration || '').split(':').map(Number);
+                        let secs = 0;
+                        if (parts.length === 3) secs = parts[0] * 3600 + parts[1] * 60 + parts[2];
+                        else if (parts.length === 2) secs = parts[0] * 60 + parts[1];
+                        return i.category === 'sleep_life' || secs >= 3600;
+                      }).length;
+                    } else if (cat.id === 'conversation') {
+                      count = langFiltered.filter(i => i.category === 'conversation' || i.tags?.includes('회화') || i.tags?.includes('팟캐스트')).length;
+                    } else {
+                      count = langFiltered.filter(i => i.category === cat.id).length;
+                    }
+
+                    return (
+                      <button
+                        key={cat.id}
+                        className={`sub-cat-pill ${selectedCategory === cat.id ? 'active' : ''} ${cat.id === 'pop_music' ? 'cat-pop-music' : ''}`}
+                        onClick={() => setSelectedCategory(cat.id)}
+                      >
+                        <span className="cat-label-text">{cat.label}</span>
+                        <span className="cat-count-badge">({count})</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 

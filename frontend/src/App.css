@@ -454,10 +454,13 @@ body {
 }
 
 .sub-cat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   background: rgba(30, 41, 59, 0.5);
   border: 1px solid rgba(71, 85, 105, 0.4);
   color: #94a3b8;
-  padding: 6px 13px;
+  padding: 6px 12px;
   border-radius: 16px;
   cursor: pointer;
   font-size: 0.84rem;
@@ -482,6 +485,20 @@ body {
   background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
   border-color: #fbcfe8;
   box-shadow: 0 3px 12px rgba(236, 72, 153, 0.35);
+}
+
+.cat-count-badge {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #a78bfa;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 1px 6px;
+  border-radius: 8px;
+}
+
+.sub-cat-pill.active .cat-count-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
 }
 
 /* Card Badges */
