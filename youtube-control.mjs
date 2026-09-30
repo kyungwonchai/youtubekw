@@ -1586,89 +1586,959 @@ export const DEFAULT_NEWS_INTERVIEW_TRACKS = [
 
 export const DEFAULT_MOVIE_DRAMA_TRACKS = [
   {
-    videoId: 'z78cxeY6acE',
-    title: 'IT HAD TO BE YOU | Full Romance Comedy & Drama Movie (1h 35m)',
-    channelTitle: 'The Cinematics Stories',
-    description: 'Natasha Henstridge, Michael Vartan • 뉴욕 배경 로맨틱 코미디 & 드라마 풀버전 영화 쉐도잉 (1시간 35분, 또렷한 영어 대사)',
-    thumbnailUrl: 'https://img.youtube.com/vi/z78cxeY6acE/hqdefault.jpg',
-    duration: '1:35:56',
-    language: 'en',
-    category: 'movie_drama',
-    tags: ['영화쉐도잉', '로맨스영화', '풀버전영화', '영어회화', '롱폼쉐도잉'],
-    source: 'curated_movie',
+    "videoId": "nTnyGDPLeeU",
+    "title": "SMITTEN | ROMANCE, COMEDY | Full Movie in English",
+    "channelTitle": "Boxoffice | ROMANCE | Full Movies",
+    "description": "Boxoffice | ROMANCE | Full Movies • 풀버전 고화질 로맨스/드라마 영화 (1:24:14)",
+    "thumbnailUrl": "https://img.youtube.com/vi/nTnyGDPLeeU/hqdefault.jpg",
+    "duration": "1:24:14",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
   },
   {
-    videoId: 'PMeHdc25BGE',
-    title: 'LOST IN LOVE | Stranded Together in Turkey | Full Romance Movie (1h 26m)',
-    channelTitle: 'SparkTV Romance',
-    description: '낭만적인 여행지에서 펼쳐지는 로맨스 드라마 풀버전 영화 & 일상 영어 대화 쉐도잉 (1시간 26분)',
-    thumbnailUrl: 'https://img.youtube.com/vi/PMeHdc25BGE/hqdefault.jpg',
-    duration: '1:26:47',
-    language: 'en',
-    category: 'movie_drama',
-    tags: ['영화쉐도잉', '로맨스드라마', '풀버전영화', '실전회화'],
-    source: 'curated_movie',
+    "videoId": "BPaDMRLl6X4",
+    "title": "From Enemies to Lovers | ROMANCE | Full Movie in English",
+    "channelTitle": "Boxoffice | ROMANCE | Full Movies",
+    "description": "Boxoffice | ROMANCE | Full Movies • 풀버전 고화질 로맨스/드라마 영화 (1:30:29)",
+    "thumbnailUrl": "https://img.youtube.com/vi/BPaDMRLl6X4/hqdefault.jpg",
+    "duration": "1:30:29",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
   },
   {
-    videoId: '9GW7F08B5U4',
-    title: 'The Mystery of Love | ROMANCE, DRAMA | Full Movie in English (1h 28m)',
-    channelTitle: 'Boxoffice Romance',
-    description: '감성적인 사랑과 삶의 갈등을 그린 정통 로맨스 드라마 풀무비 (1시간 28분)',
-    thumbnailUrl: 'https://img.youtube.com/vi/9GW7F08B5U4/hqdefault.jpg',
-    duration: '1:28:58',
-    language: 'en',
-    category: 'movie_drama',
-    tags: ['영화쉐도잉', '감성드라마', '풀버전영화', '영어듣기'],
-    source: 'curated_movie',
+    "videoId": "uIOrX103_Gk",
+    "title": "MISTRUST | ROMANCE | Full Movie in English",
+    "channelTitle": "Boxoffice | NEW Full Movies in English",
+    "description": "Boxoffice | NEW Full Movies in English • 풀버전 고화질 로맨스/드라마 영화 (1:23:45)",
+    "thumbnailUrl": "https://img.youtube.com/vi/uIOrX103_Gk/hqdefault.jpg",
+    "duration": "1:23:45",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
   },
   {
-    videoId: '76PzE22igls',
-    title: '1 hour of advice that will change your life | Solace (Deep Life Reflection)',
-    channelTitle: 'solace',
-    description: 'Solace • 20대 여성 크리에이터의 감성적이고 차분한 1시간 33분 인생 성찰 & 힐링 롱폼 에세이',
-    thumbnailUrl: 'https://img.youtube.com/vi/76PzE22igls/hqdefault.jpg',
-    duration: '1:33:32',
-    language: 'en',
-    category: 'movie_drama',
-    tags: ['인생이야기', '감성에세이', '수면롱폼', '차분한목소리', '1시간'],
-    source: 'curated_movie',
+    "videoId": "h82UZ6GFFpI",
+    "title": "Christmas in the Pines | ROMANCE | Full Movie in English",
+    "channelTitle": "Boxoffice | NEW Full Movies in English",
+    "description": "Boxoffice | NEW Full Movies in English • 풀버전 고화질 로맨스/드라마 영화 (1:30:29)",
+    "thumbnailUrl": "https://img.youtube.com/vi/h82UZ6GFFpI/hqdefault.jpg",
+    "duration": "1:30:29",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
   },
   {
-    videoId: '-e5dh1qHTs4',
-    title: '1 hour of dating & relationship advice that will change your life | Solace',
-    channelTitle: 'solace',
-    description: 'Solace • 사랑과 인간관계, 내면의 성장에 대한 솔직하고 진솔한 1시간 6분 딥토크',
-    thumbnailUrl: 'https://img.youtube.com/vi/-e5dh1qHTs4/hqdefault.jpg',
-    duration: '1:06:23',
-    language: 'en',
-    category: 'movie_drama',
-    tags: ['인간관계', '감성토크', '힐링오디오', '1시간대담'],
-    source: 'curated_movie',
+    "videoId": "MfnSBLn8VMA",
+    "title": "City Love | Full Movie in English | Romance, Drama, Comedy",
+    "channelTitle": "Boxoffice | ROMANCE | Full Movies",
+    "description": "Boxoffice | ROMANCE | Full Movies • 풀버전 고화질 로맨스/드라마 영화 (1:35:58)",
+    "thumbnailUrl": "https://img.youtube.com/vi/MfnSBLn8VMA/hqdefault.jpg",
+    "duration": "1:35:58",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
   },
   {
-    videoId: 'v1KWZ-SsrLk',
-    title: '9 Lifestyle Changes That Let You Feel Rich At Any Income | The Financial Diet',
-    channelTitle: 'The Financial Diet (Chelsea Fagan)',
-    description: 'Chelsea Fagan • 또렷하고 우아한 미국식 딕션, 삶의 질을 높이는 라이프스타일 지혜 (20분 에세이)',
-    thumbnailUrl: 'https://img.youtube.com/vi/v1KWZ-SsrLk/hqdefault.jpg',
-    duration: '20:16',
-    language: 'en',
-    category: 'essay_deep',
-    tags: ['TheFinancialDiet', 'ChelseaFagan', '라이프스타일', '명품딕션', '에세이'],
-    source: 'curated_movie',
+    "videoId": "xs8UV9wdWlI",
+    "title": "LOVE IN FOCUS | Full Romance Movie | Nicola Posener, Dan Fowlks, Colin Cunningham",
+    "channelTitle": "The Cinematics Stories",
+    "description": "The Cinematics Stories • 풀버전 고화질 로맨스/드라마 영화 (1:26:18)",
+    "thumbnailUrl": "https://img.youtube.com/vi/xs8UV9wdWlI/hqdefault.jpg",
+    "duration": "1:26:18",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
   },
   {
-    videoId: '-f6Io1jUO4s',
-    title: 'Day In the Life on a lazy Sunday | Overthinking and am I Happy?... | Sanne Vloet',
-    channelTitle: 'Sanne Vloet',
-    description: 'Sanne Vloet • 네덜란드 출신 모델 & 웰니스 크리에이터의 평온한 일상과 행복에 관한 진솔한 생각 (17분)',
-    thumbnailUrl: 'https://img.youtube.com/vi/-f6Io1jUO4s/hqdefault.jpg',
-    duration: '16:53',
-    language: 'en',
-    category: 'essay_deep',
-    tags: ['SanneVloet', '웰니스', '마음챙김', '차분한일상', '쉐도잉'],
-    source: 'curated_movie',
+    "videoId": "MaTIfXu_c-k",
+    "title": "A Royal in Paradise | Full Romantic Comedy Movie",
+    "channelTitle": "NicelyTV",
+    "description": "NicelyTV • 풀버전 고화질 로맨스/드라마 영화 (1:30:25)",
+    "thumbnailUrl": "https://img.youtube.com/vi/MaTIfXu_c-k/hqdefault.jpg",
+    "duration": "1:30:25",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
   },
+  {
+    "videoId": "AGyGGou17cQ",
+    "title": "Tortoise in Love | A Charming British Romantic Comedy | Full Movie",
+    "channelTitle": "FREE MOVIES",
+    "description": "FREE MOVIES • 풀버전 고화질 로맨스/드라마 영화 (1:20:54)",
+    "thumbnailUrl": "https://img.youtube.com/vi/AGyGGou17cQ/hqdefault.jpg",
+    "duration": "1:20:54",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "SzNBxlb096A",
+    "title": "Will He Like Me, Will He Not? | ROMANCE, COMEDY | Full Movie in English",
+    "channelTitle": "MyMovies",
+    "description": "MyMovies • 풀버전 고화질 로맨스/드라마 영화 (1:24:14)",
+    "thumbnailUrl": "https://img.youtube.com/vi/SzNBxlb096A/hqdefault.jpg",
+    "duration": "1:24:14",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "kZYTKfmoq3k",
+    "title": "ALL WOMEN ARE IN LOVE WITH THIS MOVIE! Watch this romantic story in English for free",
+    "channelTitle": "FILMDOMINION",
+    "description": "FILMDOMINION • 풀버전 고화질 로맨스/드라마 영화 (1:24:21)",
+    "thumbnailUrl": "https://img.youtube.com/vi/kZYTKfmoq3k/hqdefault.jpg",
+    "duration": "1:24:21",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "30ai5Pf1Z94",
+    "title": "Easy A 2010 Full Movie in English Teen Romantic Comedy",
+    "channelTitle": "Learn English Easy ",
+    "description": "Learn English Easy  • 풀버전 고화질 로맨스/드라마 영화 (1:32:25)",
+    "thumbnailUrl": "https://img.youtube.com/vi/30ai5Pf1Z94/hqdefault.jpg",
+    "duration": "1:32:25",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "rkGwLyxNzhQ",
+    "title": "😂❤️ A Crazy Romantic Comedy for an Evening Full of Laughter! | Free Full Movie in English",
+    "channelTitle": "Movie Marathon",
+    "description": "Movie Marathon • 풀버전 고화질 로맨스/드라마 영화 (1:36:16)",
+    "thumbnailUrl": "https://img.youtube.com/vi/rkGwLyxNzhQ/hqdefault.jpg",
+    "duration": "1:36:16",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "EicNchNKnBI",
+    "title": "Accidentally in Love | ROMANTIC COMEDY | Full Movie in English",
+    "channelTitle": "Boxoffice | NEW Full Movies in English",
+    "description": "Boxoffice | NEW Full Movies in English • 풀버전 고화질 로맨스/드라마 영화 (1:27:25)",
+    "thumbnailUrl": "https://img.youtube.com/vi/EicNchNKnBI/hqdefault.jpg",
+    "duration": "1:27:25",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "DsOijjb_yic",
+    "title": "😍🍿 You’ll Want to Watch This HILARIOUS COMEDY Again and Again! Romantic Comedy | FREE Full Movie",
+    "channelTitle": "Popcorn Movie Night",
+    "description": "Popcorn Movie Night • 풀버전 고화질 로맨스/드라마 영화 (1:25:21)",
+    "thumbnailUrl": "https://img.youtube.com/vi/DsOijjb_yic/hqdefault.jpg",
+    "duration": "1:25:21",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "E10iY_eDe3A",
+    "title": "A Life With You | ROMANCE, FAMILY | Full Movie in English",
+    "channelTitle": "MyMovies",
+    "description": "MyMovies • 풀버전 고화질 로맨스/드라마 영화 (1:37:32)",
+    "thumbnailUrl": "https://img.youtube.com/vi/E10iY_eDe3A/hqdefault.jpg",
+    "duration": "1:37:32",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "DgE9JOUcA1A",
+    "title": "🌸 She Only Came Back For The Summer… But Found The Love Of Her Life | Full Movie",
+    "channelTitle": "VISMAX PRO",
+    "description": "VISMAX PRO • 풀버전 고화질 로맨스/드라마 영화 (1:21:11)",
+    "thumbnailUrl": "https://img.youtube.com/vi/DgE9JOUcA1A/hqdefault.jpg",
+    "duration": "1:21:11",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "9U9RBrFf94s",
+    "title": "The Magic Of Ordinary Days | English Full Movie | Romance | Movie Dot (MD Channel)",
+    "channelTitle": "Multi Movie Show",
+    "description": "Multi Movie Show • 풀버전 고화질 로맨스/드라마 영화 (1:38:00)",
+    "thumbnailUrl": "https://img.youtube.com/vi/9U9RBrFf94s/hqdefault.jpg",
+    "duration": "1:38:00",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "yb8JJMML0Ms",
+    "title": "Wild Child (2008) - Full Comedy |  Drama | Romance Movie",
+    "channelTitle": "Tiktok Official Hindi",
+    "description": "Tiktok Official Hindi • 풀버전 고화질 로맨스/드라마 영화 (1:38:25)",
+    "thumbnailUrl": "https://img.youtube.com/vi/yb8JJMML0Ms/hqdefault.jpg",
+    "duration": "1:38:25",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "p8egZga9Fqs",
+    "title": "Love on Harbor Island FULL MOVIE | Romance Movies | Femme Fatales",
+    "channelTitle": "Femme Fatales",
+    "description": "Femme Fatales • 풀버전 고화질 로맨스/드라마 영화 (1:26:33)",
+    "thumbnailUrl": "https://img.youtube.com/vi/p8egZga9Fqs/hqdefault.jpg",
+    "duration": "1:26:33",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "CAecMQoPHQ4",
+    "title": "A Forbidden Royal Love | ROMANCE, ADVENTURE | Full Movie in English 💎",
+    "channelTitle": "Full Movies in English HD",
+    "description": "Full Movies in English HD • 풀버전 고화질 로맨스/드라마 영화 (1:31:11)",
+    "thumbnailUrl": "https://img.youtube.com/vi/CAecMQoPHQ4/hqdefault.jpg",
+    "duration": "1:31:11",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "jBhRZ2KmaZ4",
+    "title": "ROMEO AND JULIET GET MARRIED 🎬 Full Romance Drama Movie 🎬 English HD",
+    "channelTitle": "WATCH DRAMA MOVIES NOW",
+    "description": "WATCH DRAMA MOVIES NOW • 풀버전 고화질 로맨스/드라마 영화 (1:53:07)",
+    "thumbnailUrl": "https://img.youtube.com/vi/jBhRZ2KmaZ4/hqdefault.jpg",
+    "duration": "1:53:07",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "8OuTU256Rm8",
+    "title": "She Started Life From Scratch... And Found The Love Of Her Life 😍 Full Romantic Movie",
+    "channelTitle": "VISMAX PRO",
+    "description": "VISMAX PRO • 풀버전 고화질 로맨스/드라마 영화 (1:28:17)",
+    "thumbnailUrl": "https://img.youtube.com/vi/8OuTU256Rm8/hqdefault.jpg",
+    "duration": "1:28:17",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "x10OgRa0kxk",
+    "title": "Youthful Mistakes | Romance | Full Movie",
+    "channelTitle": "Boxoffice | ROMANCE | Full Movies",
+    "description": "Boxoffice | ROMANCE | Full Movies • 풀버전 고화질 로맨스/드라마 영화 (1:37:50)",
+    "thumbnailUrl": "https://img.youtube.com/vi/x10OgRa0kxk/hqdefault.jpg",
+    "duration": "1:37:50",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "HtnC2vxC1aA",
+    "title": "My Teacher's Romance | COMEDY | Full Movie",
+    "channelTitle": "Full Movies in English HD",
+    "description": "Full Movies in English HD • 풀버전 고화질 로맨스/드라마 영화 (1:26:58)",
+    "thumbnailUrl": "https://img.youtube.com/vi/HtnC2vxC1aA/hqdefault.jpg",
+    "duration": "1:26:58",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "NDmLTRL_T0E",
+    "title": "She Fell in Love Without Knowing His Secret | Full Romantic Movie",
+    "channelTitle": "VISMAX PRO",
+    "description": "VISMAX PRO • 풀버전 고화질 로맨스/드라마 영화 (1:31:29)",
+    "thumbnailUrl": "https://img.youtube.com/vi/NDmLTRL_T0E/hqdefault.jpg",
+    "duration": "1:31:29",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "r4efnA0Wazo",
+    "title": "The Most Beautiful Love Story of This Year ❤️🎬 This Movie Will Melt Your Heart 🥺❤️",
+    "channelTitle": "VISMAX PRO",
+    "description": "VISMAX PRO • 풀버전 고화질 로맨스/드라마 영화 (1:28:09)",
+    "thumbnailUrl": "https://img.youtube.com/vi/r4efnA0Wazo/hqdefault.jpg",
+    "duration": "1:28:09",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "3oBq-U7iV6Q",
+    "title": "Feel-Good Movie! He’s a secret billionaire who falls for a simple girl! Romantic Movies in English",
+    "channelTitle": "in Bilmi",
+    "description": "in Bilmi • 풀버전 고화질 로맨스/드라마 영화 (1:27:18)",
+    "thumbnailUrl": "https://img.youtube.com/vi/3oBq-U7iV6Q/hqdefault.jpg",
+    "duration": "1:27:18",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "7BY6S-YT4Cg",
+    "title": "He Never Expected to Fall in Love ❤️ She Changed His Life Forever...",
+    "channelTitle": "VISMAX PRO",
+    "description": "VISMAX PRO • 풀버전 고화질 로맨스/드라마 영화 (1:20:34)",
+    "thumbnailUrl": "https://img.youtube.com/vi/7BY6S-YT4Cg/hqdefault.jpg",
+    "duration": "1:20:34",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "p3harwcAygI",
+    "title": "This is a MOVIE you'll want to watch over and over again ✨ Romantic Movies",
+    "channelTitle": "VISMAX PRO",
+    "description": "VISMAX PRO • 풀버전 고화질 로맨스/드라마 영화 (1:21:21)",
+    "thumbnailUrl": "https://img.youtube.com/vi/p3harwcAygI/hqdefault.jpg",
+    "duration": "1:21:21",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "XMLBXXPX4QA",
+    "title": "THIS IS A MOVIE YOU’LL WANT TO WATCH OVER AND OVER AGAIN! | Romantic Movies | Follow Your Heart",
+    "channelTitle": "VISMAX PRO",
+    "description": "VISMAX PRO • 풀버전 고화질 로맨스/드라마 영화 (1:38:29)",
+    "thumbnailUrl": "https://img.youtube.com/vi/XMLBXXPX4QA/hqdefault.jpg",
+    "duration": "1:38:29",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "lc9w6JzXGEI",
+    "title": "This Love Story You’ll Want to Watch Again and Again! | FOLLOW YOUR HEART | Full Movie",
+    "channelTitle": "FILMDOMINION",
+    "description": "FILMDOMINION • 풀버전 고화질 로맨스/드라마 영화 (1:38:32)",
+    "thumbnailUrl": "https://img.youtube.com/vi/lc9w6JzXGEI/hqdefault.jpg",
+    "duration": "1:38:32",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "gscsCeQvfjI",
+    "title": "A Perfectly Fake Marriage | ROMANTIC COMEDY | Full Movie in English 💎",
+    "channelTitle": "Boxoffice | COMEDIES | Full Movies",
+    "description": "Boxoffice | COMEDIES | Full Movies • 풀버전 고화질 로맨스/드라마 영화 (1:27:25)",
+    "thumbnailUrl": "https://img.youtube.com/vi/gscsCeQvfjI/hqdefault.jpg",
+    "duration": "1:27:25",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "XE_5j3F5PAg",
+    "title": "WHATEVER MAKES YOU HAPPY | Full Length Romance Movie | English | FULL MOVIE FOR FREE",
+    "channelTitle": "Film Zone",
+    "description": "Film Zone • 풀버전 고화질 로맨스/드라마 영화 (1:56:49)",
+    "thumbnailUrl": "https://img.youtube.com/vi/XE_5j3F5PAg/hqdefault.jpg",
+    "duration": "1:56:49",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "-rmUmmhhffA",
+    "title": "Love Finds a Way | Heartwarming Romance Movie | Full Movie HD",
+    "channelTitle": "LoveLoom Films",
+    "description": "LoveLoom Films • 풀버전 고화질 로맨스/드라마 영화 (1:14:07)",
+    "thumbnailUrl": "https://img.youtube.com/vi/-rmUmmhhffA/hqdefault.jpg",
+    "duration": "1:14:07",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "raG4zNtPH5Y",
+    "title": "FULL] The Hidden Heir of the Vitiello Family Full Movie 2026 | the Vitiello Family Full Episode🔥",
+    "channelTitle": "Mithilesh Ballia",
+    "description": "Mithilesh Ballia • 풀버전 고화질 로맨스/드라마 영화 (1:30:08)",
+    "thumbnailUrl": "https://img.youtube.com/vi/raG4zNtPH5Y/hqdefault.jpg",
+    "duration": "1:30:08",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "9k11EVhfy5o",
+    "title": "FULL] The Hidden Heir of the Vitiello Family Full Movie 2026 | the Vitiello Family Full Episode🔥",
+    "channelTitle": "Akash rajbhar Rajbhar",
+    "description": "Akash rajbhar Rajbhar • 풀버전 고화질 로맨스/드라마 영화 (1:40:02)",
+    "thumbnailUrl": "https://img.youtube.com/vi/9k11EVhfy5o/hqdefault.jpg",
+    "duration": "1:40:02",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "QnYgmRSsiaM",
+    "title": "One Night with the CEO, 5 Years Later He Finds His Secret Twins & Marries Me!",
+    "channelTitle": "Twisted FateSeries",
+    "description": "Twisted FateSeries • 풀버전 고화질 로맨스/드라마 영화 (1:57:50)",
+    "thumbnailUrl": "https://img.youtube.com/vi/QnYgmRSsiaM/hqdefault.jpg",
+    "duration": "1:57:50",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "86mDpskfbtE",
+    "title": "😄She thought her 30-min wedding was a joke! Flash Marriage: 2 Yrs Later, CEO Heir Moves In!⭐",
+    "channelTitle": "Twisted FateSeries",
+    "description": "Twisted FateSeries • 풀버전 고화질 로맨스/드라마 영화 (2:27:26)",
+    "thumbnailUrl": "https://img.youtube.com/vi/86mDpskfbtE/hqdefault.jpg",
+    "duration": "2:27:26",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "htknl4o1_nQ",
+    "title": "Genius Kid Finds His Lost Mom on the Street—Billionaire CEO Marries Her on the Spot!",
+    "channelTitle": "Twisted FateSeries",
+    "description": "Twisted FateSeries • 풀버전 고화질 로맨스/드라마 영화 (2:13:03)",
+    "thumbnailUrl": "https://img.youtube.com/vi/htknl4o1_nQ/hqdefault.jpg",
+    "duration": "2:13:03",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "kys5fNH_LP0",
+    "title": "😡They made me marry a dying man! Now he's awake and destroying all my bullies!",
+    "channelTitle": "Billionaire's Sweetheart TV",
+    "description": "Billionaire's Sweetheart TV • 풀버전 고화질 로맨스/드라마 영화 (2:07:30)",
+    "thumbnailUrl": "https://img.youtube.com/vi/kys5fNH_LP0/hqdefault.jpg",
+    "duration": "2:07:30",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "F0HM0fN91wM",
+    "title": "🌪️I Rush-Married an Injured Tycoon. It Was Supposed to Be a Trap, Until He Woke Up❤️",
+    "channelTitle": "Twisted FateSeries",
+    "description": "Twisted FateSeries • 풀버전 고화질 로맨스/드라마 영화 (2:40:32)",
+    "thumbnailUrl": "https://img.youtube.com/vi/F0HM0fN91wM/hqdefault.jpg",
+    "duration": "2:40:32",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "gTWJHuEGWUo",
+    "title": "Drugged One-Night Stand with the CEO: 5 Years Later His Silent Baby Calls a Car Wash Girl MOM!",
+    "channelTitle": "Twisted FateSeries",
+    "description": "Twisted FateSeries • 풀버전 고화질 로맨스/드라마 영화 (1:20:24)",
+    "thumbnailUrl": "https://img.youtube.com/vi/gTWJHuEGWUo/hqdefault.jpg",
+    "duration": "1:20:24",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "O26h9RRW-R0",
+    "title": "Transference  A Love Story FULL HD MOVIE ▶️",
+    "channelTitle": "Cinema Universe ",
+    "description": "Cinema Universe  • 풀버전 고화질 로맨스/드라마 영화 (1:47:20)",
+    "thumbnailUrl": "https://img.youtube.com/vi/O26h9RRW-R0/hqdefault.jpg",
+    "duration": "1:47:20",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "RAIFwI4yoE4",
+    "title": "tagalog romantic full movie - jennylyn mercado derek ramsay",
+    "channelTitle": "SE VI LLA Tv.",
+    "description": "SE VI LLA Tv. • 풀버전 고화질 로맨스/드라마 영화 (1:46:57)",
+    "thumbnailUrl": "https://img.youtube.com/vi/RAIFwI4yoE4/hqdefault.jpg",
+    "duration": "1:46:57",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "z2JpmAQE9Fk",
+    "title": "The Day Love Rented the Empty House | Full Romantic Movie 2026",
+    "channelTitle": "LoveLoom Films",
+    "description": "LoveLoom Films • 풀버전 고화질 로맨스/드라마 영화 (1:29:02)",
+    "thumbnailUrl": "https://img.youtube.com/vi/z2JpmAQE9Fk/hqdefault.jpg",
+    "duration": "1:29:02",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "d-pMBOsr7Jo",
+    "title": "Sabah: A Love Story",
+    "channelTitle": "Turki Nasser Alomeer",
+    "description": "Turki Nasser Alomeer • 풀버전 고화질 로맨스/드라마 영화 (1:29:38)",
+    "thumbnailUrl": "https://img.youtube.com/vi/d-pMBOsr7Jo/hqdefault.jpg",
+    "duration": "1:29:38",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "rWP7OYwHCEk",
+    "title": "Anime love story full movie english sub [HD]",
+    "channelTitle": "Nightcore & amv",
+    "description": "Nightcore & amv • 풀버전 고화질 로맨스/드라마 영화 (1:17:37)",
+    "thumbnailUrl": "https://img.youtube.com/vi/rWP7OYwHCEk/hqdefault.jpg",
+    "duration": "1:17:37",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "GG8EdIZ8zSI",
+    "title": "Healing Hearts on Cedar Valley Ranch | Full Romantic Drama 2026",
+    "channelTitle": "LoveLoom Films",
+    "description": "LoveLoom Films • 풀버전 고화질 로맨스/드라마 영화 (1:25:30)",
+    "thumbnailUrl": "https://img.youtube.com/vi/GG8EdIZ8zSI/hqdefault.jpg",
+    "duration": "1:25:30",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "Jr5oLnADfaQ",
+    "title": "Chinese romantic comedy movie 2019 | With English Subtitles | Full Movie | Very Funny",
+    "channelTitle": "MoviToonZ",
+    "description": "MoviToonZ • 풀버전 고화질 로맨스/드라마 영화 (1:43:35)",
+    "thumbnailUrl": "https://img.youtube.com/vi/Jr5oLnADfaQ/hqdefault.jpg",
+    "duration": "1:43:35",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "WPU0k2iqFm8",
+    "title": "He Saved Her Ranch She Stole His Heart | Full Western Romance Movie",
+    "channelTitle": "SilkSoul Films",
+    "description": "SilkSoul Films • 풀버전 고화질 로맨스/드라마 영화 (1:24:29)",
+    "thumbnailUrl": "https://img.youtube.com/vi/WPU0k2iqFm8/hqdefault.jpg",
+    "duration": "1:24:29",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "FqHn2VBqTrg",
+    "title": "South African Romantic Drama | Coming-of-Age Love Story ❤️ Full Movie 🎬 FAREWELL 4K",
+    "channelTitle": "Greenlight Productions",
+    "description": "Greenlight Productions • 풀버전 고화질 로맨스/드라마 영화 (1:07:46)",
+    "thumbnailUrl": "https://img.youtube.com/vi/FqHn2VBqTrg/hqdefault.jpg",
+    "duration": "1:07:46",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "zHEEWvjSvRs",
+    "title": "Japanese love story full movie",
+    "channelTitle": "めいめい",
+    "description": "めいめい • 풀버전 고화질 로맨스/드라마 영화 (1:54:34)",
+    "thumbnailUrl": "https://img.youtube.com/vi/zHEEWvjSvRs/hqdefault.jpg",
+    "duration": "1:54:34",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  },
+  {
+    "videoId": "udNCrXdLBNM",
+    "title": "An Eternal Love - English Dubbed Full Movie | A School Love Story | Triangle Love Story | Subtitles",
+    "channelTitle": "New Generation",
+    "description": "New Generation • 풀버전 고화질 로맨스/드라마 영화 (2:01:39)",
+    "thumbnailUrl": "https://img.youtube.com/vi/udNCrXdLBNM/hqdefault.jpg",
+    "duration": "2:01:39",
+    "language": "en",
+    "category": "movie_drama",
+    "tags": [
+      "영화쉐도잉",
+      "풀버전영화",
+      "로맨스",
+      "드라마",
+      "장편쉐도잉"
+    ],
+    "source": "curated_movie_drama"
+  }
 ];
 
 export const DEFAULT_ENGLISH_CURATED_TRACKS = [
