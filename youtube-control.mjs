@@ -145,6 +145,7 @@ export const LANGUAGES = [
  */
 export const SUB_CATEGORIES = [
   { id: 'all', label: '✨ 전체 주제', icon: '✨', desc: '선택한 언어의 모든 주제' },
+  { id: 'news_interview', label: '📰 뉴스 & 명사 초대석 (여성 100%)', icon: '📰', desc: '초미녀 아나운서의 브리핑 & 지적인 여성 리더 1:1 심층 초대석' },
   { id: 'movie_drama', label: '🎬 드라마 & 영화 (1h+)', icon: '🎬', desc: '풀버전 로맨스/드라마 영화 & 1시간 감성 스토리 쉐도잉' },
   { id: 'pop_music', label: '🎵 감성 발라드 & 노래', icon: '🎵', desc: '댄스 제외! 서정적인 명품 발라드 & 어쿠스틱 팝 가사 싱크 쉐도잉' },
   { id: 'sleep_life', label: '🌙 수면 & 롱폼 딥토크 (1h+)', icon: '🌙', desc: '취침·휴식 시 듣기 좋은 60분+ 차분한 롱폼 스토리텔링' },
@@ -443,14 +444,14 @@ const SEARCH_QUERIES = [
  */
 const MALE_KEYWORDS = [
   '남자', '남성', 'male', 'guy', 'guys', 'husband', 'boyfriend', 'boy', 'boys', 'bro', 'bros',
-  'father', 'dad', 'brother', 'son', 'gentleman', 'gentlemen', 'he', 'his', 'him', 'mr.', 'mr ', 'sir', 'himself',
+  'father', 'dad', 'brother', 'son', 'gentleman', 'gentlemen', ' mr ', 'mr.', 'sir',
   'jack', 'john', 'david', 'michael', 'james', 'robert', 'william', 'thomas', 'daniel', 'matthew',
   'anthony', 'mark', 'donald', 'steven', 'paul', 'andrew', 'joshua', 'kenneth', 'kevin', 'brian',
   'george', 'edward', 'ronald', 'timothy', 'jason', 'jeffrey', 'ryan', 'jacob', 'gary', 'nicholas',
   'eric', 'jonathan', 'stephen', 'larry', 'justin', 'scott', 'brandon', 'benjamin', 'samuel', 'gregory',
   'alexander', 'patrick', 'frank', 'raymond', 'dennis', 'jerry', 'tyler', 'aaron', 'jose',
   'adam', 'nathan', 'henry', 'douglas', 'zachary', 'peter', 'kyle', 'walter', 'ethan', 'jeremy',
-  'harold', 'keith', 'christian', 'roger', 'noah', 'gerald', 'carl', 'terry', 'sean', 'austin',
+  'harold', 'keith', 'roger', 'noah', 'gerald', 'carl', 'terry', 'sean', 'austin',
   'arthur', 'lawrence', 'jesse', 'dylan', 'bryan', 'joe', 'jordan', 'billy', 'bruce', 'albert',
   'willie', 'gabriel', 'logan', 'alan', 'juan', 'wayne', 'roy', 'ralph', 'randy', 'eugene',
   'vincent', 'russell', 'louis', 'philip', 'bobby', 'johnny', 'bradley', 'martin', 'neil', 'luke',
@@ -458,10 +459,15 @@ const MALE_KEYWORDS = [
   'theodore', 'wyatt', 'jayden', 'matteo', 'julian', 'leo', 'ezra', 'harrison',
   'pewdiepie', 'clint', 'steve', 'mike', 'dave', 'tom', 'chris', 'dan', 'matt', 'sam', 'ian',
   'shetty', 'abdaal', 'charles', 'moseley', 'roland frasier', 'simon sinek', 'huberman', 'peterson',
-  'jensen huang', 'shashi tharoor', 'konstantin kisin', 'mehdi hasan', 'raj persaud'
+  'jensen huang', 'shashi tharoor', 'konstantin kisin', 'mehdi hasan', 'raj persaud',
+  'bon iver', 'rauw alejandro', 'zzoilo', 'khalid', 'vincent podcast', 'rich roll', 'doug bopst', 'viall files'
 ];
 
 const TRASH_KEYWORDS = [
+  // 종교 / 교회 / 천주교 / 찬송가 / 찬양 (엄격 영구 차단)
+  'church', 'jesus', 'christ', 'gospel', 'worship', 'pastor', 'christian', 'catholic', 'bible', 'pray',
+  '찬송', '찬양', '교회', '예수', '성경', '목사', '천주교', '성당', '신부', 'hymn', 'iglesia', 'dios', 'catolica',
+
   // Banned or low-quality speakers / filters
   'mel robbins', 'cleo abram', 'vanessa van edwards', 'dr. justin moseley', 'moseley',
   'black woman', 'black female', 'african', 'olamide olowe', 'chidera eggerue', 'kamala harris',
@@ -479,10 +485,8 @@ const TRASH_KEYWORDS = [
   'ai voice', 'ai generated', 'ai avatar', 'virtual', 'vtuber', 'animation', 'anime', 'cartoon', 'synth', 'text to speech', 'tts', 'bot',
   'manga', 'manhwa', 'comic', 'webtoon', 'faceless', 'no face',
 
-  // 한국어/동양어권 (영어 학습용이므로 제외)
-  'korean', 'vlog in korea', 'korea vlog', 'seoul vlog', '한국', '브이로그', '일상', '취준생',
-  'k-pop', 'kpop', 'kdrama', 'chinese', 'mandarin', 'taiwanese', 'china', 'taiwan', 'hong kong',
-  '中文', '汉语', '普通话', '台灣', '中国', '香港', '중국어', '대만', 'japanese', 'japan vlog', 'tokyo vlog',
+  // 불필요한 국내 취준/먹방 잡담 브이로그
+  'vlog in korea', 'korea vlog', 'seoul vlog', '취준생 브이로그', '자취생 브이로그', '먹방 브이로그',
 
   // 무음 / 비언어 콘텐츠
   '요가', 'yoga', 'pilates', '필라테스', 'stretching', '스트레칭', 'workout', 'exercise', 'fitness routine', 'home workout',
@@ -581,6 +585,69 @@ export function isWithin5Years(publishedText = '') {
 export const isWithin3Years = isWithin5Years;
 
 const MUSIC_FILE = '/home/kw/kwsoft/ytmusic/data/music.json';
+
+export const DEFAULT_NEWS_INTERVIEW_TRACKS = [
+  {
+    videoId: 'zxTMjX1U2HI',
+    title: 'Melinda French Gates on Tech, Wealth & Purpose | Bloomberg Originals (Emily Chang)',
+    channelTitle: 'Bloomberg Originals',
+    description: 'Emily Chang (블룸버그 간판 여성 앵커) & Melinda French Gates • 기술의 미래, 자선사업, 진정한 가치관에 대한 1:1 심층 초대석 인터뷰 (24분, 완벽한 표준 미국식 딕션)',
+    thumbnailUrl: 'https://img.youtube.com/vi/zxTMjX1U2HI/hqdefault.jpg',
+    duration: '23:53',
+    language: 'en',
+    category: 'news_interview',
+    tags: ['뉴스초대석', 'Bloomberg', 'EmilyChang', 'MelindaGates', '명품인터뷰'],
+    source: 'curated_news',
+  },
+  {
+    videoId: 'AbzHJktYCa8',
+    title: 'Sheryl Sandberg: Bloomberg Studio 1.0 with Emily Chang (Full Interview)',
+    channelTitle: 'Bloomberg Television',
+    description: 'Emily Chang & Sheryl Sandberg (전 메타 COO) • 여성 리더십, 린인(Lean In), 위기 극복에 관한 24분 심층 대담',
+    thumbnailUrl: 'https://img.youtube.com/vi/AbzHJktYCa8/hqdefault.jpg',
+    duration: '24:17',
+    language: 'en',
+    category: 'news_interview',
+    tags: ['뉴스초대석', 'Bloomberg', 'SherylSandberg', '여성리더십', '고급영어'],
+    source: 'curated_news',
+  },
+  {
+    videoId: 'UMzma1aATAU',
+    title: 'Crypto Investor Katie Haun on Bloomberg Studio 1.0 with Emily Chang',
+    channelTitle: 'Bloomberg Tech',
+    description: 'Emily Chang & Katie Haun (전 미 연방검사 / 실리콘밸리 톱 투자자) • 명쾌한 논리와 빠른 템포의 비즈니스 딕션 인터뷰 (24분)',
+    thumbnailUrl: 'https://img.youtube.com/vi/UMzma1aATAU/hqdefault.jpg',
+    duration: '24:07',
+    language: 'en',
+    category: 'news_interview',
+    tags: ['뉴스초대석', 'Bloomberg', 'KatieHaun', '투자자인터뷰', '실전비즈니스'],
+    source: 'curated_news',
+  },
+  {
+    videoId: '1PGi5QDAob4',
+    title: "Savannah Guthrie's In-Depth Conversation With Hoda Kotb (TODAY Extended Cut)",
+    channelTitle: 'NBC TODAY',
+    description: 'Savannah Guthrie (NBC 대표 앵커) & Hoda Kotb • 두 여성 메인 앵커가 나누는 진솔한 인생, 뉴스 비하인드, 삶의 지혜 (35분 대화)',
+    thumbnailUrl: 'https://img.youtube.com/vi/1PGi5QDAob4/hqdefault.jpg',
+    duration: '35:28',
+    language: 'en',
+    category: 'news_interview',
+    tags: ['뉴스초대석', 'NBCTODAY', 'SavannahGuthrie', 'HodaKotb', '진솔한대화'],
+    source: 'curated_news',
+  },
+  {
+    videoId: '5fTFGGycba8',
+    title: "CNBC's Full Interview with Accenture CEO Julie Sweet (Global Business Leader)",
+    channelTitle: 'CNBC International Live',
+    description: 'CNBC 대표 여성 앵커 & Julie Sweet (액센츄어 글로벌 CEO) • 세계 경제와 AI 혁신, 기업가정신을 다룬 12분 심층 인터뷰',
+    thumbnailUrl: 'https://img.youtube.com/vi/5fTFGGycba8/hqdefault.jpg',
+    duration: '11:58',
+    language: 'en',
+    category: 'news_interview',
+    tags: ['뉴스초대석', 'CNBC', 'JulieSweet', 'CEO인터뷰', '비즈니스영어'],
+    source: 'curated_news',
+  },
+];
 
 export const DEFAULT_MOVIE_DRAMA_TRACKS = [
   {
@@ -2087,6 +2154,22 @@ export function loadMultiLangTracks() {
       source: 'curated_movie',
       bookmarked: false,
       addedAt: Date.now() - 2000,
+    })),
+    ...DEFAULT_NEWS_INTERVIEW_TRACKS.map(t => ({
+      id: `news_${t.videoId}`,
+      videoId: t.videoId,
+      title: t.title,
+      channelTitle: t.channelTitle,
+      description: t.description,
+      thumbnailUrl: t.thumbnailUrl,
+      url: `https://www.youtube.com/watch?v=${t.videoId}`,
+      duration: t.duration,
+      language: t.language || 'en',
+      category: t.category || 'news_interview',
+      tags: t.tags,
+      source: 'curated_news',
+      bookmarked: false,
+      addedAt: Date.now() - 1000,
     })),
   ];
   return all;

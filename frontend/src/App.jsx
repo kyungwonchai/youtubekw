@@ -236,6 +236,7 @@ export default function App() {
 
   const SUB_CATEGORIES = [
     { id: 'all', label: '✨ 전체 주제' },
+    { id: 'news_interview', label: '📰 뉴스 & 명사 초대석 (100% 여성)' },
     { id: 'movie_drama', label: '🎬 드라마 & 영화 (1h+)' },
     { id: 'pop_music', label: '🎵 감성 발라드 & 노래' },
     { id: 'sleep_life', label: '🌙 수면 & 롱폼 딥토크 (1h+)' },
@@ -257,7 +258,9 @@ export default function App() {
 
       // Tier 2: Sub-category Filter
       if (selectedCategory !== 'all' && selectedCategory !== 'top_trained') {
-        if (selectedCategory === 'movie_drama') {
+        if (selectedCategory === 'news_interview') {
+          if (item.category !== 'news_interview' && !item.tags?.includes('뉴스초대석')) return false;
+        } else if (selectedCategory === 'movie_drama') {
           if (item.category !== 'movie_drama' && !item.tags?.includes('영화쉐도잉') && !item.tags?.includes('풀버전영화')) return false;
         } else if (selectedCategory === 'sleep_life') {
           const parts = (item.duration || '').split(':').map(Number);
