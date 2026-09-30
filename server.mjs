@@ -18,7 +18,7 @@ import {
   blockVideoOrSpeaker,
 } from './youtube-control.mjs';
 import { getTranscriptForVideo, lookupWord } from './transcript-service.mjs';
-import { getDirectAudioUrl } from './audio-service.mjs';
+import { getDirectAudioUrl, streamDirectAudio } from './audio-service.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -410,18 +410,17 @@ const handleAudioUrl = async (req, res) => {
 app.get('/api/audio-url/:videoId', handleAudioUrl);
 app.get('/youtubekw/api/audio-url/:videoId', handleAudioUrl);
 
-const handleAudioStreamRedirect = async (req, res) => {
+const handleAudioStream = async (req, res) => {
   try {
     const { videoId } = req.params;
     if (!videoId) return res.status(400).send('Video ID is required');
-    const directUrl = await getDirectAudioUrl(videoId);
-    res.redirect(302, directUrl);
+    await streamDirectAudio(videoId, req, res);
   } catch (e) {
-    res.status(500).send(e.message);
+    if (!res.headersSent) res.status(500).send(e.message);
   }
 };
-app.get('/api/audio-stream/:videoId', handleAudioStreamRedirect);
-app.get('/youtubekw/api/audio-stream/:videoId', handleAudioStreamRedirect);
+app.get('/api/audio-stream/:videoId', handleAudioStream);
+app.get('/youtubekw/api/audio-stream/:videoId', handleAudioStream);
 
 // Weekly Wednesday AI Council Sessions Endpoints
 const handleGetWeeklySessions = (req, res) => {

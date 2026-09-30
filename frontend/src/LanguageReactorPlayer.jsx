@@ -558,53 +558,34 @@ export default function LanguageReactorPlayer({
     }
   }, [currentVideo?.videoId, transcript, playerReady, player, bgAudioMode, autoSkipIntro]);
 
-  // 2. Fetch direct audio URL for background playback
-  const fetchAudioUrl = async () => {
-    if (!currentVideo?.videoId) return null;
-    if (audioUrl) return audioUrl;
-    setLoadingAudio(true);
-    try {
-      const res = await fetch(`${API_BASE}/audio-url/${currentVideo.videoId}`);
-      const data = await res.json();
-      if (data.ok && data.audioUrl) {
-        setAudioUrl(data.audioUrl);
-        return data.audioUrl;
-      }
-    } catch (e) {
-      console.error('[Audio] Fetch audio url error:', e);
-    } finally {
-      setLoadingAudio(false);
-    }
-    return null;
+  // 2. Direct audio stream endpoint for robust background playback
+  const getAudioStreamUrl = (videoId) => {
+    return `${API_BASE}/audio-stream/${videoId}`;
   };
 
   // 2-1. Background Audio Auto-play on Video Change
   useEffect(() => {
-    if (bgAudioMode && currentVideo?.videoId) {
-      setAudioUrl(null);
+    if (bgAudioMode && currentVideo?.videoId && audioRef.current) {
       setLoadingAudio(true);
-      fetch(`${API_BASE}/audio-url/${currentVideo.videoId}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.ok && data.audioUrl && audioRef.current) {
-            setAudioUrl(data.audioUrl);
-            audioRef.current.src = data.audioUrl;
-            let startT = 0;
-            if (autoSkipIntro && transcript.length > 0 && transcript[0]?.start >= 1.0 && introSkippedRef.current !== currentVideo?.videoId) {
-              introSkippedRef.current = currentVideo?.videoId;
-              startT = Math.max(0, transcript[0].start - 0.1);
-              showVocabToast(`⚡ 인트로 건너뛰기: 첫 문장(${transcript[0].start.toFixed(1)}초)부터 시작`, 'info');
-            }
-            audioRef.current.currentTime = startT;
-            audioRef.current.playbackRate = playbackRate;
-            audioRef.current.play().then(() => {
-              setIsPlaying(true);
-              if (startT > 0) setActiveIndex(0);
-            }).catch(() => {});
-          }
-        })
-        .catch(e => console.error(e))
-        .finally(() => setLoadingAudio(false));
+      const streamSrc = getAudioStreamUrl(currentVideo.videoId);
+      audioRef.current.src = streamSrc;
+
+      let startT = 0;
+      if (autoSkipIntro && transcript.length > 0 && transcript[0]?.start >= 1.0 && introSkippedRef.current !== currentVideo?.videoId) {
+        introSkippedRef.current = currentVideo?.videoId;
+        startT = Math.max(0, transcript[0].start - 0.1);
+        showVocabToast(`⚡ 인트로 건너뛰기: 첫 문장(${transcript[0].start.toFixed(1)}초)부터 시작`, 'info');
+      }
+      audioRef.current.currentTime = startT;
+      audioRef.current.playbackRate = playbackRate;
+      
+      audioRef.current.play().then(() => {
+        setIsPlaying(true);
+        setLoadingAudio(false);
+        if (startT > 0) setActiveIndex(0);
+      }).catch(() => {
+        setLoadingAudio(false);
+      });
     }
   }, [currentVideo?.videoId, bgAudioMode, autoSkipIntro, transcript]);
 
@@ -826,13 +807,9 @@ export default function LanguageReactorPlayer({
         player.pauseVideo();
       }
 
-      let url = audioUrl;
-      if (!url) {
-        url = await fetchAudioUrl();
-      }
-
-      if (url && audioRef.current) {
-        audioRef.current.src = url;
+      if (currentVideo?.videoId && audioRef.current) {
+        const streamUrl = getAudioStreamUrl(currentVideo.videoId);
+        audioRef.current.src = streamUrl;
         audioRef.current.currentTime = curTime;
         audioRef.current.playbackRate = playbackRate;
         audioRef.current.play().then(() => {
@@ -1305,7 +1282,22 @@ export default function LanguageReactorPlayer({
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
           onEnded={() => handleVideoEnded(null)}
+          onError={(e) => {
+            console.warn('[Audio] Stream playback error, auto-recovering...', e);
+            if (bgAudioMode && currentVideo?.videoId && audioRef.current) {
+              const curT = audioRef.current.currentTime || 0;
+              showVocabToast('🔄 오디오 스트림 자동 재연결 중...', 'info');
+              setTimeout(() => {
+                if (audioRef.current && currentVideo?.videoId) {
+                  audioRef.current.src = `${getAudioStreamUrl(currentVideo.videoId)}?t=${Date.now()}`;
+                  audioRef.current.currentTime = curT;
+                  audioRef.current.play().catch(() => {});
+                }
+              }, 1200);
+            }
+          }}
           playsInline
+          preload="auto"
         />
 
         {/* COMPACT TOP HEADER */}
