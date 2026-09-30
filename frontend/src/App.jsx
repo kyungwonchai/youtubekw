@@ -355,15 +355,15 @@ export default function App() {
         </div>
       )}
 
-      {/* Custom URL Quick Add Bar (Instant Bookmark) */}
-      <div className="yt-custom-add-card">
+      {/* Compact Action & Custom URL Quick Add Bar */}
+      <div className="yt-top-action-bar">
         <form className="yt-custom-add-form" onSubmit={handleAddCustomUrl}>
           <div className="yt-custom-input-wrap">
             <span className="input-icon">🔗</span>
             <input
               type="text"
               className="yt-custom-input"
-              placeholder="추가하고 싶은 유튜브 영상 주소 복붙 (예: https://youtu.be/... 또는 watch?v=...)"
+              placeholder="유튜브 영상 주소 붙여넣기 (https://youtu.be/...)"
               value={customUrl}
               onChange={(e) => setCustomUrl(e.target.value)}
               disabled={addingCustom}
@@ -390,30 +390,77 @@ export default function App() {
               </>
             ) : (
               <>
-                <span>⭐ 바로 찜 추가</span>
+                <span>⭐ 바로 찜 등록</span>
               </>
             )}
           </button>
         </form>
-        <div className="custom-add-hint">
-          <span>💡 <strong>데이터 보존 원칙:</strong> 내가 찜(⭐)한 영상과 직접 등록한 영상은 <strong>영구 보존</strong>됩니다.</span>
+
+        <div className="top-utility-actions">
+          <button
+            className={`btn-sub-view ${activeTab === 'feed' || activeTab === 'bookmarked' ? 'active' : ''}`}
+            onClick={() => setActiveTab('feed')}
+          >
+            🎬 쉐도잉 피드
+          </button>
+          <button
+            className={`btn-sub-view ${activeTab === 'weekly' ? 'active' : ''}`}
+            onClick={() => setActiveTab('weekly')}
+          >
+            📅 주간 AI 회의록 ({weeklyData.sessions?.length || 0})
+          </button>
+          <button
+            className={`btn-sub-view ${activeTab === 'speakers' ? 'active' : ''}`}
+            onClick={() => setActiveTab('speakers')}
+          >
+            👥 롤모델 인재풀 ({speakers.length})
+          </button>
         </div>
       </div>
 
-      {/* 2-Tier Category Navigation */}
+      {/* Main Filter & Category Controller */}
       {(activeTab === 'feed' || activeTab === 'bookmarked') && (
         <div className="yt-category-hierarchy">
-          {/* Tier 1: Major Language Tabs (대카테고리: 언어별 선택) */}
+          {/* Main Feed vs Bookmarked Mode Toggle + Search */}
+          <div className="feed-control-row">
+            <div className="view-mode-toggles">
+              <button
+                className={`mode-toggle-btn ${activeTab === 'feed' ? 'active' : ''}`}
+                onClick={() => setActiveTab('feed')}
+              >
+                🔥 전체 피드 <span className="mode-badge">{items.length}</span>
+              </button>
+              <button
+                className={`mode-toggle-btn bookmark ${activeTab === 'bookmarked' ? 'active' : ''}`}
+                onClick={() => setActiveTab('bookmarked')}
+              >
+                ⭐ 찜 보관함 <span className="mode-badge star">{bookmarkedCount}</span>
+              </button>
+            </div>
+
+            <div className="yt-search-box">
+              <input
+                type="text"
+                placeholder="스피커, 강연 주제, 가치관 검색..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+              />
+              {searchQuery && (
+                <button className="clear-search-btn" onClick={() => setSearchQuery('')}>✕</button>
+              )}
+            </div>
+          </div>
+
+          {/* Tier 1: Major Language Tabs */}
           <div className="major-lang-bar">
             <div className="hierarchy-title-wrap">
-              <span className="hierarchy-badge">대카테고리</span>
-              <span className="hierarchy-label">🌐 학습 언어 선택</span>
+              <span className="hierarchy-badge">언어</span>
             </div>
             <div className="lang-pill-list">
               {LANGUAGES.map(lang => {
                 const count = lang.id === 'all'
-                  ? items.length
-                  : items.filter(i => (i.language || (i.category === 'spanish' ? 'es' : 'en')) === lang.id).length;
+                  ? (activeTab === 'bookmarked' ? bookmarkedCount : items.length)
+                  : items.filter(i => (activeTab !== 'bookmarked' || i.bookmarked) && (i.language || (i.category === 'spanish' ? 'es' : 'en')) === lang.id).length;
                 return (
                   <button
                     key={lang.id}
@@ -432,11 +479,10 @@ export default function App() {
             </div>
           </div>
 
-          {/* Tier 2: Sub-category Topic Pills (소카테고리: 주제 및 포맷) */}
+          {/* Tier 2: Sub-category Topic Pills */}
           <div className="sub-cat-bar">
             <div className="hierarchy-title-wrap">
-              <span className="hierarchy-badge sub">소카테고리</span>
-              <span className="hierarchy-label">🎯 상세 주제 / 형식</span>
+              <span className="hierarchy-badge sub">주제</span>
             </div>
             <div className="sub-cat-pill-list">
               {SUB_CATEGORIES.map(cat => (
@@ -450,120 +496,76 @@ export default function App() {
               ))}
             </div>
           </div>
+
+          {/* Pop Music Artist Sub-filter */}
+          {selectedCategory === 'pop_music' && (
+            <div className="pop-artist-filter-bar">
+              <button
+                className={`pop-artist-pill ${popArtistFilter === 'all' ? 'active' : ''}`}
+                onClick={() => setPopArtistFilter('all')}
+              >
+                🎵 전체 노래 ({items.filter(i => (activeTab !== 'bookmarked' || i.bookmarked) && (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (selectedLanguage === 'all' || (i.language || 'en') === selectedLanguage)).length}곡)
+              </button>
+              {(selectedLanguage === 'all' || selectedLanguage === 'en') && (
+                <>
+                  <button
+                    className={`pop-artist-pill adele ${popArtistFilter === 'Adele' ? 'active' : ''}`}
+                    onClick={() => setPopArtistFilter('Adele')}
+                  >
+                    💙 아델
+                  </button>
+                  <button
+                    className={`pop-artist-pill lana ${popArtistFilter === 'Lana Del Rey' ? 'active' : ''}`}
+                    onClick={() => setPopArtistFilter('Lana Del Rey')}
+                  >
+                    🖤 라나 델 레이
+                  </button>
+                  <button
+                    className={`pop-artist-pill gracie ${popArtistFilter === 'Gracie Abrams' ? 'active' : ''}`}
+                    onClick={() => setPopArtistFilter('Gracie Abrams')}
+                  >
+                    🤍 그레이시 에이브럼스
+                  </button>
+                  <button
+                    className={`pop-artist-pill taylor ${popArtistFilter === 'Taylor Swift' ? 'active' : ''}`}
+                    onClick={() => setPopArtistFilter('Taylor Swift')}
+                  >
+                    💖 테일러 스위프트
+                  </button>
+                  <button
+                    className={`pop-artist-pill billie ${popArtistFilter === 'Billie Eilish' ? 'active' : ''}`}
+                    onClick={() => setPopArtistFilter('Billie Eilish')}
+                  >
+                    💚 빌리 아일리시
+                  </button>
+                  <button
+                    className={`pop-artist-pill olivia ${popArtistFilter === 'Olivia Rodrigo' ? 'active' : ''}`}
+                    onClick={() => setPopArtistFilter('Olivia Rodrigo')}
+                  >
+                    💜 올리비아 로드리고
+                  </button>
+                </>
+              )}
+              {(selectedLanguage === 'all' || selectedLanguage === 'es') && (
+                <button
+                  className={`pop-artist-pill aitana ${popArtistFilter === 'Spanish Ballads' ? 'active' : ''}`}
+                  onClick={() => setPopArtistFilter('Spanish Ballads')}
+                >
+                  🇪🇸 아이타나 & 라틴 발라드
+                </button>
+              )}
+              {(selectedLanguage === 'all' || selectedLanguage === 'zh') && (
+                <button
+                  className={`pop-artist-pill gem ${popArtistFilter === 'G.E.M.' ? 'active' : ''}`}
+                  onClick={() => setPopArtistFilter('G.E.M.')}
+                >
+                  🇨🇳 덩쯔치 G.E.M.
+                </button>
+              )}
+            </div>
+          )}
         </div>
       )}
-
-      {/* Pop Music Artist Sub-filter (언어별 동적 필터링) */}
-      {(activeTab === 'feed' || activeTab === 'bookmarked') && selectedCategory === 'pop_music' && (
-        <div className="pop-artist-filter-bar">
-          <button
-            className={`pop-artist-pill ${popArtistFilter === 'all' ? 'active' : ''}`}
-            onClick={() => setPopArtistFilter('all')}
-          >
-            🎵 전체 발라드 & 노래 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (selectedLanguage === 'all' || (i.language || 'en') === selectedLanguage)).length}곡)
-          </button>
-          {(selectedLanguage === 'all' || selectedLanguage === 'en') && (
-            <>
-              <button
-                className={`pop-artist-pill adele ${popArtistFilter === 'Adele' ? 'active' : ''}`}
-                onClick={() => setPopArtistFilter('Adele')}
-              >
-                💙 아델 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('adele') || i.title?.toLowerCase().includes('adele'))).length}곡)
-              </button>
-              <button
-                className={`pop-artist-pill lana ${popArtistFilter === 'Lana Del Rey' ? 'active' : ''}`}
-                onClick={() => setPopArtistFilter('Lana Del Rey')}
-              >
-                🖤 라나 델 레이 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('lana') || i.title?.toLowerCase().includes('lana'))).length}곡)
-              </button>
-              <button
-                className={`pop-artist-pill gracie ${popArtistFilter === 'Gracie Abrams' ? 'active' : ''}`}
-                onClick={() => setPopArtistFilter('Gracie Abrams')}
-              >
-                🤍 그레이시 에이브럼스 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('gracie') || i.title?.toLowerCase().includes('gracie'))).length}곡)
-              </button>
-              <button
-                className={`pop-artist-pill taylor ${popArtistFilter === 'Taylor Swift' ? 'active' : ''}`}
-                onClick={() => setPopArtistFilter('Taylor Swift')}
-              >
-                💖 테일러 스위프트 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('taylor') || i.channelTitle?.toLowerCase().includes('taylor') || i.title?.toLowerCase().includes('taylor'))).length}곡)
-              </button>
-              <button
-                className={`pop-artist-pill billie ${popArtistFilter === 'Billie Eilish' ? 'active' : ''}`}
-                onClick={() => setPopArtistFilter('Billie Eilish')}
-              >
-                💚 빌리 아일리시 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('billie') || i.channelTitle?.toLowerCase().includes('billie') || i.title?.toLowerCase().includes('billie'))).length}곡)
-              </button>
-              <button
-                className={`pop-artist-pill olivia ${popArtistFilter === 'Olivia Rodrigo' ? 'active' : ''}`}
-                onClick={() => setPopArtistFilter('Olivia Rodrigo')}
-              >
-                💜 올리비아 로드리고 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('olivia') || i.channelTitle?.toLowerCase().includes('olivia') || i.title?.toLowerCase().includes('olivia'))).length}곡)
-              </button>
-            </>
-          )}
-          {(selectedLanguage === 'all' || selectedLanguage === 'es') && (
-            <button
-              className={`pop-artist-pill aitana ${popArtistFilter === 'Spanish Ballads' ? 'active' : ''}`}
-              onClick={() => setPopArtistFilter('Spanish Ballads')}
-            >
-              🇪🇸 아이타나 & 라틴 발라드 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('aitana') || i.artist?.toLowerCase().includes('shakira') || i.artist?.toLowerCase().includes('mon laferte') || i.tags?.includes('스페인어노래') || i.tags?.includes('감성발라드'))).length}곡)
-            </button>
-          )}
-          {(selectedLanguage === 'all' || selectedLanguage === 'zh') && (
-            <button
-              className={`pop-artist-pill gem ${popArtistFilter === 'G.E.M.' ? 'active' : ''}`}
-              onClick={() => setPopArtistFilter('G.E.M.')}
-            >
-              🇨🇳 덩쯔치 G.E.M. ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (i.artist?.toLowerCase().includes('gem') || i.artist?.toLowerCase().includes('g.e.m') || i.title?.includes('鄧紫棋'))).length}곡)
-            </button>
-          )}
-        </div>
-      )}
-
-      {/* Clean Navigation & Search Bar */}
-      <div className="yt-nav-bar">
-        <div className="yt-tabs">
-          <button
-            className={`tab-btn ${activeTab === 'feed' ? 'active' : ''}`}
-            onClick={() => setActiveTab('feed')}
-          >
-            🔥 추천 쉐도잉 피드 ({items.length})
-          </button>
-          <button
-            className={`tab-btn ${activeTab === 'bookmarked' ? 'active' : ''}`}
-            onClick={() => setActiveTab('bookmarked')}
-          >
-            ⭐ 찜한 영상 ({bookmarkedCount})
-          </button>
-          <button
-            className={`tab-btn ${activeTab === 'weekly' ? 'active' : ''}`}
-            onClick={() => setActiveTab('weekly')}
-          >
-            📅 주간 AI 추천 회의록 ({weeklyData.sessions?.length || 0})
-          </button>
-          <button
-            className={`tab-btn ${activeTab === 'speakers' ? 'active' : ''}`}
-            onClick={() => setActiveTab('speakers')}
-          >
-            👥 롤모델 멘토 인재풀 ({speakers.length})
-          </button>
-        </div>
-
-        {(activeTab === 'feed' || activeTab === 'bookmarked') && (
-          <div className="yt-search-box">
-            <input
-              type="text"
-              placeholder="스피커, 강연 주제, 가치관 검색..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-            />
-            {searchQuery && (
-              <button className="clear-search-btn" onClick={() => setSearchQuery('')}>✕</button>
-            )}
-          </div>
-        )}
-      </div>
 
       {/* Main Content Area */}
       <main className="yt-main">
