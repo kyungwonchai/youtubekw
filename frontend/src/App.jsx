@@ -286,6 +286,7 @@ export default function App() {
 
   const SUB_CATEGORIES = [
     { id: 'all', label: '✨ 전체 주제' },
+    { id: 'travel_nature', label: '🌿 자연 & 솔로 여행 (100% 힐링)' },
     { id: 'news_interview', label: '📰 뉴스 & 명사 초대석 (100% 여성)' },
     { id: 'movie_drama', label: '🎬 드라마 & 영화 (1h+)' },
     { id: 'pop_music', label: '🎵 감성 발라드 & 노래' },
@@ -321,7 +322,9 @@ export default function App() {
 
       // Tier 2: Sub-category Filter
       if (selectedCategory !== 'all' && selectedCategory !== 'top_trained') {
-        if (selectedCategory === 'news_interview') {
+        if (selectedCategory === 'travel_nature') {
+          if (item.category !== 'travel_nature' && !item.tags?.includes('자연여행') && !item.tags?.includes('대자연') && !item.tags?.includes('솔로트래블')) return false;
+        } else if (selectedCategory === 'news_interview') {
           if (item.category !== 'news_interview' && !item.tags?.includes('뉴스초대석')) return false;
         } else if (selectedCategory === 'movie_drama') {
           if (item.category !== 'movie_drama' && !item.tags?.includes('영화쉐도잉') && !item.tags?.includes('풀버전영화')) return false;
@@ -1057,7 +1060,7 @@ export default function App() {
 
             {/* Subtype Filter Pills for Game */}
             <div className="vip-filter-bar">
-              {['all', '수영/다이빙', '요가/필라테스', '폴댄스'].map(sub => {
+              {['all', '수영/다이빙', '요가/필라테스', '폴댄스', '골프'].map(sub => {
                 const count = sub === 'all'
                   ? vipItems.length
                   : vipItems.filter(v => v.subType === sub || v.tags?.includes(sub)).length;
@@ -1071,6 +1074,7 @@ export default function App() {
                     {sub === '수영/다이빙' && '🏊 수영/다이빙'}
                     {sub === '요가/필라테스' && '🧘 요가/필라테스'}
                     {sub === '폴댄스' && '⚡ 피트니스'}
+                    {sub === '골프' && '⛳ 골프'}
                     <span className="vip-sub-count">({count})</span>
                   </button>
                 );
@@ -1109,7 +1113,7 @@ export default function App() {
                         <span className="yt-duration">{item.duration}</span>
                         <div className="card-badge-group">
                           <span className="vip-badge-tag">🎮 게임</span>
-                          <span className="vip-sub-badge">{item.subType === '폴댄스' ? '피트니스' : (item.subType || 'GAME')}</span>
+                          <span className="vip-sub-badge">{item.subType === '폴댄스' ? '피트니스' : (item.subType === '골프' ? '⛳ 골프' : (item.subType || 'GAME'))}</span>
                         </div>
                         <div className="yt-play-overlay">
                           <span className="play-icon">▶</span>

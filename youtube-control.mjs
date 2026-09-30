@@ -5389,7 +5389,9 @@ export function getYouTubeLinks({ filter = 'all', language = 'all', category = '
   }
 
   if (category && category !== 'all') {
-    if (category === 'sleep_life') {
+    if (category === 'travel_nature') {
+      list = list.filter(item => item.category === 'travel_nature' || item.tags?.includes('자연여행') || item.tags?.includes('대자연') || item.tags?.includes('솔로트래블'));
+    } else if (category === 'sleep_life') {
       list = list.filter(item => {
         const secs = parseDurationInSeconds(item.duration);
         return item.category === 'sleep_life' || secs >= 3600;
