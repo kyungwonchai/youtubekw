@@ -20,3 +20,5 @@ target/
 
 *.log
 *.tar.gz
+
+.system_generated/
