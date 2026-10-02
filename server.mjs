@@ -64,28 +64,6 @@ const handleBlockSpeaker = (req, res) => {
 app.post('/api/blacklist', handleBlockSpeaker);
 app.post('/youtubekw/api/blacklist', handleBlockSpeaker);
 
-// Secret VIP Special Lounge (Password Protected)
-const VIP_FILE = '/home/kw/.kwsoft-youtube-secret-vip.json';
-const handleGetSecretVip = async (req, res) => {
-  try {
-    const { pass } = req.query;
-    // Allow 'kw1121'
-    if (pass !== 'kw1121' && pass !== '7777') {
-      return res.status(403).json({ ok: false, error: '암호가 일치하지 않습니다.' });
-    }
-    const fs = await import('fs');
-    let items = [];
-    if (fs.existsSync(VIP_FILE)) {
-      items = JSON.parse(fs.readFileSync(VIP_FILE, 'utf8'));
-    }
-    res.json({ ok: true, count: items.length, items });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-};
-app.get('/api/secret-vip', handleGetSecretVip);
-app.get('/youtubekw/api/secret-vip', handleGetSecretVip);
-
 // API Handlers
 const handleGetLinks = (req, res) => {
   try {
