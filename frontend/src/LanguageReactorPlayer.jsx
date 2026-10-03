@@ -2354,7 +2354,7 @@ export default function LanguageReactorPlayer({
                             })}
                           </div>
                         )}
-                        {(displayMode === 'dual' || displayMode === 'ko_only') && transcript[activeIndex - 1].translation && (
+                        {(displayMode === 'dual' || displayMode === 'ko_only') && transcript[activeIndex - 1].translation && transcript[activeIndex - 1].translation.trim().toLowerCase() !== transcript[activeIndex - 1].text.trim().toLowerCase() && (
                           <p className="focus-ko-sub">{transcript[activeIndex - 1].translation}</p>
                         )}
                       </div>
@@ -2429,7 +2429,7 @@ export default function LanguageReactorPlayer({
                             </div>
                           )}
 
-                          {(displayMode === 'dual' || displayMode === 'ko_only') && line.translation && (
+                          {(displayMode === 'dual' || displayMode === 'ko_only') && line.translation && line.translation.trim().toLowerCase() !== line.text.trim().toLowerCase() && (
                             <div className="focus-main-ko">
                               {line.translation}
                             </div>
@@ -2473,7 +2473,7 @@ export default function LanguageReactorPlayer({
                             })}
                           </div>
                         )}
-                        {(displayMode === 'dual' || displayMode === 'ko_only') && transcript[activeIndex + 1].translation && (
+                        {(displayMode === 'dual' || displayMode === 'ko_only') && transcript[activeIndex + 1].translation && transcript[activeIndex + 1].translation.trim().toLowerCase() !== transcript[activeIndex + 1].text.trim().toLowerCase() && (
                           <p className="focus-ko-sub">{transcript[activeIndex + 1].translation}</p>
                         )}
                       </div>
