@@ -2319,49 +2319,54 @@
 
 .focus-main-content {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 10px;
-  padding: 8px 0;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 4px 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-/* 동적 확장 영어 메인 폰트 (화면 크기에 따라 시원하게 확대) */
+/* 본문장 영어 텍스트: 패널 크기에 맞게 안정적 핏(Fit) */
 .focus-main-en {
-  font-size: calc(clamp(1.36rem, 2.2vw + 0.95rem, 2.3rem) * var(--sub-font-scale, 1));
+  font-size: calc(clamp(1.12rem, 1.25vw + 0.75rem, 1.55rem) * var(--sub-font-scale, 1));
   font-weight: 700;
-  line-height: 1.65;
+  line-height: 1.5;
   color: #ffffff;
-  word-break: normal;
-  overflow-wrap: break-word;
-  letter-spacing: 0;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  letter-spacing: -0.01em;
 }
 
-/* 동적 확장 한글 번역 폰트 */
+/* 본문장 한글 번역 */
 .focus-main-ko {
-  font-size: calc(clamp(1.06rem, 1.3vw + 0.8rem, 1.52rem) * var(--sub-font-scale, 1));
+  font-size: calc(clamp(0.92rem, 0.9vw + 0.65rem, 1.18rem) * var(--sub-font-scale, 1));
   font-weight: 500;
-  line-height: 1.5;
+  line-height: 1.4;
   color: #67e8f9;
   word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
-/* 영상 숨김 모드 (글자 전체 점유) 시 초대형 텍스트 */
+/* 영상 숨김 모드 (글자 전체 점유) */
 .layout-text_only .focus-main-en {
-  font-size: calc(clamp(1.7rem, 3.2vw + 1.1rem, 2.9rem) * var(--sub-font-scale, 1));
-  line-height: 1.6;
+  font-size: calc(clamp(1.35rem, 2.0vw + 0.9rem, 2.1rem) * var(--sub-font-scale, 1));
+  line-height: 1.55;
 }
 
 .layout-text_only .focus-main-ko {
-  font-size: calc(clamp(1.25rem, 1.8vw + 0.95rem, 1.9rem) * var(--sub-font-scale, 1));
+  font-size: calc(clamp(1.05rem, 1.2vw + 0.8rem, 1.45rem) * var(--sub-font-scale, 1));
 }
 
 @media (max-width: 992px) {
   .focus-main-en {
-    font-size: calc(clamp(1.28rem, 4.5vw + 0.45rem, 1.85rem) * min(var(--sub-font-scale, 1), 1.5));
+    font-size: calc(clamp(1.05rem, 3.2vw + 0.45rem, 1.35rem) * min(var(--sub-font-scale, 1), 1.3));
+    line-height: 1.45;
   }
   .focus-main-ko {
-    font-size: calc(clamp(1.0rem, 3.2vw + 0.35rem, 1.35rem) * min(var(--sub-font-scale, 1), 1.5));
+    font-size: calc(clamp(0.88rem, 2.4vw + 0.35rem, 1.1rem) * min(var(--sub-font-scale, 1), 1.3));
   }
 }
 
