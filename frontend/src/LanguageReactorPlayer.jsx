@@ -178,15 +178,14 @@ export default function LanguageReactorPlayer({
     }
   };
   
-  // Video Layout Mode: 'theater' (100% 영상 전체보기) | 'half' (50% 분할) | 'compact' (20% 축소)
+  // Video Layout Mode: 'half' (50% 나란히 분할) | 'compact' (20% 축소) | 'theater' (영상 전체보기)
   const [videoLayout, setVideoLayout] = useState(() => {
     try {
       const saved = localStorage.getItem('ytkw_video_layout');
-      if (saved) return saved;
-      const oldCompact = localStorage.getItem('ytkw_compact_video');
-      return oldCompact === 'false' ? 'half' : 'theater';
+      if (saved && ['half', 'compact', 'theater'].includes(saved)) return saved;
+      return 'half';
     } catch (e) {
-      return 'theater';
+      return 'half';
     }
   });
 
@@ -201,7 +200,7 @@ export default function LanguageReactorPlayer({
   // Legacy compactVideo getter for compatibility
   const compactVideo = videoLayout === 'compact';
   const handleToggleCompactVideo = () => {
-    handleSetVideoLayout(videoLayout === 'compact' ? 'theater' : 'compact');
+    handleSetVideoLayout(videoLayout === 'compact' ? 'half' : 'compact');
   };
 
   // Video Hide Mode: 영상 숨기고 글자만 화면 전체 점유 (체크박스/토글)
@@ -293,13 +292,13 @@ export default function LanguageReactorPlayer({
     } catch (e) {}
   };
 
-  // Subtitle Scroll Mode ('replace_focus': 고정 센터링 내용교체, 'instant': 초고속 즉시, 'smart_page': 스마트 넘김, 'smooth': 부드러운 슬라이딩, 'off': 끔)
+  // Subtitle Scroll Mode ('smooth': 부드러운 슬라이딩, 'instant': 초고속 즉시, 'smart_page': 스마트 넘김, 'replace_focus': 고정 센터링 내용교체, 'off': 끔)
   const [scrollMode, setScrollMode] = useState(() => {
     try {
       const saved = localStorage.getItem('ytkw_scroll_mode');
-      return saved || 'replace_focus'; // Default to fixed center content replacement
+      return saved || 'smooth'; // Default to clean smooth auto-scrolling list
     } catch (e) {
-      return 'replace_focus';
+      return 'smooth';
     }
   });
 
@@ -1477,181 +1476,129 @@ export default function LanguageReactorPlayer({
           preload="auto"
         />
 
-        {/* COMPACT TOP HEADER */}
+        {/* COMPACT CLEAN TOP HEADER */}
         <div className="lr-header">
           <div className="lr-title-info">
             <span className="lr-badge">⚡ 쉐도잉</span>
             <h2 title={currentVideo.title}>{currentVideo.title}</h2>
             {/* 🎧 Live Video Listening Stats Badge */}
-            <div
-              className={`lr-stats-header-pill ${totalVideoListens >= 50 ? 'pill-gold' : totalVideoListens >= 10 ? 'pill-emerald' : 'pill-sky'}`}
-              title={`이 영상 총 청취 문장: ${totalVideoListens}회\n3회 이상 숙달: ${masteredSentencesCount}/${totalTranscriptCount}문장 (${videoMasteryPct}%)`}
-            >
-              <span className="lsh-icon">{totalVideoListens >= 50 ? '👑' : totalVideoListens >= 10 ? '🌟' : '🎧'}</span>
-              <span className="lsh-text">누적 <strong>{totalVideoListens}회</strong> 훈련</span>
-              {totalTranscriptCount > 0 && (
-                <div className="lsh-bar-wrap">
-                  <div className="lsh-bar-fill" style={{ width: `${videoMasteryPct}%` }}></div>
-                  <span className="lsh-bar-num">{videoMasteryPct}%</span>
-                </div>
-              )}
-            </div>
+            {totalVideoListens > 0 && (
+              <div
+                className={`lr-stats-header-pill ${totalVideoListens >= 50 ? 'pill-gold' : totalVideoListens >= 10 ? 'pill-emerald' : 'pill-sky'}`}
+                title={`이 영상 총 청취: ${totalVideoListens}회\n3회 이상 숙달: ${masteredSentencesCount}/${totalTranscriptCount}문장 (${videoMasteryPct}%)`}
+              >
+                <span className="lsh-icon">{totalVideoListens >= 50 ? '👑' : totalVideoListens >= 10 ? '🌟' : '🎧'}</span>
+                <span className="lsh-text"><strong>{totalVideoListens}회</strong></span>
+              </div>
+            )}
           </div>
 
           <div className="lr-header-actions">
-            {/* Playlist Drawer Button */}
+            {/* 1. 화면 분할 세그먼트 (50:50 / 축소 / 시어터 / 글자만) */}
+            {!bgAudioMode && (
+              <div className="lr-layout-seg-group">
+                <button
+                  className={`lr-seg-btn ${!hideVideo && videoLayout === 'half' ? 'active' : ''}`}
+                  onClick={() => { if (hideVideo) setHideVideo(false); handleSetVideoLayout('half'); }}
+                  title="🗖 50:50 나란히 분할 (영상+자막 균형)"
+                >
+                  🗖 50:50
+                </button>
+                <button
+                  className={`lr-seg-btn ${!hideVideo && videoLayout === 'compact' ? 'active' : ''}`}
+                  onClick={() => { if (hideVideo) setHideVideo(false); handleSetVideoLayout('compact'); }}
+                  title="📱 영상 20% 축소 (자막 극대화)"
+                >
+                  📱 축소
+                </button>
+                <button
+                  className={`lr-seg-btn ${!hideVideo && videoLayout === 'theater' ? 'active' : ''}`}
+                  onClick={() => { if (hideVideo) setHideVideo(false); handleSetVideoLayout('theater'); }}
+                  title="🖥️ 영상 전체보기 (시어터 모드)"
+                >
+                  🖥️ 시어터
+                </button>
+                <button
+                  className={`lr-seg-btn ${hideVideo ? 'active text-only-active' : ''}`}
+                  onClick={handleToggleHideVideo}
+                  title={hideVideo ? "영상 다시 보기" : "영상 숨기고 글자(자막)만 전체 화면 점유"}
+                >
+                  🔤 글자만
+                </button>
+              </div>
+            )}
+
+            {/* 2. 자막 표시 모드 (듀얼 -> 영문만 -> 한글만) */}
+            <button
+              className={`lr-icon-btn lr-submode-btn ${displayMode !== 'dual' ? 'active' : ''}`}
+              onClick={handleCycleDisplayMode}
+              title={`자막 표시 모드 (현재: ${getDisplayModeLabel()})\n• 클릭 시: 🔤 듀얼 ➔ 🇺🇸 영문만 ➔ 🇰🇷 한글만 순환`}
+            >
+              {getDisplayModeLabel()}
+            </button>
+
+            {/* 3. 글자 크기 */}
+            <button
+              className={`lr-icon-btn lr-font-btn ${fontScale > 1.0 ? 'active' : ''}`}
+              onClick={handleFontScaleCycle}
+              onWheel={handleFontWheel}
+              title={`글자 크기 (현재: ${fontScale.toFixed(1)}x / 최대 2.0배)\n• 클릭: 0.2x씩 순환\n• 마우스 휠: 0.1x씩 미세조절`}
+            >
+              🔠 {fontScale.toFixed(1)}x
+            </button>
+
+            {/* 4. 순차 재생목록 (목록이 1개 초과거나 재생목록 열기) */}
             <button
               className={`lr-icon-btn lr-playlist-btn ${showPlaylistDrawer ? 'active' : ''}`}
               onClick={() => setShowPlaylistDrawer(!showPlaylistDrawer)}
               title="순차 재생목록 열기/닫기"
             >
-              📜 재생목록 ({currentIndex + 1}/{effectivePlaylist.length})
+              📜 목록 ({currentIndex + 1}/{effectivePlaylist.length})
             </button>
 
-            {/* Video Prev/Next Navigation (if playlist > 1) */}
-            {effectivePlaylist.length > 1 && (
-              <>
-                <button
-                  className="lr-icon-btn"
-                  onClick={handlePrevVideo}
-                  title="이전 영상으로 이동"
-                >
-                  ⏮️ 이전영상
-                </button>
-                <button
-                  className="lr-icon-btn"
-                  onClick={handleNextVideo}
-                  title="다음 영상으로 이동"
-                >
-                  ⏭️ 다음영상
-                </button>
-              </>
-            )}
-
-            {/* Repeat Mode (전체 순차 무한반복 / 1개 반복 / 1회 순차재생) */}
+            {/* 5. 재생 반복 모드 (전체 순차 무한반복 / 1개 반복 / 1회 순차재생) */}
             <button
               className={`lr-icon-btn lr-repeat-mode-btn ${repeatMode !== 'off' ? 'active' : ''}`}
               onClick={handleCycleRepeatMode}
-              title={`재생 반복 모드 순환 (현재: ${repeatMode === 'playlist' ? '전체 순차 무한반복' : repeatMode === 'single' ? '현재 영상 1개 무한반복' : '1회 순차재생'})\n• 클릭 시: 🔁 전체 순차반복 ➔ 🔂 영상 1개 반복 ➔ ➡️ 1회 순차재생`}
+              title={`재생 반복 모드 (현재: ${repeatMode === 'playlist' ? '전체 순차 무한반복' : repeatMode === 'single' ? '현재 영상 1개 무한반복' : '1회 순차재생'})`}
             >
-              {repeatMode === 'playlist' ? '🔁 순차 무한반복' : repeatMode === 'single' ? '🔂 1개 반복' : '➡️ 1회 순차'}
+              {repeatMode === 'playlist' ? '🔁 순차반복' : repeatMode === 'single' ? '🔂 1개반복' : '➡️ 1회'}
             </button>
 
-            {/* 1. 영상 100% 전체보기 (시어터 모드) */}
-            {!bgAudioMode && !hideVideo && (
-              <button
-                className={`lr-icon-btn ${videoLayout === 'theater' ? 'active video-full-active' : ''}`}
-                onClick={() => handleSetVideoLayout('theater')}
-                title="🖥️ 영상 100% 전체보기 (시어터 모드 - 잘림 없는 전체 화면)"
-              >
-                🖥️ 영상전체
-              </button>
-            )}
+            {/* 6. 문장 보관함 */}
+            <button
+              className={`lr-icon-btn ${savedSentences.length > 0 ? 'active' : ''}`}
+              onClick={() => setShowSentencesDrawer(true)}
+              title="저장한 명문장 보관함 열기"
+            >
+              🔖 문장함 ({savedSentences.length})
+            </button>
 
-            {/* 2. 50:50 분할 모드 */}
-            {!bgAudioMode && !hideVideo && (
-              <button
-                className={`lr-icon-btn ${videoLayout === 'half' ? 'active' : ''}`}
-                onClick={() => handleSetVideoLayout('half')}
-                title="🗖 영상과 자막 50:50 나란히 보기"
-              >
-                🗖 50% 분할
-              </button>
-            )}
+            {/* 7. 백그라운드 / 취침 모드 */}
+            <button
+              className={`lr-icon-btn ${bgAudioMode ? 'bg-active' : ''}`}
+              onClick={handleToggleBgAudio}
+              title={bgAudioMode ? '백그라운드 모드 끄기 (비디오로 복귀)' : '🎧 백그라운드 취침 모드 (화면 꺼짐 재생)'}
+            >
+              {loadingAudio ? '⏳ 준비...' : bgAudioMode ? '🌙 취침ON' : '🎧 취침모드'}
+            </button>
 
-            {/* 3. 20% 축소 모드 */}
-            {!bgAudioMode && !hideVideo && (
-              <button
-                className={`lr-icon-btn ${videoLayout === 'compact' ? 'active' : ''}`}
-                onClick={() => handleSetVideoLayout('compact')}
-                title="📱 영상 20% 축소 (자막 스크롤 집중)"
-              >
-                📱 20% 축소
-              </button>
-            )}
-
-            {/* 4. 브라우저 전체화면 (HTML5 Fullscreen [F]) */}
+            {/* 8. 브라우저 전체화면 (HTML5 Fullscreen [F]) */}
             {!bgAudioMode && !hideVideo && (
               <button
                 className={`lr-icon-btn ${isFullscreen ? 'active fs-active' : ''}`}
                 onClick={handleToggleFullscreen}
                 title="⛶ 모니터 100% 전체화면 (단축키: F)"
               >
-                {isFullscreen ? '✕ 화면복귀' : '⛶ 전체화면'}
+                {isFullscreen ? '✕ 복귀' : '⛶ 전체'}
               </button>
             )}
 
-            {/* 5. 영상 숨김 & 글자만 전체점유 체크박스 버튼 */}
-            {!bgAudioMode && (
-              <button
-                className={`lr-icon-btn ${hideVideo ? 'active text-only-active' : ''}`}
-                onClick={handleToggleHideVideo}
-                title={hideVideo ? "영상 숨김 해제 (영상 다시 보기)" : "영상 없이 글자(자막)만 화면 전체 점유 모드"}
-              >
-                {hideVideo ? '☑️ 영상숨김' : '🔲 영상숨김'}
-              </button>
-            )}
-
-            {/* 2-2. 스마트 포즈/무음 건너뛰기 토글 */}
-            <button
-              className={`lr-icon-btn lr-smart-gap-btn ${smartGapSkip ? 'active' : ''}`}
-              onClick={handleToggleSmartGapSkip}
-              title={smartGapSkip ? "⚡ 긴 포즈/무음 자동 건너뛰기 ON (대화만 연속 재생)" : "⏸️ 포즈 자동 건너뛰기 OFF"}
-            >
-              {smartGapSkip ? '⚡ 포즈스킵 ON' : '⏸️ 포즈스킵 OFF'}
-            </button>
-
-            {/* 3. 자막 표시 모드 (듀얼 -> 영문만 -> 한글만) */}
-            <button
-              className={`lr-icon-btn lr-submode-btn ${displayMode !== 'dual' ? 'active' : ''}`}
-              onClick={handleCycleDisplayMode}
-              title={`자막 표시 모드 즉시 변경 (현재: ${getDisplayModeLabel()})\n• 클릭 시: 🔤 듀얼 ➔ 🇺🇸 영문만 ➔ 🇰🇷 한글만 순환`}
-            >
-              {getDisplayModeLabel()}
-            </button>
-
-            {/* 4. 품사색 토글 */}
-            <button
-              className={`lr-icon-btn ${posHighlight ? 'active pos-active' : ''}`}
-              onClick={handleTogglePosHighlight}
-              title={posHighlight ? '품사별 색상 하이라이트 끄기' : '🎨 품사별 색상 하이라이트 켜기 (동사/명사/형용사/부사)'}
-            >
-              {posHighlight ? '🎨 품사색 ON' : '🎨 품사색 OFF'}
-            </button>
-
-            {/* 5. 문장 보관함 */}
-            <button
-              className={`lr-icon-btn ${savedSentences.length > 0 ? 'active' : ''}`}
-              onClick={() => setShowSentencesDrawer(true)}
-              title="좋은 명문장 보관함 열기"
-            >
-              🔖 문장함 ({savedSentences.length})
-            </button>
-
-            {/* 6. 글자 크기 */}
-            <button
-              className={`lr-icon-btn lr-font-btn ${fontScale > 1.0 ? 'active' : ''}`}
-              onClick={handleFontScaleCycle}
-              onWheel={handleFontWheel}
-              title={`글자 크기 조절 (현재: ${fontScale.toFixed(1)}x / 최대 2.0배)\n• 클릭: 0.2x씩 순환\n• 마우스 휠: 0.1x씩 미세조절`}
-            >
-              🔠 {fontScale.toFixed(1)}x
-            </button>
-
-            {/* 7. 백그라운드 오디오 */}
-            <button
-              className={`lr-icon-btn ${bgAudioMode ? 'bg-active' : ''}`}
-              onClick={handleToggleBgAudio}
-              title={bgAudioMode ? '백그라운드 모드 끄기 (비디오로 복귀)' : '🎧 백그라운드 취침 모드 (화면 꺼짐 재생)'}
-            >
-              {loadingAudio ? '⏳ 오디오 준비...' : bgAudioMode ? '🌙 취침모드 ON' : '🎧 백그라운드'}
-            </button>
-
-            {/* 8. 설정창 */}
+            {/* 9. 설정창 (배속, 테두리색, 포즈스킵, 오프닝스킵 등) */}
             <button
               className={`lr-icon-btn ${showSettings ? 'active' : ''}`}
               onClick={() => setShowSettings(!showSettings)}
-              title="테두리 색상, 글자크기 & 세밀배속 상세설정"
+              title="상세 설정 (재생배속, 품사색상, 테두리색, 포즈스킵, 스크롤방식 등)"
             >
               ⚙️ {playbackRate.toFixed(2)}x
             </button>

@@ -36,7 +36,9 @@
 
 /* Slim Compact Top Header */
 .lr-header {
-  padding: 8px 14px;
+  height: 52px;
+  min-height: 52px;
+  padding: 0 14px;
   background: #0d1322;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
@@ -47,13 +49,14 @@
   width: 100%;
   box-sizing: border-box;
   overflow: hidden;
+  z-index: 10;
 }
 
 .lr-title-info {
   display: flex;
   align-items: center;
   gap: 8px;
-  max-width: 280px;
+  max-width: 260px;
   min-width: 120px;
   flex-shrink: 0;
   overflow: hidden;
@@ -72,7 +75,7 @@
 }
 
 .lr-title-info h2 {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 700;
   color: #f8fafc;
   margin: 0;
@@ -91,26 +94,58 @@
   overflow-y: hidden;
   white-space: nowrap;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-  padding: 2px 4px;
+  scrollbar-width: none;
+  padding: 2px 0;
 }
 
 .lr-header-actions::-webkit-scrollbar {
-  height: 4px;
+  display: none;
 }
 
-.lr-header-actions::-webkit-scrollbar-track {
+/* Layout Mode Segmented Control Group */
+.lr-layout-seg-group {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.lr-seg-btn {
+  padding: 4px 8px;
   background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: #94a3b8;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 3px;
 }
 
-.lr-header-actions::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
+.lr-seg-btn:hover {
+  color: #f1f5f9;
+  background: rgba(255, 255, 255, 0.08);
 }
 
-.lr-header-actions::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 242, 254, 0.5);
+.lr-seg-btn.active {
+  background: #0284c7;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.lr-seg-btn.text-only-active {
+  background: #059669 !important;
+  color: #ffffff !important;
+  font-weight: 700;
 }
 
 .lr-header-fixed-actions {
@@ -126,7 +161,7 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   color: #cbd5e1;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
@@ -575,14 +610,17 @@
   flex: 1;
   display: grid;
   grid-template-columns: 50% 50%;
+  height: calc(100vh - 52px);
+  height: calc(100dvh - 52px);
+  min-height: 0;
   overflow: hidden;
   transition: all 0.2s ease;
 }
 
-/* 0. Video Full / Theater Mode (100% Video, Centered, Never Cropped) */
+/* 0. Video Full / Theater Mode (영상 최대화 뷰) */
 .layout-video_full .lr-main-grid {
   grid-template-columns: 1fr !important;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto 1fr !important;
   overflow-y: auto;
 }
 
@@ -595,32 +633,36 @@
   flex-direction: column;
   align-items: center;
   background: #000;
+  flex-shrink: 0;
 }
 
 .layout-video_full .lr-video-wrapper {
   width: 100%;
-  max-width: 1160px;
+  max-width: 960px;
+  max-height: 48vh;
   aspect-ratio: 16 / 9;
   margin: 0 auto;
 }
 
 .layout-video_full .lr-control-deck {
   width: 100%;
-  max-width: 1160px;
+  max-width: 960px;
   margin: 0 auto;
 }
 
 .layout-video_full .lr-subtitles-panel {
   width: 100%;
-  max-width: 1160px;
+  max-width: 960px;
   margin: 0 auto;
-  min-height: 280px;
+  min-height: 35vh;
+  flex: 1;
+  overflow: hidden;
 }
 
-/* 1. Compact Video Mode (Desktop: 32% Video / 68% Subtitles) */
+/* 1. Compact Video Mode (Desktop: 35% Video / 65% Subtitles) */
 .layout-compact .lr-main-grid,
 .compact-video-mode .lr-main-grid {
-  grid-template-columns: 32% 68%;
+  grid-template-columns: 35% 65%;
 }
 
 /* 2. Expanded Video Mode (Desktop: 50% Video / 50% Subtitles) */
@@ -660,19 +702,25 @@
 .lr-player-panel {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   background: #000;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
   overflow: hidden;
+  height: 100%;
+  min-height: 0;
 }
 
 .lr-video-wrapper {
+  flex: 1;
   width: 100%;
+  max-height: calc(100% - 60px);
   aspect-ratio: 16 / 9;
   background: #000;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: auto 0;
 }
 
 .lr-video-wrapper iframe,
@@ -1001,15 +1049,17 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  min-width: 72px;
+  gap: 5px;
+  width: 52px;
+  min-width: 52px;
   flex-shrink: 0;
+  padding-top: 2px;
 }
 
 .line-time {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: #64748b;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.3px;
 }
@@ -1017,7 +1067,7 @@
 .line-btn-group {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
 }
 
 .line-play-btn,
@@ -1033,13 +1083,13 @@
   line-height: 1;
 }
 
-/* Big Play/Pause Button for Single Sentence */
+/* Play/Pause Button for Single Sentence */
 .line-play-btn {
-  width: 34px;
-  height: 34px;
-  min-width: 34px;
-  border-radius: 9px;
-  font-size: 1.15rem;
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  border-radius: 8px;
+  font-size: 1.0rem;
   background: rgba(56, 189, 248, 0.15);
   border: 1.5px solid rgba(56, 189, 248, 0.4);
   color: #38bdf8;
@@ -1071,11 +1121,11 @@
 
 /* Loop Button for Single Sentence */
 .line-loop-btn {
-  width: 28px;
-  height: 28px;
-  min-width: 28px;
-  border-radius: 7px;
-  font-size: 1.0rem;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  border-radius: 6px;
+  font-size: 0.85rem;
   background: rgba(168, 85, 247, 0.12);
   border: 1px solid rgba(168, 85, 247, 0.3);
   color: #c084fc;
@@ -1105,11 +1155,11 @@
 
 /* Bookmark Button */
 .line-save-btn {
-  width: 26px;
-  height: 26px;
-  min-width: 26px;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
   border-radius: 6px;
-  font-size: 0.92rem;
+  font-size: 0.85rem;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: #94a3b8;
@@ -1137,25 +1187,28 @@
 
 .line-content {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 5px;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
-/* English Text & Word Interaction (No text-shadow glow / No aura) */
+/* English Text & Word Interaction */
 .line-en {
-  font-size: calc(1.12rem * var(--sub-font-scale, 1));
+  font-size: calc(1.15rem * var(--sub-font-scale, 1));
   font-weight: 500;
   line-height: 1.6;
-  color: #e2e8f0;
-  word-break: normal;
-  overflow-wrap: break-word;
+  color: #f1f5f9;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .lr-sub-line.active .line-en {
   color: #ffffff;
   font-weight: 600;
-  text-shadow: none !important; /* 글자 아우라/번짐 완전 제거 */
+  text-shadow: none !important;
 }
 
 .clickable-word {
@@ -1842,51 +1895,54 @@
 }
 
 /* =========================================================
-   📱 MOBILE & GALAXY S24 ULTRA PORTRAIT OPTIMIZATION (세로모드 80%+ 자막 극대화)
+   📱 MOBILE & GALAXY PORTRAIT OPTIMIZATION
    ========================================================= */
 @media (max-width: 992px) {
   .lr-header {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-rows: auto auto;
+    height: auto;
+    min-height: auto;
+    display: flex;
+    flex-wrap: wrap;
     gap: 6px 8px;
     padding: 8px 10px;
     align-items: center;
   }
 
   .lr-title-info {
-    grid-column: 1 / 2;
-    grid-row: 1 / 2;
-    max-width: 100%;
+    max-width: calc(100% - 80px);
     min-width: 0;
+    flex: 1;
   }
 
   .lr-header-fixed-actions {
-    grid-column: 2 / 3;
-    grid-row: 1 / 2;
+    margin-left: auto;
   }
 
   .lr-header-actions {
-    grid-column: 1 / 3;
-    grid-row: 2 / 3;
     width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    padding: 3px 2px 5px 2px;
+    scrollbar-width: none;
+    padding: 2px 0 4px 0;
     gap: 5px;
+  }
+
+  .lr-header-actions::-webkit-scrollbar {
+    display: none;
   }
 
   .lr-icon-btn {
     padding: 5px 8px;
-    font-size: 0.76rem;
+    font-size: 0.75rem;
   }
 
   .lr-studio-container {
     width: 100vw;
     height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
     border-radius: 0;
     border: none;
   }
@@ -1894,7 +1950,8 @@
   .lr-main-grid {
     grid-template-columns: 1fr !important;
     grid-template-rows: auto 1fr !important;
-    height: calc(100vh - 82px);
+    height: calc(100vh - 88px);
+    height: calc(100dvh - 88px);
   }
 
   /* Layout Modes on Mobile */
@@ -1907,11 +1964,11 @@
     width: 100% !important;
     aspect-ratio: 16 / 9 !important;
     height: auto !important;
-    max-height: 48vh;
+    max-height: 38vh;
   }
 
   .layout-expanded .lr-player-panel {
-    max-height: 44vh;
+    max-height: 32vh;
     flex-shrink: 0;
   }
 
@@ -1919,11 +1976,12 @@
     width: 100% !important;
     aspect-ratio: 16 / 9 !important;
     height: auto !important;
+    max-height: 26vh;
   }
 
   .layout-compact .lr-player-panel,
   .compact-video-mode .lr-player-panel {
-    max-height: 26vh;
+    max-height: 24vh;
     flex-shrink: 0;
   }
 
@@ -1932,7 +1990,7 @@
     width: 100% !important;
     aspect-ratio: 16 / 9 !important;
     height: auto !important;
-    max-height: 20vh;
+    max-height: 18vh;
   }
 
   .layout-text_only .lr-main-grid {
@@ -1943,37 +2001,60 @@
     display: none !important;
   }
 
-  .compact-video-mode .lr-control-deck {
+  .compact-video-mode .lr-control-deck,
+  .lr-control-deck {
     padding: 6px 10px;
   }
 
-  .compact-video-mode .lr-icon-action-btn {
+  .compact-video-mode .lr-icon-action-btn,
+  .lr-icon-action-btn {
     height: 34px;
     font-size: 1.1rem;
   }
 
-  /* Subtitles take up remaining 78%~82% of screen */
+  /* Subtitles take up remaining screen height */
   .lr-subtitles-panel {
     flex: 1;
     height: 100%;
+    min-height: 0;
     overflow: hidden;
   }
 
   .lr-sub-list-container {
-    padding: 10px 8px;
+    padding: 8px;
   }
 
   .lr-sub-line {
-    padding: 10px 12px;
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .line-meta {
+    width: 44px;
+    min-width: 44px;
+  }
+
+  .line-play-btn {
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+    font-size: 0.9rem;
+  }
+
+  .line-loop-btn, .line-save-btn {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    font-size: 0.8rem;
   }
 
   .line-en {
-    font-size: calc(1.18rem * min(var(--sub-font-scale, 1), 1.5));
+    font-size: calc(1.1rem * min(var(--sub-font-scale, 1), 1.5));
     line-height: 1.5;
   }
 
   .line-ko {
-    font-size: calc(0.96rem * min(var(--sub-font-scale, 1), 1.5));
+    font-size: calc(0.92rem * min(var(--sub-font-scale, 1), 1.5));
   }
 
   .line-blind-placeholder {
@@ -1987,11 +2068,10 @@
 .lr-focus-replace-view {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: stretch;
-  gap: 12px;
+  gap: 10px;
   height: 100%;
-  min-height: 280px;
+  min-height: 0;
+  overflow-y: auto;
   padding: 8px 6px;
   box-sizing: border-box;
 }
@@ -2000,11 +2080,14 @@
   border-radius: 14px;
   transition: all 0.15s ease;
   box-sizing: border-box;
+  flex-shrink: 0;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
-/* TOP PREVIOUS CARD (상단 이전 문장 - 스카이/인디고 포인트 컬러) */
+/* TOP PREVIOUS CARD (상단 이전 문장) */
 .focus-sub-card.prev-card {
-  padding: 12px 16px;
+  padding: 10px 14px;
   background: linear-gradient(135deg, rgba(30, 41, 59, 0.65), rgba(15, 23, 42, 0.75));
   border: 1px solid rgba(56, 189, 248, 0.25);
   border-left: 4px solid #38bdf8;
@@ -2017,12 +2100,11 @@
   opacity: 1;
   background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.9));
   border-color: #38bdf8;
-  transform: translateY(-1px);
 }
 
-/* BOTTOM NEXT CARD (하단 다음 문장 - 에메랄드/민트 포인트 컬러) */
+/* BOTTOM NEXT CARD (하단 다음 문장) */
 .focus-sub-card.next-card {
-  padding: 12px 16px;
+  padding: 10px 14px;
   background: linear-gradient(135deg, rgba(20, 35, 30, 0.65), rgba(15, 23, 42, 0.75));
   border: 1px solid rgba(16, 185, 129, 0.25);
   border-left: 4px solid #10b981;
@@ -2035,14 +2117,13 @@
   opacity: 1;
   background: linear-gradient(135deg, rgba(20, 35, 30, 0.85), rgba(15, 23, 42, 0.9));
   border-color: #10b981;
-  transform: translateY(1px);
 }
 
 .focus-sub-card.placeholder {
   opacity: 0.35;
   cursor: default;
   text-align: center;
-  padding: 10px;
+  padding: 8px;
   background: rgba(255, 255, 255, 0.02);
   border: 1px dashed rgba(255, 255, 255, 0.08);
   border-left: 4px solid rgba(255, 255, 255, 0.1);
@@ -2052,31 +2133,31 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .focus-tag-prev {
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   font-weight: 700;
   color: #080c16;
   background: linear-gradient(135deg, #38bdf8, #818cf8);
-  padding: 2px 8px;
-  border-radius: 6px;
+  padding: 2px 7px;
+  border-radius: 5px;
   letter-spacing: 0.2px;
 }
 
 .focus-tag-next {
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   font-weight: 700;
   color: #080c16;
   background: linear-gradient(135deg, #10b981, #34d399);
-  padding: 2px 8px;
-  border-radius: 6px;
+  padding: 2px 7px;
+  border-radius: 5px;
   letter-spacing: 0.2px;
 }
 
 .focus-time {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: #94a3b8;
   font-family: monospace;
   font-weight: 600;
@@ -2088,8 +2169,8 @@
   color: #f1f5f9;
   line-height: 1.6;
   font-weight: 500;
-  word-break: normal;
-  overflow-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .focus-ko-sub {
@@ -2097,6 +2178,8 @@
   font-size: calc(clamp(0.88rem, 1.0vw + 0.6rem, 1.1rem) * var(--sub-font-scale, 1));
   color: #94a3b8;
   line-height: 1.4;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
 .prev-card .focus-ko-sub {
@@ -2107,19 +2190,19 @@
   color: #6ee7b7;
 }
 
-/* MAIN CURRENT CENTER CARD (동적 초대형 반응형 폰트 슬롯) */
+/* MAIN CURRENT CENTER CARD */
 .focus-sub-card.current-main-card {
   flex: 1;
-  min-height: 150px;
-  padding: 18px 20px;
-  background: rgba(15, 23, 42, 0.9);
+  min-height: 0;
+  padding: 14px 18px;
+  background: rgba(15, 23, 42, 0.95);
   border: 2px solid #00f2fe;
   border-radius: 16px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 242, 254, 0.15);
-  transform: none !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 242, 254, 0.15);
+  overflow-y: auto;
 }
 
 /* Theme border colors on current main card */
