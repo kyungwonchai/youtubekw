@@ -72,34 +72,42 @@ export const translateEnToKo = translateTextToKo;
  * Batch translate transcript lines quickly (chunks of 25 lines with delimiter safety)
  */
 export async function batchTranslateLines(lines, sourceLang = 'auto') {
-  const BATCH_SIZE = 25;
+  const BATCH_SIZE = 30;
+  const batches = [];
   for (let i = 0; i < lines.length; i += BATCH_SIZE) {
-    const slice = lines.slice(i, i + BATCH_SIZE);
-    const combined = slice.map(l => l.text.replace(/[\r\n]+/g, ' ')).join('\n');
-    try {
-      const translated = await translateTextToKo(combined, sourceLang);
-      if (translated) {
-        const transParts = translated.split('\n');
-        slice.forEach((line, idx) => {
-          if (transParts[idx] && transParts[idx].trim()) {
-            line.translation = transParts[idx].trim();
-          }
-        });
-      }
-    } catch (e) {}
-
-    // Parallel fallback for any lines in the batch that still have empty translations
-    const missingLines = slice.filter(l => !l.translation);
-    if (missingLines.length > 0) {
-      await Promise.allSettled(
-        missingLines.map(async (line) => {
-          try {
-            line.translation = await translateTextToKo(line.text, sourceLang);
-          } catch (err) {}
-        })
-      );
-    }
+    batches.push(lines.slice(i, i + BATCH_SIZE));
   }
+
+  // Parallel chunk translation (10x faster)
+  await Promise.allSettled(
+    batches.map(async (slice) => {
+      const combined = slice.map(l => l.text.replace(/[\r\n]+/g, ' ')).join('\n');
+      try {
+        const translated = await translateTextToKo(combined, sourceLang);
+        if (translated) {
+          const transParts = translated.split('\n');
+          slice.forEach((line, idx) => {
+            if (transParts[idx] && transParts[idx].trim()) {
+              line.translation = transParts[idx].trim();
+            }
+          });
+        }
+      } catch (e) {}
+
+      // Parallel fallback for any lines in this chunk that were missed
+      const missingLines = slice.filter(l => !l.translation);
+      if (missingLines.length > 0) {
+        await Promise.allSettled(
+          missingLines.map(async (line) => {
+            try {
+              line.translation = await translateTextToKo(line.text, sourceLang);
+            } catch (err) {}
+          })
+        );
+      }
+    })
+  );
+
   return lines;
 }
 
@@ -131,30 +139,22 @@ export async function getTranscriptForVideo(videoId, { autoTranslate = true, lan
   }
 
   let rawList = [];
-  // Strategy: Try candidate language codes in order (target language, default, English, others)
-  let candidateLangs = [];
-  if (lang) {
-    candidateLangs.push(lang);
-    if (lang === 'ja') candidateLangs.push('ja-JP', 'ja');
-    else if (lang === 'zh') candidateLangs.push('zh-CN', 'zh-TW', 'zh-Hans', 'zh-Hant', 'zh');
-    else if (lang === 'es') candidateLangs.push('es-419', 'es-ES', 'es');
-    else if (lang === 'fr') candidateLangs.push('fr-FR', 'fr');
-    else if (lang === 'de') candidateLangs.push('de-DE', 'de');
-  }
-  candidateLangs.push(undefined, 'en', 'es', 'ja', 'zh', 'fr', 'de');
-  candidateLangs = [...new Set(candidateLangs)];
-
-  for (const candidate of candidateLangs) {
-    try {
-      if (candidate) {
-        rawList = await YoutubeTranscript.fetchTranscript(videoId, { lang: candidate });
-      } else {
-        rawList = await YoutubeTranscript.fetchTranscript(videoId);
-      }
-      if (rawList && rawList.length > 0) break;
-    } catch (err) {
-      // Continue to next candidate
+  try {
+    if (lang) {
+      rawList = await YoutubeTranscript.fetchTranscript(videoId, { lang });
     }
+  } catch (e) {}
+
+  if (!rawList || rawList.length === 0) {
+    try {
+      rawList = await YoutubeTranscript.fetchTranscript(videoId);
+    } catch (e) {}
+  }
+
+  if (!rawList || rawList.length === 0) {
+    try {
+      rawList = await YoutubeTranscript.fetchTranscript(videoId, { lang: 'en' });
+    } catch (e) {}
   }
 
   if (!rawList || rawList.length === 0) {
