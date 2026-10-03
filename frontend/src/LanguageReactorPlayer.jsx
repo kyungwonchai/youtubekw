@@ -739,30 +739,44 @@ export default function LanguageReactorPlayer({
   }, [currentVideo?.videoId]);
 
   const seekLockRef = useRef(null);
+  const activeIndexRef = useRef(activeIndex);
+  const transcriptRef = useRef(transcript);
+  const loopModeRef = useRef(loopMode);
+  const loopingIndexRef = useRef(loopingIndex);
 
-  // Helper: Find subtitle index accurately without false positive overlap to previous subtitle
+  useEffect(() => { activeIndexRef.current = activeIndex; }, [activeIndex]);
+  useEffect(() => { transcriptRef.current = transcript; }, [transcript]);
+  useEffect(() => { loopModeRef.current = loopMode; }, [loopMode]);
+  useEffect(() => { loopingIndexRef.current = loopingIndex; }, [loopingIndex]);
+
+  // Helper: High-precision real-time subtitle finder with lead-in sync bias (Zero lag)
   const findSubtitleIndex = (subtitles, time) => {
     if (!subtitles || subtitles.length === 0) return -1;
+    // Lead-in offset (+0.18s) to eliminate YouTube postMessage lag & sync instantly to voice
+    const t = time + 0.18;
+
     // 1. Direct hit inside subtitle start/end boundary
     for (let i = 0; i < subtitles.length; i++) {
       const cur = subtitles[i];
       const next = subtitles[i + 1];
-      const endLimit = next ? Math.min(cur.end + 0.05, next.start) : cur.end + 0.2;
-      if (time >= cur.start && time < endLimit) {
+      const endLimit = next ? Math.min(cur.end + 0.15, next.start) : cur.end + 0.4;
+      if (t >= cur.start && t < endLimit) {
         return i;
       }
     }
     // 2. Nearest prior subtitle
     for (let i = subtitles.length - 1; i >= 0; i--) {
-      if (time >= subtitles[i].start) {
+      if (t >= subtitles[i].start) {
         return i;
       }
     }
     return 0;
   };
 
-  // 4. Time polling loop (100ms) for high-precision subtitle sync & loop handling
+  // 4. Ultra high-speed continuous time polling loop (30ms) for instant zero-lag subtitle sync
   useEffect(() => {
+    if (timeUpdateInterval.current) clearInterval(timeUpdateInterval.current);
+
     timeUpdateInterval.current = setInterval(() => {
       try {
         let t = 0;
@@ -772,49 +786,53 @@ export default function LanguageReactorPlayer({
           t = player.getCurrentTime() || 0;
         }
 
-        if (typeof t === 'number') {
+        if (typeof t === 'number' && t >= 0) {
           setCurrentTime(t);
+          const currentTranscript = transcriptRef.current;
+          const currentActiveIdx = activeIndexRef.current;
+          const currentLoopMode = loopModeRef.current;
+          const currentLoopIdx = loopingIndexRef.current;
 
-          if (transcript.length > 0) {
-            // SINGLE SENTENCE LOOP MODE: Lock activeIndex strictly to loopingIndex to prevent jitter/dizziness
-            if (loopMode === 'single_loop' && loopingIndex !== null) {
-              if (activeIndex !== loopingIndex) {
-                setActiveIndex(loopingIndex);
+          if (currentTranscript && currentTranscript.length > 0) {
+            // SINGLE SENTENCE LOOP MODE
+            if (currentLoopMode === 'single_loop' && currentLoopIdx !== null) {
+              if (currentActiveIdx !== currentLoopIdx) {
+                setActiveIndex(currentLoopIdx);
               }
-              const curLine = transcript[loopingIndex];
+              const curLine = currentTranscript[currentLoopIdx];
               if (curLine) {
-                const nextLine = transcript[loopingIndex + 1];
+                const nextLine = currentTranscript[currentLoopIdx + 1];
                 const loopEndTime = nextLine ? Math.min(curLine.end, nextLine.start) : curLine.end;
-                if (t >= loopEndTime || t > curLine.end + 0.3) {
-                  handleSeekTo(curLine.start, loopingIndex, true);
+                if (t >= loopEndTime || t > curLine.end + 0.25) {
+                  handleSeekTo(curLine.start, currentLoopIdx, true);
                 }
               }
             } else {
-              // Grace period during explicit seekTo so keyframe offsets don't flash previous line
+              // Grace period during explicit seekTo
               if (seekLockRef.current && Date.now() < seekLockRef.current.until) {
-                if (activeIndex !== seekLockRef.current.index) {
+                if (currentActiveIdx !== seekLockRef.current.index) {
                   setActiveIndex(seekLockRef.current.index);
                 }
               } else {
-                const idx = findSubtitleIndex(transcript, t);
-                if (idx !== -1 && idx !== activeIndex) {
+                const idx = findSubtitleIndex(currentTranscript, t);
+                if (idx !== -1 && idx !== currentActiveIdx) {
                   setActiveIndex(idx);
 
-                  if (loopMode === 'pause_after_sentence' && loopingIndex !== null && idx > loopingIndex) {
+                  if (currentLoopMode === 'pause_after_sentence' && currentLoopIdx !== null && idx > currentLoopIdx) {
                     if (bgAudioMode && audioRef.current) audioRef.current.pause();
                     else if (player) player.pauseVideo();
                     setLoopingIndex(null);
                   }
                 }
 
-                // ⚡ Smart Gap Skip: 대사 종료 후 다음 대사까지 0.8초 이상 긴 무음/포즈 시 자동으로 다음 대사로 즉시 점프
-                if (smartGapSkipRef.current && loopMode === 'none' && activeIndex >= 0 && transcript[activeIndex] && transcript[activeIndex + 1]) {
-                  const curLine = transcript[activeIndex];
-                  const nextLine = transcript[activeIndex + 1];
+                // ⚡ Smart Gap Skip
+                if (smartGapSkipRef.current && currentLoopMode === 'none' && currentActiveIdx >= 0 && currentTranscript[currentActiveIdx] && currentTranscript[currentActiveIdx + 1]) {
+                  const curLine = currentTranscript[currentActiveIdx];
+                  const nextLine = currentTranscript[currentActiveIdx + 1];
                   const now = Date.now();
                   if (t >= curLine.end + 0.1 && (nextLine.start - t) >= 0.8 && (now - lastGapSkipRef.current > 700)) {
                     lastGapSkipRef.current = now;
-                    handleSeekTo(Math.max(0, nextLine.start - 0.05), activeIndex + 1, true);
+                    handleSeekTo(Math.max(0, nextLine.start - 0.05), currentActiveIdx + 1, true);
                     return;
                   }
                 }
@@ -823,12 +841,12 @@ export default function LanguageReactorPlayer({
           }
         }
       } catch (e) {}
-    }, 100);
+    }, 30);
 
     return () => {
       if (timeUpdateInterval.current) clearInterval(timeUpdateInterval.current);
     };
-  }, [playerReady, player, bgAudioMode, transcript, activeIndex, loopMode, loopingIndex]);
+  }, [playerReady, player, bgAudioMode]);
 
   // 5. MediaSession API integration (Galaxy Lockscreen & AOD & Notifications Control)
   useEffect(() => {
