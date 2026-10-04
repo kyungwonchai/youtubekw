@@ -129,6 +129,8 @@ export function isBlacklisted(title = '', desc = '', channelTitle = '', videoId 
   const bl = loadBlacklist();
   if (videoId && bl.videoIds.includes(videoId)) return true;
 
+  if (isMaleContent(title, desc, channelTitle)) return true;
+
   const combined = `${title} ${desc} ${channelTitle}`.toLowerCase();
   
   for (const chan of bl.channels) {
@@ -233,28 +235,6 @@ export const MENTOR_SPEAKER_POOL = [
     keywords: ['Barbara Oakley Learning How to Learn speech', 'Barbara Oakley Mindshift adult learning TED', 'Barbara Oakley how to learn faster'],
   },
   {
-    id: 'andrew_huberman',
-    name: 'Dr. Andrew Huberman',
-    role: '스탠퍼드 의대 신경생물학 교수 & Huberman Lab 진행자',
-    category: 'essay_deep',
-    avatar: '🔬',
-    badge: '🔬 스탠퍼드 신경과학',
-    dictionStyle: '차분하고 정밀하며 신뢰감 넘치는 신경과학자 딕션, 과학적 프로토콜 전달',
-    coreTopics: '성인 두뇌 집중력 최적화, 도파민 관리, 성인기 뇌가소성, 과학적 수면/학습 루틴',
-    keywords: ['Andrew Huberman focus neuroplasticity speech', 'Andrew Huberman learn faster protocol talk', 'Andrew Huberman brain study habits'],
-  },
-  {
-    id: 'cal_newport',
-    name: 'Cal Newport',
-    role: 'MIT 박사 · 조지타운대 컴퓨터과학 교수 & 《Deep Work》 저자',
-    category: 'essay_deep',
-    avatar: '📚',
-    badge: '⚡ 딥워크 & 지적생산성',
-    dictionStyle: '논리정연하고 빈틈없는 학자 딕션, 지적 자극과 실행을 이끄는 명료한 전달력',
-    coreTopics: '딥워크(초몰입), 커리어 자본(Career Capital), 디지털 미니멀리즘, 어려운 스킬 고속 습득',
-    keywords: ['Cal Newport Deep Work speech', 'Cal Newport TEDx quit social media', 'Cal Newport master hard skills'],
-  },
-  {
     id: 'carol_dweck',
     name: 'Dr. Carol Dweck',
     role: '스탠퍼드대 심리학 교수 & 《마인드셋》 저자',
@@ -310,17 +290,6 @@ export const MENTOR_SPEAKER_POOL = [
     keywords: ['Wendy Suzuki brain changing benefits TED talk', 'Wendy Suzuki boost memory focus speech'],
   },
   {
-    id: 'ali_abdaal',
-    name: 'Dr. Ali Abdaal',
-    role: '캠브리지 의대 졸업 & 《Feel-Good Productivity》 저자',
-    category: 'essay_deep',
-    avatar: '🩺',
-    badge: '📖 과학적 공부법 & 생산성',
-    dictionStyle: '명료하고 빠른 영국식 딕션, 체계적인 메타인지와 학습 방법론',
-    coreTopics: '능동적 회상(Active Recall), 간격 반복, 즐거운 생산성, 파인만 테크닉',
-    keywords: ['Ali Abdaal evidence based study techniques', 'Ali Abdaal learn anything fast Feynman technique'],
-  },
-  {
     id: 'susan_david',
     name: 'Dr. Susan David',
     role: '하버드 의대 심리학자 & 《정서적 민첩성》 저자',
@@ -365,6 +334,17 @@ export const MENTOR_SPEAKER_POOL = [
     keywords: ['Leila Hormozi speech', 'Leila Hormozi interview advice', 'Leila Hormozi leadership talk'],
   },
   {
+    id: 'erika_kullberg',
+    name: 'Erika Kullberg',
+    role: '조지타운 로스쿨 출신 기업 변호사 & 글로벌 크리에이터',
+    category: 'essay_deep',
+    avatar: '⚖️',
+    badge: '⚖️ 로스쿨 협상 & 지적 스피치',
+    dictionStyle: '극도로 깔끔하고 똑 부러지는 아나운서급 미국식 표준 딕션',
+    coreTopics: '지적 대화법, 협상 스킬, 스마트한 의사결정, 비즈니스 에세이',
+    keywords: ['Erika Kullberg speech career negotiation mindset', 'Erika Kullberg interview life advice'],
+  },
+  {
     id: 'linguriosa_elena',
     name: 'Elena Herraiz (Linguriosa)',
     role: '언어학자 & 스페인어 발음·어원 1타 크리에이터 (마드리드)',
@@ -388,29 +368,23 @@ export const MENTOR_SPEAKER_POOL = [
   },
 ];
 
-// Targeted queries focused on adult study motivation, PhD/professors, neuroscience, 35~45+ reinvention, and deep work
+// Targeted queries focused on female role models, neuroscience, adult study motivation, and deep work
 const SEARCH_QUERIES = [
-  // 1. Adult Learning, Brain Science & PhD Grit (35~45+ Study Motivation)
+  // 1. Adult Learning, Brain Science & Female Grit (35~45+ Study Motivation)
   'Barbara Oakley Learning How to Learn TEDx talk clear english',
   'Barbara Oakley Mindshift adult learning speech',
-  'Andrew Huberman neuroplasticity learning adults focus speech',
-  'Andrew Huberman how to focus study protocol deep talk',
-  'Cal Newport Deep Work speech advice career mastery',
-  'Cal Newport how to master hard skills fast interview',
   'Carol Dweck Developing a Growth Mindset TED talk',
   'Dr Maya Shankar science of change podcast speech',
   'Dr Tara Swart How to Rewire Your Brain in Adulthood speech',
   'Wendy Suzuki brain changing benefits of exercise TED',
   'Mel Robbins reinvent yourself at any age speech advice',
   'Mel Robbins how to stop screwing yourself over TEDx talk',
-  'Ali Abdaal evidence based study techniques Feynman technique',
   'Susan David emotional agility TED talk speech',
-  'Rich Karlgaard late bloomers succeed late in life speech',
   
   // 2. High-Diction Intellectual Speeches & Commencements
-  'Oxford Union speech articulate inspiring intellectual speech',
-  'university commencement speech inspiring life wisdom clear english',
-  'best TED speeches science psychology mindset clear diction',
+  'Oxford Union speech woman articulate inspiring intellectual speech',
+  'university commencement speech inspiring woman life wisdom clear english',
+  'best TED speeches woman science psychology mindset clear diction',
   'Liv Boeree TED talk decision making game theory speech',
   'Codie Sanchez speaking trick CEO communication',
   'Leila Hormozi mindset business leadership advice speech',
@@ -420,13 +394,12 @@ const SEARCH_QUERIES = [
   'Jess Ekstrom TEDx talk public speaking story',
   'Kat Cole TED talk leadership hot shot rule speech',
 
-  // 4. [New] 1 Hour+ Sleep, Life Stories & Deep Intimate Conversations (잘 때 듣는 1시간+ 인생 이야기 & 팟캐스트 - 미녀 엄선)
+  // 4. 1 Hour+ Sleep, Life Stories & Deep Intimate Conversations (여성 진행 롱폼 딥토크 & 팟캐스트)
   'Emma Chamberlain Anything Goes life story full podcast 1 hour',
   'Dr Maya Shankar deep conversation podcast full episode 1 hour',
   'inspiring young woman life story full podcast 1 hour calm voice',
   'calm articulate young woman storytelling 1 hour sleep english',
   'deep life conversation podcast young female founder 1 hour clear diction',
-  'Diary of a CEO female founder inspiring life story 1 hour calm english',
   'soothing deep talk interview articulate woman life philosophy 1 hour',
   'Liv Boeree full length podcast deep conversation life 1 hour',
   'Alex Cooper podcast deep intimate life interview full 1 hour',
@@ -438,18 +411,20 @@ const SEARCH_QUERIES = [
   'TED en espanol charla inspiradora mujer diccion clara',
   'TEDx charla mujer espanol diccion pronunciacion',
   'Linguriosa espanol pronunciacion explicacion',
-  'aprender espanol shadowing podcast conversacion clara',
+  'aprender espanol shadowing podcast conversacion clara mujer',
   'TED en espanol psicologia liderazgo mujer charla',
   'charla motivacional espanol mujer inspiradora',
-  'TEDx speech spanish clear pronunciation storytelling',
+  'TEDx speech spanish clear pronunciation storytelling woman',
 ];
 
 /**
  * Filter keywords
  */
-const MALE_KEYWORDS = [
-  '남자', '남성', 'male', 'guy', 'guys', 'husband', 'boyfriend', 'boy', 'boys', 'bro', 'bros',
+export const MALE_KEYWORDS = [
+  // 남성 지칭어
+  '남자', '남성', ' male ', ' guy', ' guys', 'husband', 'boyfriend', 'boy', 'boys', 'bro ', 'bros',
   'father', 'dad', 'brother', 'son', 'gentleman', 'gentlemen', ' mr ', 'mr.', 'sir',
+  // 흔한 남성 이름들
   'jack', 'john', 'david', 'michael', 'james', 'robert', 'william', 'thomas', 'daniel', 'matthew',
   'anthony', 'mark', 'donald', 'steven', 'paul', 'andrew', 'joshua', 'kenneth', 'kevin', 'brian',
   'george', 'edward', 'ronald', 'timothy', 'jason', 'jeffrey', 'ryan', 'jacob', 'gary', 'nicholas',
@@ -462,12 +437,34 @@ const MALE_KEYWORDS = [
   'vincent', 'russell', 'louis', 'philip', 'bobby', 'johnny', 'bradley', 'martin', 'neil', 'luke',
   'elliott', 'elliot', 'liam', 'oliver', 'lucas', 'mason', 'sebastian', 'owen',
   'theodore', 'wyatt', 'jayden', 'matteo', 'julian', 'leo', 'ezra', 'harrison',
-  'pewdiepie', 'clint', 'steve', 'mike', 'dave', 'tom', 'chris', 'dan', 'matt', 'sam', 'ian',
-  'shetty', 'abdaal', 'charles', 'moseley', 'roland frasier', 'simon sinek', 'huberman', 'peterson',
-  'alex hormozi', 'lewis howes', 'rainn wilson', 'soul boom',
-  'jensen huang', 'shashi tharoor', 'konstantin kisin', 'mehdi hasan', 'raj persaud',
-  'bon iver', 'rauw alejandro', 'zzoilo', 'khalid', 'vincent podcast', 'rich roll', 'doug bopst', 'viall files'
+  // 유명 남성 유튜버 / 진행자 / 연설가
+  'pewdiepie', 'clint', 'steve', 'mike', 'dave', 'tom', 'dan', 'matt', 'sam', 'ian',
+  'shetty', 'jay shetty', 'abdaal', 'ali abdaal', 'charles', 'moseley', 'roland frasier', 'simon sinek',
+  'huberman', 'andrew huberman', 'peterson', 'jordan peterson', 'alex hormozi', 'lewis howes',
+  'rainn wilson', 'soul boom', 'jensen huang', 'shashi tharoor', 'konstantin kisin', 'mehdi hasan',
+  'raj persaud', 'rich roll', 'doug bopst', 'viall files', 'chris williamson', 'tim ferriss',
+  'tom bilyeu', 'chris lonsdale', 'joe rogan', 'naval ravikant', 'thomas frank', 'steven bartlett',
+  'diary of a ceo', 'ed mylett', 'lex fridman', 'tony robbins', 'david goggins', 'sam altman',
+  'elon musk', 'bill gates', 'jeff bezos', 'warren buffett', 'charlie munger', 'mark zuckerberg',
+  'mikel hyperpolyglot', 'matthew mcconaughey', 'john grisham', 'michael kilgard', 'rich karlgaard',
+  'cal newport', 'bon iver', 'rauw alejandro', 'zzoilo', 'khalid', 'vincent podcast'
 ];
+
+export function isMaleContent(title = '', desc = '', channelTitle = '') {
+  const text = `${title} ${desc} ${channelTitle}`.toLowerCase();
+  for (const kw of MALE_KEYWORDS) {
+    const lowerKw = kw.trim().toLowerCase();
+    if (!lowerKw) continue;
+    if (/^[a-z0-9. ]+$/.test(lowerKw) && lowerKw.length <= 15) {
+      const escaped = lowerKw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`(?:^|[^a-z0-9])${escaped}(?:$|[^a-z0-9])`, 'i');
+      if (regex.test(text)) return true;
+    } else {
+      if (text.includes(lowerKw)) return true;
+    }
+  }
+  return false;
+}
 
 const TRASH_KEYWORDS = [
   // 마인크래프트 / 게임 / 애니메이션 / 카툰 (엄격 영구 차단)
@@ -479,7 +476,7 @@ const TRASH_KEYWORDS = [
   '찬송', '찬양', '교회', '예수', '성경', '목사', '천주교', '성당', '신부', 'hymn', 'iglesia', 'dios', 'catolica',
 
   // Banned or low-quality speakers / filters
-  'mel robbins', 'cleo abram', 'vanessa van edwards', 'dr. justin moseley', 'moseley',
+  'cleo abram', 'vanessa van edwards', 'dr. justin moseley', 'moseley',
   'black woman', 'black female', 'african', 'olamide olowe', 'chidera eggerue', 'kamala harris',
   'grandma', 'elderly', 'wrinkle', 'senior citizen', 'old woman', 'old lady', '70-year', '80-year', '90-year',
   'wrinkles', 'aging skin', 'grandparent', 'retiree',
@@ -506,18 +503,21 @@ const TRASH_KEYWORDS = [
 ];
 
 /**
- * Check if content contains any trash/banned keywords
+ * Check if content contains any trash/banned keywords or male content
  */
 export function isTrashContent(title = '', desc = '', channelTitle = '') {
+  // 1. Male content strictly rejected
+  if (isMaleContent(title, desc, channelTitle)) return true;
+
   const text = `${title} ${desc} ${channelTitle}`.toLowerCase();
   const cTitle = (channelTitle || '').toLowerCase();
 
-  // 1. Check Korean noise in non-Korean curation (reject generic domestic vlogs)
+  // 2. Check Korean noise in non-Korean curation (reject generic domestic vlogs)
   if (cTitle.includes('브이로그') || cTitle.includes('취준생') || cTitle.includes('먹방') || cTitle.includes('청소')) return true;
   const koreanCount = (title.match(/[가-힣]/g) || []).length;
   if (koreanCount > 10) return true;
 
-  // 2. Trash keywords
+  // 3. Trash keywords
   for (const kw of TRASH_KEYWORDS) {
     const lowerKw = kw.trim().toLowerCase();
     if (!lowerKw) continue;

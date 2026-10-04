@@ -33,6 +33,7 @@ export default function LanguageReactorPlayer({
   const currentVideo = effectivePlaylist[currentIndex] || video || {};
 
   const [player, setPlayer] = useState(null);
+  const playerRef = useRef(null);
   const [playerReady, setPlayerReady] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -658,85 +659,144 @@ export default function LanguageReactorPlayer({
     }
   }, [currentVideo?.videoId, bgAudioMode, autoSkipIntro, transcript]);
 
-  // 3. Initialize YouTube IFrame API
+  // 3. Initialize & Manage YouTube IFrame API (Seamless transition without DOM destruction)
   useEffect(() => {
     if (!currentVideo?.videoId) return;
-    let ytPlayer = null;
 
+    // A. If player instance already exists and is ready, smoothly switch video without destroying iframe/DOM!
+    if (playerRef.current && typeof playerRef.current.loadVideoById === 'function') {
+      try {
+        let startT = 0;
+        if (autoSkipIntro && transcript.length > 0 && transcript[0]?.start >= 1.0 && introSkippedRef.current !== currentVideo?.videoId) {
+          introSkippedRef.current = currentVideo?.videoId;
+          startT = Math.max(0, transcript[0].start - 0.1);
+          showVocabToast(`⚡ 인트로 건너뛰기: 첫 문장(${transcript[0].start.toFixed(1)}초)부터 시작`, 'info');
+        }
+
+        if (!bgAudioMode) {
+          playerRef.current.loadVideoById({
+            videoId: currentVideo.videoId,
+            startSeconds: startT,
+          });
+          if (playbackRate !== 1) {
+            try { playerRef.current.setPlaybackRate(playbackRate); } catch (e) {}
+          }
+          setIsPlaying(true);
+          if (startT > 0) setActiveIndex(0);
+        }
+        return;
+      } catch (err) {
+        console.warn('[Player] loadVideoById error, falling back to init:', err);
+      }
+    }
+
+    // B. First time initialization or fallback
     const initPlayer = () => {
       if (!window.YT || !window.YT.Player) return;
-      ytPlayer = new window.YT.Player('lr-yt-embed', {
-        videoId: currentVideo.videoId,
-        playerVars: {
-          autoplay: 1,
-          controls: 1,
-          rel: 0,
-          modestbranding: 1,
-          enablejsapi: 1,
-          origin: window.location.origin,
-          fs: 1,
-          playsinline: 1,
-        },
-        events: {
-          onReady: (event) => {
-            try {
-              const iframe = event.target.getIframe();
-              if (iframe) {
-                iframe.setAttribute('allowfullscreen', 'true');
-                iframe.setAttribute('webkitallowfullscreen', 'true');
-                iframe.setAttribute('mozallowfullscreen', 'true');
-                iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen');
+      
+      // Ensure target element exists in DOM
+      if (videoWrapperRef.current) {
+        let embedEl = document.getElementById('lr-yt-embed');
+        if (!embedEl) {
+          embedEl = document.createElement('div');
+          embedEl.id = 'lr-yt-embed';
+          videoWrapperRef.current.prepend(embedEl);
+        }
+      }
+
+      try {
+        const ytPlayer = new window.YT.Player('lr-yt-embed', {
+          videoId: currentVideo.videoId,
+          playerVars: {
+            autoplay: 1,
+            controls: 1,
+            rel: 0,
+            modestbranding: 1,
+            enablejsapi: 1,
+            origin: window.location.origin,
+            fs: 1,
+            playsinline: 1,
+          },
+          events: {
+            onReady: (event) => {
+              try {
+                const iframe = event.target.getIframe();
+                if (iframe) {
+                  iframe.setAttribute('allowfullscreen', 'true');
+                  iframe.setAttribute('webkitallowfullscreen', 'true');
+                  iframe.setAttribute('mozallowfullscreen', 'true');
+                  iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen');
+                }
+              } catch (e) {}
+              playerRef.current = event.target;
+              setPlayer(event.target);
+              setPlayerReady(true);
+              setDuration(event.target.getDuration() || 0);
+              if (playbackRate !== 1) {
+                try { event.target.setPlaybackRate(playbackRate); } catch (e) {}
               }
-            } catch (e) {}
-            setPlayer(event.target);
-            setPlayerReady(true);
-            setDuration(event.target.getDuration() || 0);
-            if (playbackRate !== 1) {
-              try { event.target.setPlaybackRate(playbackRate); } catch (e) {}
-            }
-            if (!bgAudioMode) {
-              if (autoSkipIntro && transcript.length > 0 && transcript[0]?.start >= 1.0 && introSkippedRef.current !== currentVideo?.videoId) {
-                introSkippedRef.current = currentVideo?.videoId;
-                const targetTime = Math.max(0, transcript[0].start - 0.1);
-                event.target.seekTo(targetTime, true);
-                event.target.playVideo();
+              if (!bgAudioMode) {
+                if (autoSkipIntro && transcript.length > 0 && transcript[0]?.start >= 1.0 && introSkippedRef.current !== currentVideo?.videoId) {
+                  introSkippedRef.current = currentVideo?.videoId;
+                  const targetTime = Math.max(0, transcript[0].start - 0.1);
+                  event.target.seekTo(targetTime, true);
+                  event.target.playVideo();
+                  setIsPlaying(true);
+                  setActiveIndex(0);
+                  showVocabToast(`⚡ 인트로 건너뛰기: 첫 문장(${transcript[0].start.toFixed(1)}초)부터 시작`, 'info');
+                } else {
+                  event.target.playVideo();
+                }
+              }
+            },
+            onStateChange: (event) => {
+              if (event.data === 1) {
                 setIsPlaying(true);
-                setActiveIndex(0);
-                showVocabToast(`⚡ 인트로 건너뛰기: 첫 문장(${transcript[0].start.toFixed(1)}초)부터 시작`, 'info');
+              } else if (event.data === 0) {
+                // Video Ended -> Sequential Loop / Repeat handling
+                handleVideoEnded(event.target);
               } else {
-                event.target.playVideo();
+                setIsPlaying(false);
               }
+            },
+            onError: (err) => {
+              console.warn('[Player] YouTube Player error:', err);
             }
           },
-          onStateChange: (event) => {
-            if (event.data === 1) {
-              setIsPlaying(true);
-            } else if (event.data === 0) {
-              // Video Ended -> Sequential Loop / Repeat handling
-              handleVideoEnded(event.target);
-            } else {
-              setIsPlaying(false);
-            }
-          },
-        },
-      });
+        });
+        playerRef.current = ytPlayer;
+        setPlayer(ytPlayer);
+      } catch (e) {
+        console.error('[Player] Init error:', e);
+      }
     };
 
     if (window.YT && window.YT.Player) {
       initPlayer();
     } else {
-      const tag = document.createElement('script');
-      tag.src = 'https://www.youtube.com/iframe_api';
-      window.onYouTubeIframeAPIReady = () => initPlayer();
-      document.body.appendChild(tag);
+      const prevCallback = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => {
+        if (typeof prevCallback === 'function') prevCallback();
+        initPlayer();
+      };
+      if (!document.getElementById('yt-iframe-api-script')) {
+        const tag = document.createElement('script');
+        tag.id = 'yt-iframe-api-script';
+        tag.src = 'https://www.youtube.com/iframe_api';
+        document.body.appendChild(tag);
+      }
     }
+  }, [currentVideo?.videoId]);
 
+  // Clean up player on component unmount
+  useEffect(() => {
     return () => {
-      if (ytPlayer && ytPlayer.destroy) {
-        try { ytPlayer.destroy(); } catch (e) {}
+      if (playerRef.current && typeof playerRef.current.destroy === 'function') {
+        try { playerRef.current.destroy(); } catch (e) {}
+        playerRef.current = null;
       }
     };
-  }, [currentVideo?.videoId]);
+  }, []);
 
   const seekLockRef = useRef(null);
   const activeIndexRef = useRef(activeIndex);
