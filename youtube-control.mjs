@@ -421,9 +421,10 @@ const SEARCH_QUERIES = [
  * Filter keywords
  */
 export const MALE_KEYWORDS = [
-  // 남성 지칭어
+  // 남성 지칭어 / 대명사
   '남자', '남성', ' male ', ' guy', ' guys', 'husband', 'boyfriend', 'boy', 'boys', 'bro ', 'bros',
   'father', 'dad', 'brother', 'son', 'gentleman', 'gentlemen', ' mr ', 'mr.', 'sir',
+  ' he ', ' he’s ', " he's ", ' his ', ' him ', ' man ', ' men ', ' dying man',
   // 흔한 남성 이름들
   'jack', 'john', 'david', 'michael', 'james', 'robert', 'william', 'thomas', 'daniel', 'matthew',
   'anthony', 'mark', 'donald', 'steven', 'paul', 'andrew', 'joshua', 'kenneth', 'kevin', 'brian',
@@ -437,7 +438,8 @@ export const MALE_KEYWORDS = [
   'vincent', 'russell', 'louis', 'philip', 'bobby', 'johnny', 'bradley', 'martin', 'neil', 'luke',
   'elliott', 'elliot', 'liam', 'oliver', 'lucas', 'mason', 'sebastian', 'owen',
   'theodore', 'wyatt', 'jayden', 'matteo', 'julian', 'leo', 'ezra', 'harrison',
-  // 유명 남성 유튜버 / 진행자 / 연설가
+  // 유명 남성 유튜버 / 아티스트 / 진행자 / 연설가
+  'bruno mars', 'harry styles', 'harryween', 'chaban', 'alejandro chaban',
   'pewdiepie', 'clint', 'steve', 'mike', 'dave', 'tom', 'dan', 'matt', 'sam', 'ian',
   'shetty', 'jay shetty', 'abdaal', 'ali abdaal', 'charles', 'moseley', 'roland frasier', 'simon sinek',
   'huberman', 'andrew huberman', 'peterson', 'jordan peterson', 'alex hormozi', 'lewis howes',
