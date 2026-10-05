@@ -533,6 +533,28 @@ export default function LanguageReactorPlayer({
   const [loopMode, setLoopMode] = useState('none'); // 'none', 'single_loop', 'pause_after_sentence'
   const [loopingIndex, setLoopingIndex] = useState(null);
 
+  // Auto-Pause (한문장 끝나면 자동 멈춤 - 쉐도잉 훈련 모드)
+  const [autoPause, setAutoPause] = useState(() => {
+    try {
+      return localStorage.getItem('ytkw_auto_pause') === 'true';
+    } catch (e) {
+      return false;
+    }
+  });
+  const autoPauseRef = useRef(autoPause);
+  useEffect(() => { autoPauseRef.current = autoPause; }, [autoPause]);
+
+  const handleToggleAutoPause = (e) => {
+    if (e) e.stopPropagation();
+    const next = !autoPause;
+    setAutoPause(next);
+    autoPauseRef.current = next;
+    try {
+      localStorage.setItem('ytkw_auto_pause', String(next));
+    } catch (e) {}
+    showVocabToast(next ? '⏸️ 한문장 멈춤 ON (문장이 끝나면 자동 일시정지)' : '▶️ 한문장 멈춤 OFF (연속 재생 모드)', 'info');
+  };
+
   // Word Dictionary Popup
   const [dictWord, setDictWord] = useState(null);
   const [dictPos, setDictPos] = useState({ x: 0, y: 0 });
@@ -876,6 +898,14 @@ export default function LanguageReactorPlayer({
               } else {
                 const idx = findSubtitleIndex(currentTranscript, t);
                 if (idx !== -1 && idx !== currentActiveIdx) {
+                  // If autoPause is active and playback advanced beyond currentActiveIdx
+                  if (autoPauseRef.current && currentActiveIdx !== -1 && idx > currentActiveIdx) {
+                    if (bgAudioMode && audioRef.current) audioRef.current.pause();
+                    else if (player && typeof player.pauseVideo === 'function') player.pauseVideo();
+                    setIsPlaying(false);
+                    return;
+                  }
+
                   setActiveIndex(idx);
 
                   if (currentLoopMode === 'pause_after_sentence' && currentLoopIdx !== null && idx > currentLoopIdx) {
@@ -885,8 +915,21 @@ export default function LanguageReactorPlayer({
                   }
                 }
 
+                // If autoPause is active, pause when current sentence finishes
+                if (autoPauseRef.current && currentActiveIdx >= 0 && currentTranscript[currentActiveIdx]) {
+                  const curLine = currentTranscript[currentActiveIdx];
+                  const nextLine = currentTranscript[currentActiveIdx + 1];
+                  const sentenceEndTime = nextLine ? Math.min(curLine.end, nextLine.start) : curLine.end;
+                  if (t >= sentenceEndTime + 0.05) {
+                    if (bgAudioMode && audioRef.current) audioRef.current.pause();
+                    else if (player && typeof player.pauseVideo === 'function') player.pauseVideo();
+                    setIsPlaying(false);
+                    return;
+                  }
+                }
+
                 // ⚡ Smart Gap Skip
-                if (smartGapSkipRef.current && currentLoopMode === 'none' && currentActiveIdx >= 0 && currentTranscript[currentActiveIdx] && currentTranscript[currentActiveIdx + 1]) {
+                if (smartGapSkipRef.current && !autoPauseRef.current && currentLoopMode === 'none' && currentActiveIdx >= 0 && currentTranscript[currentActiveIdx] && currentTranscript[currentActiveIdx + 1]) {
                   const curLine = currentTranscript[currentActiveIdx];
                   const nextLine = currentTranscript[currentActiveIdx + 1];
                   const now = Date.now();
@@ -1900,6 +1943,16 @@ export default function LanguageReactorPlayer({
                 </div>
 
                 <div className="settings-section">
+                  <span className="section-title">⏸️ 한문장 멈춤 (쉐도잉 1문장 자동 정지)</span>
+                  <button
+                    className={`set-toggle-btn ${autoPause ? 'active' : ''}`}
+                    onClick={handleToggleAutoPause}
+                  >
+                    {autoPause ? '✅ 한 문장 끝나면 자동 멈춤 ON (따라 말하기 최적)' : '❌ 연속 재생 모드 OFF'}
+                  </button>
+                </div>
+
+                <div className="settings-section">
                   <span className="section-title">⚡ 오프닝 / 인트로 자동 건너뛰기</span>
                   <button
                     className={`set-toggle-btn ${autoSkipIntro ? 'active' : ''}`}
@@ -2310,6 +2363,15 @@ export default function LanguageReactorPlayer({
                   </button>
                 )}
 
+                {/* AUTO-PAUSE (한문장 멈춤) TOGGLE */}
+                <button
+                  className={`lr-icon-action-btn autopause-deck-btn ${autoPause ? 'autopause-active' : ''}`}
+                  onClick={handleToggleAutoPause}
+                  title={autoPause ? "⏸️ 한문장 멈춤 ON (문장 끝나면 자동 정지)" : "⏸️ 한문장 멈춤 켜기 (문장 끝나면 자동 일시정지 - 쉐도잉)"}
+                >
+                  {autoPause ? '⏸️1문장' : '⏸️'}
+                </button>
+
                 {/* SINGLE SENTENCE LOOP */}
                 <button
                   className={`lr-icon-action-btn ${loopMode === 'single_loop' ? 'loop-active' : ''}`}
@@ -2446,11 +2508,20 @@ export default function LanguageReactorPlayer({
                           </div>
                           <div className="focus-btn-group">
                             <button
+                              className={`line-autopause-btn ${autoPause ? 'active' : ''}`}
+                              onClick={handleToggleAutoPause}
+                              title={autoPause ? "⏸️ 한문장 멈춤 ON (문장 끝나면 자동 정지)" : "⏸️ 한문장 멈춤 켜기 (문장 끝나면 자동 일시정지 - 쉐도잉)"}
+                            >
+                              <span className="btn-icon">⏸️</span>
+                              <span className="btn-label">{autoPause ? '1문장 멈춤 ON' : '1문장 멈춤'}</span>
+                            </button>
+                            <button
                               className={`line-play-btn ${isPlaying ? 'playing' : ''}`}
                               onClick={(e) => handleLinePlayPause(line, curIdx, e)}
                               title={isPlaying ? "이 문장 일시정지 (Space)" : "이 문장 재생 (Space)"}
                             >
-                              {isPlaying ? '⏸️' : '▶️'}
+                              <span className="btn-icon">{isPlaying ? '⏸️' : '▶️'}</span>
+                              <span className="btn-label">{isPlaying ? '멈춤' : '재생'}</span>
                             </button>
                             <button
                               className={`line-loop-btn ${isLooping ? 'active' : ''}`}

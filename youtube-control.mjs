@@ -77,6 +77,7 @@ export function blockVideoOrSpeaker({ videoId, channelTitle, title, speakerName 
  * Check if an item matches the permanent blacklist (영상 ID 기반 절대안봄 + 수동 지정 키워드)
  */
 export const BAD_VIDEO_IDS = new Set([
+  'cQib_iUmR6c',
   '30ai5Pf1Z94',
   'rWP7OYwHCEk',
   'Jr5oLnADfaQ',
@@ -490,8 +491,13 @@ const TRASH_KEYWORDS = [
   'tidy up', 'declutter', 'house cleaning', 'cleaning routine', 'clean with me',
   'speed clean', 'clean my room', 'kitchen clean', 'bathroom clean', 'laundry', '빨래',
 
-  // AI 보이스 / 버추얼
-  'ai voice', 'ai generated', 'ai avatar', 'virtual', 'vtuber', 'synth', 'text to speech', 'tts', 'bot',
+  // AI 보이스 / 버추얼 / 생성형 AI 영상 / TTS / 가상 인간 / AI 스토리 / AI 더빙 / AI 커버
+  'ai voice', 'ai generated', 'ai avatar', 'virtual avatar', 'virtual human', 'vtuber', 'synth', 'text to speech', 'tts', 'bot',
+  'ai story', 'ai animation', 'ai animated', 'ai cover', 'ai song', 'ai music', 'ai speech',
+  'ai video', 'ai clone', 'cloned voice', 'deepfake', 'artificial intelligence speech', 'elevenlabs',
+  'synthesia', 'heygen', 'd-id', 'sora', 'runway', 'midjourney', 'pika', 'invideo', 'vrew',
+  'typecast', 'clova dubbing', 'chatgpt', 'openai', 'voces ai', 'ai narrat',
+  'ai영상', '인공지능', 'ai목소리', 'ai더빙', 'ai스토리', 'ai생성', 'ai커버', 'ai노래', '생성형 ai', '버추얼', '딥페이크',
   'manga', 'manhwa', 'comic', 'webtoon', 'faceless', 'no face',
 
   // 불필요한 국내 취준/먹방 잡담 브이로그
@@ -519,7 +525,11 @@ export function isTrashContent(title = '', desc = '', channelTitle = '') {
   const koreanCount = (title.match(/[가-힣]/g) || []).length;
   if (koreanCount > 10) return true;
 
-  // 3. Trash keywords
+  // 3. Strict AI-generated content & synthetic voice detection
+  const aiRegex = /\b(ai\s+(voice|generated|avatar|cover|song|music|story|animation|animated|video|clone|dubbing|speech|speechs|narrat\w*)|(voice|cover|song|music|avatar|video)\s+ai|\(ai\)|voces ai|elevenlabs|synthesia|heygen|deepfake|tts|text to speech|midjourney|sora|runway|typecast|vrew|clova dubbing)\b|ai영상|인공지능\s*(목소리|더빙|영상|스토리|생성|커버)|ai목소리|ai더빙|ai스토리|ai생성|ai커버|ai노래|생성형\s*ai|버추얼/i;
+  if (aiRegex.test(text)) return true;
+
+  // 4. Trash keywords
   for (const kw of TRASH_KEYWORDS) {
     const lowerKw = kw.trim().toLowerCase();
     if (!lowerKw) continue;
@@ -4403,23 +4413,6 @@ export const DEFAULT_SPANISH_TRACKS = [
       "인생에세이",
       "마인드셋",
       "쉐도잉"
-    ],
-    "source": "curated_spanish"
-  },
-  {
-    "videoId": "cQib_iUmR6c",
-    "title": "ROSALIA (AI) - SOLAMENTE TÚ",
-    "channelTitle": "Voces AI",
-    "description": "Voces AI • 또렷한 카스티야 & 중남미 표준 스페인어 명품 쉐도잉 (4:03)",
-    "thumbnailUrl": "https://img.youtube.com/vi/cQib_iUmR6c/hqdefault.jpg",
-    "duration": "4:03",
-    "language": "es",
-    "category": "pop_music",
-    "tags": [
-      "스페인어",
-      "감성발라드",
-      "스페인노래",
-      "가사쉐도잉"
     ],
     "source": "curated_spanish"
   },

@@ -2003,13 +2003,31 @@
 
   .compact-video-mode .lr-control-deck,
   .lr-control-deck {
-    padding: 6px 10px;
+    padding: 8px 10px;
+    gap: 6px;
   }
 
   .compact-video-mode .lr-icon-action-btn,
   .lr-icon-action-btn {
-    height: 34px;
-    font-size: 1.1rem;
+    height: 42px;
+    min-width: 42px;
+    font-size: 1.2rem;
+    border-radius: 10px;
+  }
+
+  .compact-video-mode .lr-icon-action-btn.play-pause-btn,
+  .lr-icon-action-btn.play-pause-btn {
+    height: 46px;
+    min-width: 66px;
+    font-size: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(244, 63, 94, 0.45);
+  }
+
+  .lr-icon-action-btn.autopause-deck-btn {
+    min-width: 52px;
+    font-size: 0.95rem;
+    font-weight: 800;
   }
 
   /* Subtitles take up remaining screen height */
@@ -2025,27 +2043,29 @@
   }
 
   .lr-sub-line {
-    padding: 8px 10px;
-    gap: 8px;
+    padding: 10px 12px;
+    gap: 10px;
   }
 
   .line-meta {
-    width: 44px;
-    min-width: 44px;
+    width: 58px;
+    min-width: 58px;
   }
 
   .line-play-btn {
-    width: 26px;
-    height: 26px;
-    min-width: 26px;
-    font-size: 0.9rem;
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    font-size: 1.15rem;
+    border-radius: 10px;
   }
 
   .line-loop-btn, .line-save-btn {
-    width: 22px;
-    height: 22px;
-    min-width: 22px;
-    font-size: 0.8rem;
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    font-size: 0.95rem;
+    border-radius: 8px;
   }
 
   .line-en {
@@ -2316,7 +2336,92 @@
 .focus-btn-group {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* 🎯 Focus Main Card Sentence Play/Pause Button */
+.focus-btn-group .line-play-btn {
+  width: auto;
+  min-width: 78px;
+  height: 38px;
+  padding: 0 12px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.22), rgba(14, 165, 233, 0.32));
+  border: 1.5px solid rgba(56, 189, 248, 0.55);
+  color: #38bdf8;
+  box-shadow: 0 2px 10px rgba(56, 189, 248, 0.25);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  touch-action: manipulation;
+}
+
+.focus-btn-group .line-play-btn:hover {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.35), rgba(14, 165, 233, 0.45)) !important;
+  border-color: #38bdf8 !important;
+  transform: translateY(-1px) scale(1.03) !important;
+  box-shadow: 0 4px 14px rgba(56, 189, 248, 0.4) !important;
+}
+
+.focus-btn-group .line-play-btn.playing {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.28), rgba(225, 29, 72, 0.38));
+  border-color: #f43f5e;
+  color: #fecdd3;
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.4);
+}
+
+/* 🎯 Auto-Pause Button (한문장 멈춤) */
+.line-autopause-btn {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  color: #94a3b8;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+  touch-action: manipulation;
+}
+
+.line-autopause-btn:hover {
+  background: rgba(16, 185, 129, 0.18);
+  border-color: #10b981;
+  color: #34d399;
+  transform: translateY(-1px);
+}
+
+.line-autopause-btn.active {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.32), rgba(5, 150, 105, 0.45));
+  border-color: #34d399;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+  font-weight: 800;
+}
+
+.focus-btn-group .line-loop-btn,
+.focus-btn-group .line-save-btn {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-radius: 10px;
+  font-size: 1.1rem;
+}
+
+.autopause-deck-btn.autopause-active {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  border-color: #6ee7b7 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.5) !important;
 }
 
 .focus-main-content {
@@ -2371,12 +2476,80 @@
   .focus-sub-card.current-main-card {
     padding: 12px 14px;
   }
+
+  .focus-main-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .focus-badge-group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .focus-btn-group {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  /* 🎯 Main Current Sentence Play/Pause Button - HUGE & EASY TO TAP ON PHONE */
+  .focus-btn-group .line-play-btn {
+    flex: 1 1 auto;
+    height: 50px;
+    min-height: 50px;
+    font-size: 1.25rem;
+    font-weight: 800;
+    border-radius: 14px;
+    padding: 0 16px;
+    box-shadow: 0 4px 16px rgba(56, 189, 248, 0.45);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .focus-btn-group .line-play-btn.playing {
+    box-shadow: 0 4px 18px rgba(244, 63, 94, 0.6);
+  }
+
+  /* 🎯 Auto-Pause Button on Phone (한문장 멈춤) */
+  .focus-btn-group .line-autopause-btn {
+    flex: 1 1 auto;
+    height: 50px;
+    min-height: 50px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    border-radius: 14px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .focus-btn-group .line-loop-btn,
+  .focus-btn-group .line-save-btn {
+    width: 44px;
+    height: 50px;
+    min-width: 44px;
+    font-size: 1.25rem;
+    border-radius: 14px;
+  }
+
   .focus-main-en {
-    font-size: calc(clamp(1.02rem, 2.8vw + 0.45rem, 1.28rem) * min(var(--sub-font-scale, 1), 1.2));
+    font-size: calc(clamp(1.05rem, 3vw + 0.45rem, 1.35rem) * min(var(--sub-font-scale, 1), 1.25));
     line-height: 1.45;
   }
   .focus-main-ko {
-    font-size: calc(clamp(0.86rem, 2.2vw + 0.35rem, 1.05rem) * min(var(--sub-font-scale, 1), 1.2));
+    font-size: calc(clamp(0.88rem, 2.2vw + 0.35rem, 1.08rem) * min(var(--sub-font-scale, 1), 1.25));
     line-height: 1.4;
   }
 }
