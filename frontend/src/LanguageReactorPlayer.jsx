@@ -533,6 +533,58 @@ export default function LanguageReactorPlayer({
   const [loopMode, setLoopMode] = useState('none'); // 'none', 'single_loop', 'pause_after_sentence'
   const [loopingIndex, setLoopingIndex] = useState(null);
 
+  // Sentence Repeat (문장별 반복 횟수: '1' 1회 기본, '2' 2번씩 반복, '3' 3번씩 반복, 'inf' 무한 반복)
+  const [sentenceRepeat, setSentenceRepeat] = useState(() => {
+    try {
+      return localStorage.getItem('ytkw_sentence_repeat') || '1';
+    } catch (e) {
+      return '1';
+    }
+  });
+  const sentenceRepeatRef = useRef(sentenceRepeat);
+  const sentenceRepeatProgressRef = useRef(1);
+  const pauseAfterSentenceIndexRef = useRef(null);
+
+  useEffect(() => {
+    sentenceRepeatRef.current = sentenceRepeat;
+    sentenceRepeatProgressRef.current = 1;
+  }, [sentenceRepeat]);
+
+  const handleCycleSentenceRepeat = (e) => {
+    if (e) e.stopPropagation();
+    let next = '1';
+    if (sentenceRepeat === '1') next = '2';
+    else if (sentenceRepeat === '2') next = '3';
+    else if (sentenceRepeat === '3') next = 'inf';
+    else next = '1';
+
+    setSentenceRepeat(next);
+    sentenceRepeatRef.current = next;
+    sentenceRepeatProgressRef.current = 1;
+    try {
+      localStorage.setItem('ytkw_sentence_repeat', next);
+    } catch (e) {}
+
+    if (next === '1') {
+      showVocabToast('▶️ 문장 1회 재생 (기본)', 'info');
+    } else if (next === '2') {
+      showVocabToast('🔁 각 문장 항상 2번씩 반복 재생 ON (1회 청취 + 1회 쉐도잉)', 'success');
+    } else if (next === '3') {
+      showVocabToast('🔁 각 문장 항상 3번씩 반복 재생 ON (3회 집중 쉐도잉)', 'success');
+    } else if (next === 'inf') {
+      showVocabToast('🔂 현재 문장 무한 반복(∞) 재생 ON', 'success');
+    }
+  };
+
+  // 🎯 이번 문장 1회 재생 후 정지 (누를 때마다 이번 문장 듣고 자동 멈춤)
+  const handlePlaySentenceOnce = (line, index, e) => {
+    if (e) e.stopPropagation();
+    pauseAfterSentenceIndexRef.current = index;
+    sentenceRepeatProgressRef.current = 1;
+    handleSeekTo(line.start, index, true);
+    showVocabToast(`⏯️ 이번 문장 #${index + 1} 1회 듣고 자동 멈춤`, 'info');
+  };
+
   // Auto-Pause (한문장 끝나면 자동 멈춤 - 쉐도잉 훈련 모드)
   const [autoPause, setAutoPause] = useState(() => {
     try {
@@ -897,9 +949,60 @@ export default function LanguageReactorPlayer({
                 }
               } else {
                 const idx = findSubtitleIndex(currentTranscript, t);
+
+                // 1. One-shot "이번 문장 듣고 정지"
+                if (pauseAfterSentenceIndexRef.current !== null && currentActiveIdx >= 0 && currentTranscript[currentActiveIdx]) {
+                  const targetSentIdx = pauseAfterSentenceIndexRef.current;
+                  const curLine = currentTranscript[targetSentIdx];
+                  const nextLine = currentTranscript[targetSentIdx + 1];
+                  const sentenceEndTime = nextLine ? Math.min(curLine.end, nextLine.start) : curLine.end;
+                  if (t >= sentenceEndTime || (idx !== -1 && idx > targetSentIdx)) {
+                    if (bgAudioMode && audioRef.current) audioRef.current.pause();
+                    else if (player && typeof player.pauseVideo === 'function') player.pauseVideo();
+                    setIsPlaying(false);
+                    pauseAfterSentenceIndexRef.current = null;
+                    return;
+                  }
+                }
+
+                // 2. Multi-Repeat Mode (2회 / 3회 / inf 무한 반복)
+                const repMode = sentenceRepeatRef.current;
+                if (repMode !== '1' && currentActiveIdx >= 0 && currentTranscript[currentActiveIdx]) {
+                  const curLine = currentTranscript[currentActiveIdx];
+                  const nextLine = currentTranscript[currentActiveIdx + 1];
+                  const sentenceEndTime = nextLine ? Math.min(curLine.end, nextLine.start) : curLine.end;
+
+                  if (t >= sentenceEndTime || (idx !== -1 && idx > currentActiveIdx)) {
+                    if (repMode === 'inf') {
+                      handleSeekTo(curLine.start, currentActiveIdx, true);
+                      return;
+                    } else {
+                      const maxReps = parseInt(repMode, 10);
+                      if (sentenceRepeatProgressRef.current < maxReps) {
+                        sentenceRepeatProgressRef.current += 1;
+                        showVocabToast(`🔁 문장 #${currentActiveIdx + 1} (${sentenceRepeatProgressRef.current}/${maxReps}회)`, 'info');
+                        handleSeekTo(curLine.start, currentActiveIdx, true);
+                        return;
+                      } else {
+                        // Max repetitions finished for current sentence
+                        sentenceRepeatProgressRef.current = 1;
+                        if (autoPauseRef.current) {
+                          if (bgAudioMode && audioRef.current) audioRef.current.pause();
+                          else if (player && typeof player.pauseVideo === 'function') player.pauseVideo();
+                          setIsPlaying(false);
+                          return;
+                        } else if (nextLine) {
+                          handleSeekTo(nextLine.start, currentActiveIdx + 1, true);
+                          return;
+                        }
+                      }
+                    }
+                  }
+                }
+
                 if (idx !== -1 && idx !== currentActiveIdx) {
-                  // If autoPause is active and playback advanced beyond currentActiveIdx
-                  if (autoPauseRef.current && currentActiveIdx !== -1 && idx > currentActiveIdx) {
+                  // If autoPause is active in 1-play mode and advancing to next sentence
+                  if (autoPauseRef.current && repMode === '1' && currentActiveIdx !== -1 && idx > currentActiveIdx) {
                     if (bgAudioMode && audioRef.current) audioRef.current.pause();
                     else if (player && typeof player.pauseVideo === 'function') player.pauseVideo();
                     setIsPlaying(false);
@@ -907,6 +1010,7 @@ export default function LanguageReactorPlayer({
                   }
 
                   setActiveIndex(idx);
+                  sentenceRepeatProgressRef.current = 1;
 
                   if (currentLoopMode === 'pause_after_sentence' && currentLoopIdx !== null && idx > currentLoopIdx) {
                     if (bgAudioMode && audioRef.current) audioRef.current.pause();
@@ -915,8 +1019,8 @@ export default function LanguageReactorPlayer({
                   }
                 }
 
-                // If autoPause is active, pause when current sentence finishes
-                if (autoPauseRef.current && currentActiveIdx >= 0 && currentTranscript[currentActiveIdx]) {
+                // 3. Normal 1-play with Auto-Pause
+                if (repMode === '1' && autoPauseRef.current && currentActiveIdx >= 0 && currentTranscript[currentActiveIdx]) {
                   const curLine = currentTranscript[currentActiveIdx];
                   const nextLine = currentTranscript[currentActiveIdx + 1];
                   const sentenceEndTime = nextLine ? Math.min(curLine.end, nextLine.start) : curLine.end;
@@ -929,7 +1033,7 @@ export default function LanguageReactorPlayer({
                 }
 
                 // ⚡ Smart Gap Skip
-                if (smartGapSkipRef.current && !autoPauseRef.current && currentLoopMode === 'none' && currentActiveIdx >= 0 && currentTranscript[currentActiveIdx] && currentTranscript[currentActiveIdx + 1]) {
+                if (smartGapSkipRef.current && !autoPauseRef.current && repMode === '1' && currentLoopMode === 'none' && currentActiveIdx >= 0 && currentTranscript[currentActiveIdx] && currentTranscript[currentActiveIdx + 1]) {
                   const curLine = currentTranscript[currentActiveIdx];
                   const nextLine = currentTranscript[currentActiveIdx + 1];
                   const now = Date.now();
@@ -1096,6 +1200,7 @@ export default function LanguageReactorPlayer({
   const handleSeekTo = (startTime, index = null, shouldPlay = true) => {
     if (index !== null) {
       setActiveIndex(index);
+      sentenceRepeatProgressRef.current = 1;
       seekLockRef.current = { index, until: Date.now() + 600 };
       lastScrolledIndex.current = -1; // Force immediate scroll centering on click
       if (loopMode === 'single_loop' && loopingIndex !== index) {
@@ -2363,25 +2468,25 @@ export default function LanguageReactorPlayer({
                   </button>
                 )}
 
-                {/* AUTO-PAUSE (한문장 멈춤) TOGGLE */}
+                {/* PLAY CURRENT SENTENCE ONCE & PAUSE */}
                 <button
-                  className={`lr-icon-action-btn autopause-deck-btn ${autoPause ? 'autopause-active' : ''}`}
-                  onClick={handleToggleAutoPause}
-                  title={autoPause ? "⏸️ 한문장 멈춤 ON (문장 끝나면 자동 정지)" : "⏸️ 한문장 멈춤 켜기 (문장 끝나면 자동 일시정지 - 쉐도잉)"}
+                  className="lr-icon-action-btn play-once-deck-btn"
+                  onClick={(e) => {
+                    const curIdx = activeIndex >= 0 ? activeIndex : 0;
+                    if (transcript[curIdx]) handlePlaySentenceOnce(transcript[curIdx], curIdx, e);
+                  }}
+                  title="⏯️ 이번 문장 1회 재생 후 정지 (누를 때마다 이번 문장 듣기)"
                 >
-                  {autoPause ? '⏸️1문장' : '⏸️'}
+                  ⏯️
                 </button>
 
-                {/* SINGLE SENTENCE LOOP */}
+                {/* SENTENCE REPEAT CYCLE (1회 / 2회 / 3회 / ∞) */}
                 <button
-                  className={`lr-icon-action-btn ${loopMode === 'single_loop' ? 'loop-active' : ''}`}
-                  onClick={(e) => {
-                    const targetIdx = (loopingIndex !== null) ? loopingIndex : (activeIndex !== -1 ? activeIndex : 0);
-                    handleToggleLineLoop(targetIdx, e);
-                  }}
-                  title={loopMode === 'single_loop' ? "🔁 현재 문장 무한반복 켜짐 (클릭 시 해제)" : "🔂 현재 문장 1개 무한반복 켜기"}
+                  className={`lr-icon-action-btn rep-deck-btn ${sentenceRepeat !== '1' ? 'loop-active' : ''}`}
+                  onClick={handleCycleSentenceRepeat}
+                  title={`문장 반복 모드: 현재 ${sentenceRepeat === '1' ? '1회 (기본)' : sentenceRepeat === '2' ? '2회씩 반복' : sentenceRepeat === '3' ? '3회씩 반복' : '무한 반복'}`}
                 >
-                  {loopMode === 'single_loop' ? '🔁' : '🔂'}
+                  {sentenceRepeat === '1' ? '1회' : sentenceRepeat === '2' ? '2회' : sentenceRepeat === '3' ? '3회' : '🔁'}
                 </button>
 
                 {/* PLAYLIST REPEAT MODE TOGGLE */}
@@ -2507,29 +2612,39 @@ export default function LanguageReactorPlayer({
                             )}
                           </div>
                           <div className="focus-btn-group">
+                            {/* 1. 이번 문장 1회 재생 후 정지 (누를 때마다 이번 문장 듣고 멈춤) */}
                             <button
-                              className={`line-autopause-btn ${autoPause ? 'active' : ''}`}
-                              onClick={handleToggleAutoPause}
-                              title={autoPause ? "⏸️ 한문장 멈춤 ON (문장 끝나면 자동 정지)" : "⏸️ 한문장 멈춤 켜기 (문장 끝나면 자동 일시정지 - 쉐도잉)"}
+                              className="line-play-once-btn"
+                              onClick={(e) => handlePlaySentenceOnce(line, curIdx, e)}
+                              title="이번 문장 1회 재생 후 정지 (누를 때마다 이번 문장 듣고 자동 멈춤)"
                             >
-                              <span className="btn-icon">⏸️</span>
-                              <span className="btn-label">{autoPause ? '1문장 멈춤 ON' : '1문장 멈춤'}</span>
+                              <span className="btn-icon">⏯️</span>
+                              <span className="btn-label">이번 문장 듣기</span>
                             </button>
+
+                            {/* 2. 전체 연속 재생 / 일시정지 */}
                             <button
                               className={`line-play-btn ${isPlaying ? 'playing' : ''}`}
                               onClick={(e) => handleLinePlayPause(line, curIdx, e)}
-                              title={isPlaying ? "이 문장 일시정지 (Space)" : "이 문장 재생 (Space)"}
+                              title={isPlaying ? "일시정지 (Space)" : "연속 재생 (Space)"}
                             >
                               <span className="btn-icon">{isPlaying ? '⏸️' : '▶️'}</span>
-                              <span className="btn-label">{isPlaying ? '멈춤' : '재생'}</span>
+                              <span className="btn-label">{isPlaying ? '일시정지' : '연속 재생'}</span>
                             </button>
+
+                            {/* 3. 문장 반복 횟수 (1회 ➔ 2회 ➔ 3회 ➔ ∞무한) */}
                             <button
-                              className={`line-loop-btn ${isLooping ? 'active' : ''}`}
-                              onClick={(e) => handleToggleLineLoop(curIdx, e)}
-                              title={isLooping ? "이 문장 무한반복 해제 (클릭 시 풀림)" : "이 문장만 무한반복 재생"}
+                              className={`line-repeat-cycle-btn rep-${sentenceRepeat}`}
+                              onClick={handleCycleSentenceRepeat}
+                              title="문장 반복 횟수: 클릭하여 1회 ➔ 2회 ➔ 3회 ➔ ∞무한 반복 순환"
                             >
-                              🔁
+                              <span className="btn-icon">🔁</span>
+                              <span className="btn-label">
+                                {sentenceRepeat === '1' ? '1회' : sentenceRepeat === '2' ? '2회 반복' : sentenceRepeat === '3' ? '3회 반복' : '∞ 무한'}
+                              </span>
                             </button>
+
+                            {/* 4. 북마크 */}
                             <button
                               className={`line-save-btn ${isSaved ? 'active' : ''}`}
                               onClick={(e) => handleToggleSaveSentence(line, e)}
@@ -2634,21 +2749,21 @@ export default function LanguageReactorPlayer({
                           <span className="line-time">{formatTime(line.start)}</span>
                           {getSentenceCountBadge(idx)}
                           <div className="line-btn-group">
+                            {/* PLAY THIS SENTENCE ONCE & PAUSE */}
+                            <button
+                              className="line-play-once-btn"
+                              onClick={(e) => handlePlaySentenceOnce(line, idx, e)}
+                              title="이 문장 1회 재생 후 자동 멈춤 (누를 때마다 듣기)"
+                            >
+                              ⏯️
+                            </button>
                             {/* INSTANT PLAY / PAUSE THIS SENTENCE */}
                             <button
                               className={`line-play-btn ${isActive && isPlaying ? 'playing' : ''}`}
                               onClick={(e) => handleLinePlayPause(line, idx, e)}
-                              title={isActive && isPlaying ? "이 문장 일시정지" : "이 문장 재생"}
+                              title={isActive && isPlaying ? "이 문장 일시정지" : "이 문장 연속 재생"}
                             >
                               {isActive && isPlaying ? '⏸️' : '▶️'}
-                            </button>
-                            {/* SINGLE SENTENCE LOOP / RELEASE */}
-                            <button
-                              className={`line-loop-btn ${isLooping ? 'active' : ''}`}
-                              onClick={(e) => handleToggleLineLoop(idx, e)}
-                              title={isLooping ? "이 문장 무한반복 해제 (풀기)" : "이 문장만 무한반복"}
-                            >
-                              🔁
                             </button>
                             {/* BOOKMARK */}
                             <button
