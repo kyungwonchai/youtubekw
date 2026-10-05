@@ -581,31 +581,16 @@ export default function LanguageReactorPlayer({
     if (e) e.stopPropagation();
     pauseAfterSentenceIndexRef.current = index;
     sentenceRepeatProgressRef.current = 1;
-    handleSeekTo(line.start, index, true);
+    handleSeekTo(line.start, index, true, true);
     showVocabToast(`⏯️ 이번 문장 #${index + 1} 1회 듣고 자동 멈춤`, 'info');
   };
 
-  // Auto-Pause (한문장 끝나면 자동 멈춤 - 쉐도잉 훈련 모드)
-  const [autoPause, setAutoPause] = useState(() => {
+  // Purge legacy auto-pause localStorage
+  useEffect(() => {
     try {
-      return localStorage.getItem('ytkw_auto_pause') === 'true';
-    } catch (e) {
-      return false;
-    }
-  });
-  const autoPauseRef = useRef(autoPause);
-  useEffect(() => { autoPauseRef.current = autoPause; }, [autoPause]);
-
-  const handleToggleAutoPause = (e) => {
-    if (e) e.stopPropagation();
-    const next = !autoPause;
-    setAutoPause(next);
-    autoPauseRef.current = next;
-    try {
-      localStorage.setItem('ytkw_auto_pause', String(next));
+      localStorage.removeItem('ytkw_auto_pause');
     } catch (e) {}
-    showVocabToast(next ? '⏸️ 한문장 멈춤 ON (문장이 끝나면 자동 일시정지)' : '▶️ 한문장 멈춤 OFF (연속 재생 모드)', 'info');
-  };
+  }, []);
 
   // Word Dictionary Popup
   const [dictWord, setDictWord] = useState(null);
@@ -974,25 +959,20 @@ export default function LanguageReactorPlayer({
 
                   if (t >= sentenceEndTime || (idx !== -1 && idx > currentActiveIdx)) {
                     if (repMode === 'inf') {
-                      handleSeekTo(curLine.start, currentActiveIdx, true);
+                      handleSeekTo(curLine.start, currentActiveIdx, true, false);
                       return;
                     } else {
                       const maxReps = parseInt(repMode, 10);
                       if (sentenceRepeatProgressRef.current < maxReps) {
                         sentenceRepeatProgressRef.current += 1;
                         showVocabToast(`🔁 문장 #${currentActiveIdx + 1} (${sentenceRepeatProgressRef.current}/${maxReps}회)`, 'info');
-                        handleSeekTo(curLine.start, currentActiveIdx, true);
+                        handleSeekTo(curLine.start, currentActiveIdx, true, false);
                         return;
                       } else {
-                        // Max repetitions finished for current sentence
+                        // Max repetitions finished for current sentence -> advance to next sentence continuously
                         sentenceRepeatProgressRef.current = 1;
-                        if (autoPauseRef.current) {
-                          if (bgAudioMode && audioRef.current) audioRef.current.pause();
-                          else if (player && typeof player.pauseVideo === 'function') player.pauseVideo();
-                          setIsPlaying(false);
-                          return;
-                        } else if (nextLine) {
-                          handleSeekTo(nextLine.start, currentActiveIdx + 1, true);
+                        if (nextLine) {
+                          handleSeekTo(nextLine.start, currentActiveIdx + 1, true, false);
                           return;
                         }
                       }
@@ -1000,15 +980,8 @@ export default function LanguageReactorPlayer({
                   }
                 }
 
+                // 3. Normal continuous playback index advancement
                 if (idx !== -1 && idx !== currentActiveIdx) {
-                  // If autoPause is active in 1-play mode and advancing to next sentence
-                  if (autoPauseRef.current && repMode === '1' && currentActiveIdx !== -1 && idx > currentActiveIdx) {
-                    if (bgAudioMode && audioRef.current) audioRef.current.pause();
-                    else if (player && typeof player.pauseVideo === 'function') player.pauseVideo();
-                    setIsPlaying(false);
-                    return;
-                  }
-
                   setActiveIndex(idx);
                   sentenceRepeatProgressRef.current = 1;
 
@@ -1019,27 +992,14 @@ export default function LanguageReactorPlayer({
                   }
                 }
 
-                // 3. Normal 1-play with Auto-Pause
-                if (repMode === '1' && autoPauseRef.current && currentActiveIdx >= 0 && currentTranscript[currentActiveIdx]) {
-                  const curLine = currentTranscript[currentActiveIdx];
-                  const nextLine = currentTranscript[currentActiveIdx + 1];
-                  const sentenceEndTime = nextLine ? Math.min(curLine.end, nextLine.start) : curLine.end;
-                  if (t >= sentenceEndTime + 0.05) {
-                    if (bgAudioMode && audioRef.current) audioRef.current.pause();
-                    else if (player && typeof player.pauseVideo === 'function') player.pauseVideo();
-                    setIsPlaying(false);
-                    return;
-                  }
-                }
-
                 // ⚡ Smart Gap Skip
-                if (smartGapSkipRef.current && !autoPauseRef.current && repMode === '1' && currentLoopMode === 'none' && currentActiveIdx >= 0 && currentTranscript[currentActiveIdx] && currentTranscript[currentActiveIdx + 1]) {
+                if (smartGapSkipRef.current && repMode === '1' && currentLoopMode === 'none' && currentActiveIdx >= 0 && currentTranscript[currentActiveIdx] && currentTranscript[currentActiveIdx + 1]) {
                   const curLine = currentTranscript[currentActiveIdx];
                   const nextLine = currentTranscript[currentActiveIdx + 1];
                   const now = Date.now();
                   if (t >= curLine.end + 0.1 && (nextLine.start - t) >= 0.8 && (now - lastGapSkipRef.current > 700)) {
                     lastGapSkipRef.current = now;
-                    handleSeekTo(Math.max(0, nextLine.start - 0.05), currentActiveIdx + 1, true);
+                    handleSeekTo(Math.max(0, nextLine.start - 0.05), currentActiveIdx + 1, true, false);
                     return;
                   }
                 }
@@ -1197,7 +1157,10 @@ export default function LanguageReactorPlayer({
   }, [activeIndex, scrollMode]);
 
   // 8. Jump to subtitle timestamp & play
-  const handleSeekTo = (startTime, index = null, shouldPlay = true) => {
+  const handleSeekTo = (startTime, index = null, shouldPlay = true, isOneShot = false) => {
+    if (!isOneShot) {
+      pauseAfterSentenceIndexRef.current = null;
+    }
     if (index !== null) {
       setActiveIndex(index);
       sentenceRepeatProgressRef.current = 1;
@@ -1577,6 +1540,7 @@ export default function LanguageReactorPlayer({
 
       if (e.code === 'Space') {
         e.preventDefault();
+        pauseAfterSentenceIndexRef.current = null;
         if (bgAudioMode && audioRef.current) {
           if (isPlaying) {
             audioRef.current.pause();
@@ -2414,6 +2378,7 @@ export default function LanguageReactorPlayer({
                 <button
                   className="lr-icon-action-btn play-pause-btn"
                   onClick={() => {
+                    pauseAfterSentenceIndexRef.current = null;
                     if (bgAudioMode && audioRef.current) {
                       if (isPlaying) {
                         audioRef.current.pause();
