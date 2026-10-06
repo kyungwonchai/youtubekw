@@ -1487,14 +1487,17 @@ export default function LanguageReactorPlayer({
     }
   };
 
-  // 11-3. Bookmark Sentence (좋은 문장 별도 저장)
+  // 11-3. Bookmark Sentence (좋은 문장 별도 저장 및 영어문장암기장 직통 킵)
   const handleToggleSaveSentence = async (line, e) => {
     if (e) e.stopPropagation();
-    const existing = savedSentences.find(s => s.text === line.text && s.videoId === currentVideo.videoId);
+    const clean = (line.text || '').trim();
+    if (!clean) return;
+    const existing = savedSentences.find(s => (s.text || '').trim().toLowerCase() === clean.toLowerCase() && s.videoId === currentVideo.videoId);
     if (existing || savingSentence) return;
 
     setSavingSentence(true);
     try {
+      // 1. Save to youtubekw local bookmark
       const res = await fetch(`${API_BASE}/sentences`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1503,15 +1506,33 @@ export default function LanguageReactorPlayer({
           videoTitle: currentVideo.title,
           start: line.start,
           end: line.end,
-          text: line.text,
-          translation: line.translation
+          text: clean,
+          translation: line.translation || ''
         })
       });
       const data = await res.json();
       if (data.ok && data.sentence) {
         setSavedSentences(prev => [data.sentence, ...prev]);
       }
+
+      // 2. Direct Sync to Global Sentence Vault (영어문장암기장)
+      await fetch('/vocab-hub/api/sentences/keep', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: clean,
+          translation: line.translation || '',
+          sourceApp: 'youtubekw',
+          sourceAppName: '유튜브쉐도잉',
+          sourceTab: '쉐도잉 플레이어',
+          sourceTitle: currentVideo.title || '유튜브 쉐도잉 영상',
+          sourceUrl: currentVideo.videoId ? `https://www.youtube.com/watch?v=${currentVideo.videoId}` : '',
+          audioTimestamp: typeof line.start === 'number' ? line.start : 0,
+          toggle: false
+        })
+      });
     } catch (err) {
+      console.error('Failed to keep youtube sentence:', err);
     } finally {
       setSavingSentence(false);
     }
