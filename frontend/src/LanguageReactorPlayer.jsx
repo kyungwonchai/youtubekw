@@ -2609,13 +2609,29 @@ export default function LanguageReactorPlayer({
                               </span>
                             </button>
 
-                            {/* 4. 북마크 */}
+                            {/* 4. 영어문장암기장 킵 */}
                             <button
                               className={`line-save-btn ${isSaved ? 'active' : ''}`}
                               onClick={(e) => handleToggleSaveSentence(line, e)}
-                              title={isSaved ? "문장 저장 해제" : "명문장 보관함에 저장"}
+                              title={isSaved ? "⭐ 영어문장암기장에 보관됨 (클릭 시 킵 해제)" : "📌 영어문장암기장으로 쏙 킵"}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                padding: '4px 10px',
+                                borderRadius: '16px',
+                                fontSize: '12px',
+                                fontWeight: 700,
+                                background: isSaved ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'rgba(245, 158, 11, 0.15)',
+                                color: isSaved ? '#fff' : '#fbbf24',
+                                border: '1px solid rgba(245, 158, 11, 0.4)',
+                                boxShadow: isSaved ? '0 0 12px rgba(245, 158, 11, 0.4)' : 'none',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s'
+                              }}
                             >
-                              {isSaved ? '🔖' : '☆'}
+                              <span>{isSaved ? '✨' : '⭐'}</span>
+                              <span>{isSaved ? '킵됨' : '킵'}</span>
                             </button>
                           </div>
                         </div>
@@ -2730,13 +2746,29 @@ export default function LanguageReactorPlayer({
                             >
                               {isActive && isPlaying ? '⏸️' : '▶️'}
                             </button>
-                            {/* BOOKMARK */}
+                            {/* BOOKMARK / SENTENCE KEEP */}
                             <button
                               className={`line-save-btn ${isSaved ? 'active' : ''}`}
                               onClick={(e) => handleToggleSaveSentence(line, e)}
-                              title={isSaved ? "문장 저장 해제" : "명문장 보관함에 저장"}
+                              title={isSaved ? "⭐ 영어문장암기장에 보관됨 (클릭 시 킵 해제)" : "📌 영어문장암기장으로 쏙 킵"}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '3px',
+                                padding: '3px 8px',
+                                borderRadius: '14px',
+                                fontSize: '11px',
+                                fontWeight: 700,
+                                background: isSaved ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'rgba(245, 158, 11, 0.12)',
+                                color: isSaved ? '#fff' : '#fbbf24',
+                                border: '1px solid rgba(245, 158, 11, 0.4)',
+                                boxShadow: isSaved ? '0 0 10px rgba(245, 158, 11, 0.35)' : 'none',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s'
+                              }}
                             >
-                              {isSaved ? '🔖' : '☆'}
+                              <span>{isSaved ? '✨' : '⭐'}</span>
+                              <span>{isSaved ? '킵됨' : '킵'}</span>
                             </button>
                           </div>
                         </div>
