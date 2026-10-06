@@ -209,8 +209,47 @@ const handleWordLookup = async (req, res) => {
 app.get('/api/dictionary/lookup', handleWordLookup);
 app.get('/youtubekw/api/dictionary/lookup', handleWordLookup);
 
-// ── Saved Sentences (북마크 명문장함) Endpoints ──
+// ── Saved Sentences (북마크 명문장함 & 영어문장암기장 연동) Endpoints ──
 const SENTENCES_FILE = '/home/kw/.kwsoft-user-store/saved_sentences.json';
+const MASTER_SENTENCES_FILE = '/home/kw/.kwsoft-user-store/sentence-master.json';
+
+function syncToMasterSentenceVault(item) {
+  try {
+    let masterData = { version: '2.0.0', sentences: [], lastUpdated: new Date().toISOString() };
+    if (fs.existsSync(MASTER_SENTENCES_FILE)) {
+      try { masterData = JSON.parse(fs.readFileSync(MASTER_SENTENCES_FILE, 'utf8')); } catch (e) {}
+    }
+    if (!Array.isArray(masterData.sentences)) masterData.sentences = [];
+
+    const clean = (item.text || '').trim().toLowerCase();
+    const existing = masterData.sentences.find(s => (s.text || '').trim().toLowerCase() === clean);
+
+    if (!existing) {
+      masterData.sentences.unshift({
+        id: item.id || `sent_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+        text: (item.text || '').trim(),
+        translation: item.translation || '',
+        sourceApp: 'youtubekw',
+        sourceAppName: '유튜브쉐도잉',
+        sourceTab: '쉐도잉 플레이어',
+        sourceTitle: item.videoTitle || '유튜브 쉐도잉 영상',
+        sourceUrl: item.videoId ? `https://www.youtube.com/watch?v=${item.videoId}` : '',
+        audioTimestamp: typeof item.start === 'number' ? item.start : 0,
+        tags: ['유튜브쉐도잉', '명문장'],
+        createdAt: item.savedAt || new Date().toISOString(),
+        playCount: 1,
+        practiceCount: 0,
+        lastScore: null,
+        bookmarked: true,
+        bundleIds: []
+      });
+      masterData.lastUpdated = new Date().toISOString();
+      fs.writeFileSync(MASTER_SENTENCES_FILE, JSON.stringify(masterData, null, 2), 'utf8');
+    }
+  } catch (err) {
+    console.warn('[YouTubeKW] Master vault sync warning:', err);
+  }
+}
 
 function loadSavedSentences() {
   try {
@@ -263,6 +302,10 @@ const handleAddSentence = (req, res) => {
 
     list.unshift(newSent);
     saveSentencesToFile(list);
+    
+    // Sync seamlessly to Global Sentences Vault (영어문장암기장)
+    syncToMasterSentenceVault(newSent);
+
     res.json({ ok: true, sentence: newSent, created: true });
   } catch (e) {
     res.status(500).json({ ok: false, error: e.message });
