@@ -1491,36 +1491,29 @@ export default function LanguageReactorPlayer({
   const handleToggleSaveSentence = async (line, e) => {
     if (e) e.stopPropagation();
     const existing = savedSentences.find(s => s.text === line.text && s.videoId === currentVideo.videoId);
+    if (existing || savingSentence) return;
 
-    if (existing) {
-      // Remove sentence
-      handleDeleteSavedSentence(existing.id);
-    } else {
-      // Add sentence
-      setSavingSentence(true);
-      try {
-        const res = await fetch(`${API_BASE}/sentences`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            videoId: currentVideo.videoId,
-            videoTitle: currentVideo.title,
-            start: line.start,
-            end: line.end,
-            text: line.text,
-            translation: line.translation
-          })
-        });
-        const data = await res.json();
-        if (data.ok && data.sentence) {
-          setSavedSentences(prev => [data.sentence, ...prev]);
-          showVocabToast('🔖 명문장이 [저장한 문장함]에 추가되었습니다!', 'success');
-        }
-      } catch (err) {
-        showVocabToast('문장 저장에 실패했습니다.', 'error');
-      } finally {
-        setSavingSentence(false);
+    setSavingSentence(true);
+    try {
+      const res = await fetch(`${API_BASE}/sentences`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          videoId: currentVideo.videoId,
+          videoTitle: currentVideo.title,
+          start: line.start,
+          end: line.end,
+          text: line.text,
+          translation: line.translation
+        })
+      });
+      const data = await res.json();
+      if (data.ok && data.sentence) {
+        setSavedSentences(prev => [data.sentence, ...prev]);
       }
+    } catch (err) {
+    } finally {
+      setSavingSentence(false);
     }
   };
 
@@ -2613,7 +2606,8 @@ export default function LanguageReactorPlayer({
                             <button
                               className={`line-save-btn ${isSaved ? 'active' : ''}`}
                               onClick={(e) => handleToggleSaveSentence(line, e)}
-                              title={isSaved ? "⭐ 영어문장암기장에 보관됨 (클릭 시 킵 해제)" : "📌 영어문장암기장으로 쏙 킵"}
+                              disabled={isSaved}
+                              title={isSaved ? "⭐ 영어문장암기장에 보관됨 (삭제는 암기장 앱에서 가능)" : "📌 영어문장암기장으로 쏙 킵"}
                               style={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
@@ -2626,7 +2620,7 @@ export default function LanguageReactorPlayer({
                                 color: isSaved ? '#fff' : '#fbbf24',
                                 border: '1px solid rgba(245, 158, 11, 0.4)',
                                 boxShadow: isSaved ? '0 0 12px rgba(245, 158, 11, 0.4)' : 'none',
-                                cursor: 'pointer',
+                                cursor: isSaved ? 'default' : 'pointer',
                                 transition: 'all 0.2s'
                               }}
                             >
@@ -2750,7 +2744,8 @@ export default function LanguageReactorPlayer({
                             <button
                               className={`line-save-btn ${isSaved ? 'active' : ''}`}
                               onClick={(e) => handleToggleSaveSentence(line, e)}
-                              title={isSaved ? "⭐ 영어문장암기장에 보관됨 (클릭 시 킵 해제)" : "📌 영어문장암기장으로 쏙 킵"}
+                              disabled={isSaved}
+                              title={isSaved ? "⭐ 영어문장암기장에 보관됨 (삭제는 암기장 앱에서 가능)" : "📌 영어문장암기장으로 쏙 킵"}
                               style={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
@@ -2763,7 +2758,7 @@ export default function LanguageReactorPlayer({
                                 color: isSaved ? '#fff' : '#fbbf24',
                                 border: '1px solid rgba(245, 158, 11, 0.4)',
                                 boxShadow: isSaved ? '0 0 10px rgba(245, 158, 11, 0.35)' : 'none',
-                                cursor: 'pointer',
+                                cursor: isSaved ? 'default' : 'pointer',
                                 transition: 'all 0.2s'
                               }}
                             >
