@@ -11,19 +11,19 @@
   "theme_color": "#07090e",
   "icons": [
     {
-      "src": "/kwboard/icon-192.png",
+      "src": "/youtubekw/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/kwboard/icon-512.png",
+      "src": "/youtubekw/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/kwboard/icon-512.png",
+      "src": "/youtubekw/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
