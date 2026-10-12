@@ -247,7 +247,6 @@ export default function App() {
     { id: 'news_interview', label: '📰 뉴스 & 명사 인터뷰' },
     { id: 'movie_drama', label: '🎬 드라마 & 영화 명장면' },
     { id: 'pop_music', label: '🎵 팝송 & 보컬 가사' },
-    { id: 'top_trained', label: '🔥 최다 훈련순' },
   ];
 
   const filteredItems = useMemo(() => {
