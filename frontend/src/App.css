@@ -676,19 +676,23 @@ body {
   color: #facc15;
 }
 
-/* 2-Tier Category Hierarchy Navigation - Glassmorphism Container */
+/* 2-Tier Category Hierarchy Navigation - Pure Crystal Glass Container */
 .yt-category-hierarchy {
   display: flex;
   flex-direction: column;
   gap: 14px;
   margin-bottom: 22px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%), rgba(15, 23, 42, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 20px;
-  padding: 18px 22px;
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-top-color: rgba(255, 255, 255, 0.25);
+  border-bottom-color: rgba(255, 255, 255, 0.05);
+  border-radius: 24px;
+  padding: 20px 24px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 
+    0 16px 40px -10px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .major-lang-bar, .sub-cat-bar {
@@ -699,8 +703,8 @@ body {
 }
 
 .major-lang-bar {
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .hierarchy-title-wrap {
@@ -711,21 +715,20 @@ body {
 }
 
 .hierarchy-badge {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(29, 78, 216, 0.8) 100%);
-  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  color: #93c5fd;
   font-size: 0.72rem;
   font-weight: 800;
-  padding: 3px 10px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  padding: 4px 10px;
+  border-radius: 9999px;
+  border: 1px solid rgba(147, 197, 253, 0.3);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3);
   letter-spacing: 0.5px;
 }
 
 .hierarchy-badge.sub {
-  background: linear-gradient(135deg, rgba(168, 85, 247, 0.8) 0%, rgba(126, 34, 206, 0.8) 100%);
-  border-color: rgba(216, 180, 254, 0.35);
-  box-shadow: 0 2px 8px rgba(168, 85, 247, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  color: #d8b4fe;
+  border-color: rgba(216, 180, 254, 0.3);
 }
 
 .lang-pill-list, .sub-cat-pill-list {
