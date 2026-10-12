@@ -882,7 +882,24 @@ export default function App() {
                                 className="btn-play-sm"
                                 onClick={() => {
                                   const videoId = v.videoId || (v.url ? v.url.match(/(?:youtu\.be\/|v=)([\w-]{11})/)?.[1] : null);
-                                  setSelectedPlayerVideo({ ...v, videoId: videoId || v.id });
+                                  const preparedVideo = {
+                                    ...v,
+                                    videoId: videoId || v.id,
+                                    url: v.url || `https://www.youtube.com/watch?v=${videoId || v.id}`,
+                                  };
+                                  // Find in global items or use session videos as playlist
+                                  const sessionPlaylist = (session.videos || []).map(sv => {
+                                    const svId = sv.videoId || (sv.url ? sv.url.match(/(?:youtu\.be\/|v=)([\w-]{11})/)?.[1] : null);
+                                    return {
+                                      ...sv,
+                                      videoId: svId || sv.id,
+                                      url: sv.url || `https://www.youtube.com/watch?v=${svId || sv.id}`,
+                                    };
+                                  });
+                                  setPlayerPlaylistState({
+                                    playlist: sessionPlaylist.length > 0 ? sessionPlaylist : [preparedVideo],
+                                    initialIndex: vIdx >= 0 ? vIdx : 0,
+                                  });
                                 }}
                               >
                                 ⚡ 쉐도잉 스튜디오 (실시간 자막)
