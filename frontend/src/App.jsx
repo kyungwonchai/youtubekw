@@ -12,7 +12,8 @@ export default function App() {
   const [runningWeekly, setRunningWeekly] = useState(false);
   const [activeTab, setActiveTab] = useState('feed'); // 'feed', 'bookmarked', 'weekly', 'speakers'
   const [selectedLanguage, setSelectedLanguage] = useState('all'); // 'all', 'en', 'es', 'ja', 'zh', 'fr', 'de'
-  const [selectedCategory, setSelectedCategory] = useState('all'); // 'all', 'ted_speech', 'essay_deep', 'conversation', 'sleep_life', 'pop_music', 'top_trained'
+  const [selectedCategory, setSelectedCategory] = useState('all'); // 'all', 'ted_speech', 'essay_deep', 'conversation', 'sleep_life', 'pop_music'
+  const [selectedChannelFilter, setSelectedChannelFilter] = useState('all'); // 'all' or specific channelTitle
   const [popArtistFilter, setPopArtistFilter] = useState('all'); // 'all', 'Olivia Rodrigo', 'Billie Eilish'
   const [searchQuery, setSearchQuery] = useState('');
   const [customUrl, setCustomUrl] = useState('');
@@ -301,6 +302,15 @@ export default function App() {
         }
       }
 
+      // Channel / Creator Filter
+      if (selectedChannelFilter !== 'all') {
+        const itemChannel = (item.channelTitle || '').trim();
+        const itemArtist = (item.artist || '').trim();
+        if (itemChannel !== selectedChannelFilter && itemArtist !== selectedChannelFilter) {
+          return false;
+        }
+      }
+
       // Search Query Filter
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
@@ -312,16 +322,30 @@ export default function App() {
       return true;
     });
 
-    if (selectedCategory === 'top_trained') {
-      result = [...result].sort((a, b) => {
-        const aStats = listenStats.videoStats?.[a.videoId]?.totalListens || 0;
-        const bStats = listenStats.videoStats?.[b.videoId]?.totalListens || 0;
-        return bStats - aStats;
-      });
-    }
-
     return result;
-  }, [items, activeTab, selectedLanguage, selectedCategory, popArtistFilter, searchQuery, listenStats]);
+  }, [items, activeTab, selectedLanguage, selectedCategory, selectedChannelFilter, popArtistFilter, searchQuery, listenStats]);
+
+  // Dynamic Channel/Speaker list based on current language and category
+  const channelList = useMemo(() => {
+    const counts = {};
+    items.forEach(i => {
+      const itemLang = i.language || (i.category === 'spanish' ? 'es' : 'en');
+      if (selectedLanguage !== 'all' && itemLang !== selectedLanguage) return;
+      if (selectedCategory !== 'all') {
+        if (selectedCategory === 'pop_music') {
+          if (i.category !== 'pop_music' && i.source !== 'ytmusic_pop') return;
+        } else if (i.category !== selectedCategory) {
+          return;
+        }
+      }
+      const ch = (i.channelTitle || i.artist || '').trim();
+      if (ch) counts[ch] = (counts[ch] || 0) + 1;
+    });
+
+    return Object.entries(counts)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count);
+  }, [items, selectedLanguage, selectedCategory]);
 
   const bookmarkedCount = items.filter(i => i.bookmarked).length;
 
@@ -458,166 +482,175 @@ export default function App() {
             </div>
           </div>
 
-          {/* Category Filters (Active in Feed mode, Disabled/Dimmed in Bookmark mode) */}
-          {activeTab === 'bookmarked' ? (
-            <div className="bookmark-all-notice-bar">
-              <span className="notice-icon">⭐</span>
-              <span className="notice-text">
-                <strong>찜 보관함 전용 모드:</strong> 필터 조건과 관계없이 내가 저장한 <strong>{bookmarkedCount}개의 찜 영상 전체</strong>를 빠짐없이 표시합니다.
-              </span>
-            </div>
-          ) : (
-            <>
-              {/* Tier 1: Major Language Tabs */}
-              <div className="major-lang-bar">
-                <div className="hierarchy-title-wrap">
-                  <span className="hierarchy-badge">언어</span>
-                </div>
-                <div className="lang-pill-list">
-                  {LANGUAGES.map(lang => {
-                    const count = lang.id === 'all'
-                      ? items.length
-                      : items.filter(i => (i.language || (i.category === 'spanish' ? 'es' : 'en')) === lang.id).length;
-                    return (
-                      <button
-                        key={lang.id}
-                        className={`lang-tab-btn ${selectedLanguage === lang.id ? 'active' : ''}`}
-                        onClick={() => {
-                          setSelectedLanguage(lang.id);
-                          setPopArtistFilter('all');
-                        }}
-                      >
-                        <span className="lang-flag">{lang.flag}</span>
-                        <span className="lang-name">{lang.name}</span>
-                        <span className="lang-count">{count}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Tier 2: Sub-category Topic Pills */}
-              <div className="sub-cat-bar">
-                <div className="hierarchy-title-wrap">
-                  <span className="hierarchy-badge sub">주제</span>
-                </div>
-                <div className="sub-cat-pill-list">
-                  {SUB_CATEGORIES.map(cat => {
-                    // Calculate count for this subcategory under the currently selected language
-                    let count = 0;
-                    const langFiltered = selectedLanguage === 'all'
-                      ? items
-                      : items.filter(i => (i.language || (i.category === 'spanish' ? 'es' : 'en')) === selectedLanguage);
-
-                    if (cat.id === 'all' || cat.id === 'top_trained') {
-                      count = langFiltered.length;
-                    } else if (cat.id === 'pop_music') {
-                      count = langFiltered.filter(i => i.category === 'pop_music' || i.source === 'ytmusic_pop').length;
-                    } else {
-                      count = langFiltered.filter(i => i.category === cat.id).length;
-                    }
-
-                    return (
-                      <button
-                        key={cat.id}
-                        className={`sub-cat-pill ${selectedCategory === cat.id ? 'active' : ''} ${cat.id === 'pop_music' ? 'cat-pop-music' : ''}`}
-                        onClick={() => setSelectedCategory(cat.id)}
-                      >
-                        <span className="cat-label-text">{cat.label}</span>
-                        <span className="cat-count-badge">({count})</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Pop Music Artist Sub-filter */}
-              {selectedCategory === 'pop_music' && (
-                <div className="pop-artist-filter-bar">
-                  <button
-                    className={`pop-artist-pill ${popArtistFilter === 'all' ? 'active' : ''}`}
-                    onClick={() => setPopArtistFilter('all')}
-                  >
-                    🎵 전체 노래 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (selectedLanguage === 'all' || (i.language || 'en') === selectedLanguage)).length}곡)
-                  </button>
-                  <button
-                    className={`pop-artist-pill olivia ${popArtistFilter === 'Olivia Rodrigo' ? 'active' : ''}`}
-                    onClick={() => setPopArtistFilter('Olivia Rodrigo')}
-                  >
-                    💜 올리비아 로드리고
-                  </button>
-                  <button
-                    className={`pop-artist-pill adele ${popArtistFilter === 'Adele' ? 'active' : ''}`}
-                    onClick={() => setPopArtistFilter('Adele')}
-                  >
-                    💙 아델
-                  </button>
-                  <button
-                    className={`pop-artist-pill billie ${popArtistFilter === 'Billie Eilish' ? 'active' : ''}`}
-                    onClick={() => setPopArtistFilter('Billie Eilish')}
-                  >
-                    💚 빌리 아일리시
-                  </button>
-                  <button
-                    className={`pop-artist-pill taylor ${popArtistFilter === 'Taylor Swift' ? 'active' : ''}`}
-                    onClick={() => setPopArtistFilter('Taylor Swift')}
-                  >
-                    💖 테일러 스위프트
-                  </button>
-                  <button
-                    className={`pop-artist-pill coldplay ${popArtistFilter === 'Coldplay' ? 'active' : ''}`}
-                    onClick={() => setPopArtistFilter('Coldplay')}
-                  >
-                    ✨ 콜드플레이
-                  </button>
-                  <button
-                    className={`pop-artist-pill ed ${popArtistFilter === 'Ed Sheeran' ? 'active' : ''}`}
-                    onClick={() => setPopArtistFilter('Ed Sheeran')}
-                  >
-                    🧡 에드 시런
-                  </button>
-                  <button
-                    className={`pop-artist-pill kpop ${popArtistFilter === 'K-Pop Ballads' ? 'active' : ''}`}
-                    onClick={() => setPopArtistFilter('K-Pop Ballads')}
-                  >
-                    🌸 아이유 / 태연 / 양요섭
-                  </button>
-                  <button
-                    className={`pop-artist-pill lana ${popArtistFilter === 'Lana Del Rey' ? 'active' : ''}`}
-                    onClick={() => setPopArtistFilter('Lana Del Rey')}
-                  >
-                    🖤 라나 델 레이
-                  </button>
-                  <button
-                    className={`pop-artist-pill sabrina ${popArtistFilter === 'Sabrina Carpenter' ? 'active' : ''}`}
-                    onClick={() => setPopArtistFilter('Sabrina Carpenter')}
-                  >
-                    ☕ 사브리나 카펜터
-                  </button>
-                  <button
-                    className={`pop-artist-pill dua ${popArtistFilter === 'Dua Lipa' ? 'active' : ''}`}
-                    onClick={() => setPopArtistFilter('Dua Lipa')}
-                  >
-                    🌌 두아 리파
-                  </button>
-                  <button
-                    className={`pop-artist-pill gracie ${popArtistFilter === 'Gracie Abrams' ? 'active' : ''}`}
-                    onClick={() => setPopArtistFilter('Gracie Abrams')}
-                  >
-                    🤍 그레이시 에이브럼스
-                  </button>
-                </div>
+          {/* Quick Active Filter Badges */}
+          {(selectedLanguage !== 'all' || selectedCategory !== 'all' || selectedChannelFilter !== 'all' || popArtistFilter !== 'all') && (
+            <div className="active-filter-chips-row">
+              <span className="chips-label">🎯 적용된 필터:</span>
+              {selectedLanguage !== 'all' && (
+                <span className="filter-chip">
+                  {LANGUAGES.find(l => l.id === selectedLanguage)?.label || selectedLanguage}
+                  <button onClick={() => { setSelectedLanguage('all'); setSelectedChannelFilter('all'); }}>✕</button>
+                </span>
               )}
-            </>
+              {selectedCategory !== 'all' && (
+                <span className="filter-chip">
+                  {SUB_CATEGORIES.find(c => c.id === selectedCategory)?.label || selectedCategory}
+                  <button onClick={() => { setSelectedCategory('all'); setSelectedChannelFilter('all'); setPopArtistFilter('all'); }}>✕</button>
+                </span>
+              )}
+              {selectedChannelFilter !== 'all' && (
+                <span className="filter-chip highlight">
+                  👤 {selectedChannelFilter}
+                  <button onClick={() => setSelectedChannelFilter('all')}>✕</button>
+                </span>
+              )}
+              {popArtistFilter !== 'all' && (
+                <span className="filter-chip highlight">
+                  🎵 {popArtistFilter}
+                  <button onClick={() => setPopArtistFilter('all')}>✕</button>
+                </span>
+              )}
+              <button
+                className="btn-reset-filters"
+                onClick={() => {
+                  setSelectedLanguage('all');
+                  setSelectedCategory('all');
+                  setSelectedChannelFilter('all');
+                  setPopArtistFilter('all');
+                  setSearchQuery('');
+                }}
+              >
+                전체 초기화
+              </button>
+            </div>
           )}
         </div>
       )}
 
-      {/* Main Content Area */}
-      <main className="yt-main">
-        {/* TAB 1 & 2: Video Grid (Feed / Bookmarked) */}
+      {/* Main Layout Container (Left Sidebar + Right Feed) */}
+      <div className={`yt-layout-container ${activeTab === 'feed' || activeTab === 'bookmarked' ? 'with-sidebar' : 'full-width'}`}>
+        {/* LEFT CLASSIFICATION SIDEBAR */}
         {(activeTab === 'feed' || activeTab === 'bookmarked') && (
-          loading ? (
+          <aside className="yt-sidebar">
+            {activeTab === 'bookmarked' ? (
+              <div className="sidebar-section">
+                <div className="sidebar-section-title">
+                  <span>⭐ 찜 보관함</span>
+                </div>
+                <div className="sidebar-bookmark-note">
+                  저장된 <strong>{bookmarkedCount}개</strong>의 찜 영상 목록입니다.
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* 1. 언어별 분류 */}
+                <div className="sidebar-section">
+                  <div className="sidebar-section-title">
+                    <span>🌐 언어별</span>
+                  </div>
+                  <div className="sidebar-nav-list">
+                    {LANGUAGES.map(lang => {
+                      const count = lang.id === 'all'
+                        ? items.length
+                        : items.filter(i => (i.language || (i.category === 'spanish' ? 'es' : 'en')) === lang.id).length;
+                      return (
+                        <button
+                          key={lang.id}
+                          className={`sidebar-nav-item ${selectedLanguage === lang.id ? 'active' : ''}`}
+                          onClick={() => {
+                            setSelectedLanguage(lang.id);
+                            setSelectedChannelFilter('all');
+                            setPopArtistFilter('all');
+                          }}
+                        >
+                          <span className="item-icon">{lang.flag}</span>
+                          <span className="item-label">{lang.name}</span>
+                          <span className="item-count">{count}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 2. 장르/주제별 분류 */}
+                <div className="sidebar-section">
+                  <div className="sidebar-section-title">
+                    <span>📑 장르 & 주제별</span>
+                  </div>
+                  <div className="sidebar-nav-list">
+                    {SUB_CATEGORIES.map(cat => {
+                      let count = 0;
+                      const langFiltered = selectedLanguage === 'all'
+                        ? items
+                        : items.filter(i => (i.language || (i.category === 'spanish' ? 'es' : 'en')) === selectedLanguage);
+
+                      if (cat.id === 'all') {
+                        count = langFiltered.length;
+                      } else if (cat.id === 'pop_music') {
+                        count = langFiltered.filter(i => i.category === 'pop_music' || i.source === 'ytmusic_pop').length;
+                      } else {
+                        count = langFiltered.filter(i => i.category === cat.id).length;
+                      }
+
+                      return (
+                        <button
+                          key={cat.id}
+                          className={`sidebar-nav-item ${selectedCategory === cat.id ? 'active' : ''}`}
+                          onClick={() => {
+                            setSelectedCategory(cat.id);
+                            setSelectedChannelFilter('all');
+                            setPopArtistFilter('all');
+                          }}
+                        >
+                          <span className="item-label">{cat.label}</span>
+                          <span className="item-count">{count}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 3. 사람별 (스피커 / 채널 / 아티스트) 분류 */}
+                <div className="sidebar-section">
+                  <div className="sidebar-section-title">
+                    <span>👤 사람 & 크리에이터별</span>
+                    {selectedChannelFilter !== 'all' && (
+                      <button className="sidebar-mini-clear" onClick={() => setSelectedChannelFilter('all')}>전체</button>
+                    )}
+                  </div>
+                  <div className="sidebar-nav-list scrollable-creators">
+                    <button
+                      className={`sidebar-nav-item ${selectedChannelFilter === 'all' ? 'active' : ''}`}
+                      onClick={() => setSelectedChannelFilter('all')}
+                    >
+                      <span className="item-icon">👥</span>
+                      <span className="item-label">전체 크리에이터</span>
+                      <span className="item-count">{channelList.reduce((acc, c) => acc + c.count, 0)}</span>
+                    </button>
+                    {channelList.slice(0, 35).map(ch => (
+                      <button
+                        key={ch.name}
+                        className={`sidebar-nav-item ${selectedChannelFilter === ch.name ? 'active' : ''}`}
+                        onClick={() => setSelectedChannelFilter(ch.name)}
+                        title={ch.name}
+                      >
+                        <span className="item-icon">🎙️</span>
+                        <span className="item-label text-truncate">{ch.name}</span>
+                        <span className="item-count">{ch.count}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+          </aside>
+        )}
+
+        {/* Main Content Area */}
+        <main className="yt-main">
+          {/* TAB 1 & 2: Video Grid (Feed / Bookmarked) */}
+          {(activeTab === 'feed' || activeTab === 'bookmarked') && (
+            loading ? (
             <div className="loading-state">
               <div className="spinner large"></div>
               <p>영상을 불러오는 중입니다...</p>
@@ -982,6 +1015,7 @@ export default function App() {
         )}
         {/* TAB 5: Game Lounge (Password Protected) */}
       </main>
+      </div>
 
       {/* Language Reactor Studio Live Player Modal */}
       {playerPlaylistState && (
