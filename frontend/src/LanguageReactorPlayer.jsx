@@ -3,6 +3,81 @@ import './LanguageReactorPlayer.css';
 
 const API_BASE = window.location.pathname.startsWith('/youtubekw') ? '/youtubekw/api' : '/api';
 
+// ── Static POS Sets & Classifier (Zero Allocation & Instant Lookups) ──
+const STATIC_POS_PRONOUNS = new Set([
+  'i', 'you', 'he', 'she', 'it', 'we', 'they', 'me', 'him', 'her', 'us', 'them',
+  'my', 'your', 'his', 'its', 'our', 'their', 'mine', 'yours', 'hers', 'ours', 'theirs',
+  'myself', 'yourself', 'himself', 'herself', 'itself', 'ourselves', 'themselves',
+  'this', 'that', 'these', 'those', 'who', 'whom', 'whose', 'which', 'what', 'whatever', 'whoever'
+]);
+
+const STATIC_POS_PREPOSITIONS = new Set([
+  'in', 'on', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through',
+  'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'of', 'off',
+  'over', 'under', 'and', 'but', 'or', 'nor', 'so', 'yet', 'because', 'although', 'since',
+  'unless', 'while', 'where', 'when', 'if', 'than', 'as', 'out', 'into'
+]);
+
+const STATIC_POS_ADJECTIVES = new Set([
+  'good', 'great', 'new', 'first', 'last', 'long', 'great', 'little', 'own', 'other',
+  'old', 'right', 'big', 'high', 'different', 'small', 'large', 'next', 'early', 'young',
+  'important', 'few', 'public', 'bad', 'same', 'able', 'best', 'better', 'hard', 'real',
+  'simple', 'true', 'strong', 'free', 'special', 'clear', 'full', 'easy', 'deep', 'sure',
+  'human', 'local', 'general', 'specific', 'major', 'economic', 'happy', 'ready', 'open'
+]);
+
+const STATIC_POS_VERBS = new Set([
+  'be', 'is', 'are', 'was', 'were', 'been', 'being', 'have', 'has', 'had', 'having',
+  'do', 'does', 'did', 'done', 'doing', 'can', 'could', 'will', 'would', 'shall', 'should',
+  'may', 'might', 'must', 'make', 'makes', 'made', 'take', 'takes', 'took', 'taken',
+  'get', 'gets', 'got', 'gotten', 'go', 'goes', 'went', 'gone', 'come', 'comes', 'came',
+  'know', 'knows', 'knew', 'known', 'see', 'sees', 'saw', 'seen', 'think', 'thinks', 'thought',
+  'say', 'says', 'said', 'tell', 'tells', 'told', 'look', 'looks', 'looked', 'find', 'finds', 'found',
+  'give', 'gives', 'gave', 'given', 'work', 'works', 'worked', 'call', 'calls', 'called',
+  'try', 'tries', 'tried', 'ask', 'asks', 'asked', 'feel', 'feels', 'felt', 'become', 'becomes', 'became',
+  'leave', 'leaves', 'left', 'put', 'puts', 'mean', 'means', 'meant', 'keep', 'keeps', 'kept',
+  'let', 'lets', 'begin', 'begins', 'began', 'begun', 'seem', 'seems', 'seemed', 'help', 'helps', 'helped',
+  'talk', 'talks', 'talked', 'turn', 'turns', 'turned', 'start', 'starts', 'started', 'show', 'shows', 'showed', 'shown',
+  'hear', 'hears', 'heard', 'play', 'plays', 'played', 'run', 'runs', 'ran', 'move', 'moves', 'moved',
+  'like', 'likes', 'liked', 'live', 'lives', 'lived', 'believe', 'believes', 'believed', 'hold', 'holds', 'held',
+  'bring', 'brings', 'brought', 'happen', 'happens', 'happened', 'write', 'writes', 'wrote', 'written',
+  'provide', 'provides', 'provided', 'sit', 'sits', 'sat', 'stand', 'stands', 'stood', 'lose', 'loses', 'lost',
+  'pay', 'pays', 'paid', 'meet', 'meets', 'met', 'include', 'includes', 'included', 'continue', 'continues',
+  'set', 'sets', 'learn', 'learns', 'learned', 'change', 'changes', 'changed', 'lead', 'leads', 'led',
+  'understand', 'understands', 'understood', 'watch', 'watches', 'watched', 'follow', 'follows', 'followed',
+  'stop', 'stops', 'stopped', 'create', 'creates', 'created', 'speak', 'speaks', 'spoke', 'spoken',
+  'read', 'reads', 'allow', 'allows', 'allowed', 'add', 'adds', 'added', 'spend', 'spends', 'spent',
+  'grow', 'grows', 'grew', 'grown', 'open', 'opens', 'opened', 'walk', 'walks', 'walked', 'win', 'wins', 'won',
+  'offer', 'offers', 'offered', 'remember', 'remembers', 'remembered', 'love', 'loves', 'loved',
+  'consider', 'considers', 'considered', 'appear', 'appears', 'appeared', 'buy', 'buys', 'bought',
+  'wait', 'waits', 'waited', 'serve', 'serves', 'served', 'die', 'dies', 'died', 'send', 'sends', 'sent',
+  'expect', 'expects', 'expected', 'build', 'builds', 'built', 'stay', 'stays', 'stayed', 'fall', 'falls', 'fell',
+  'cut', 'cuts', 'reach', 'reaches', 'reached', 'kill', 'kills', 'killed', 'remain', 'remains', 'remained'
+]);
+
+const STATIC_POS_ADVERBS = new Set([
+  'very', 'really', 'always', 'never', 'often', 'sometimes', 'usually', 'quite', 'too',
+  'also', 'just', 'even', 'already', 'still', 'again', 'actually', 'especially', 'well',
+  'almost', 'enough', 'now', 'then', 'here', 'there', 'today', 'tonight', 'tomorrow', 'yesterday'
+]);
+
+const classifyWordPos = (rawWord) => {
+  const w = (rawWord || '').toLowerCase().replace(/[^a-z]/g, '');
+  if (!w) return '';
+  if (STATIC_POS_PRONOUNS.has(w)) return 'pos-pron';
+  if (STATIC_POS_PREPOSITIONS.has(w)) return 'pos-prep';
+  if (STATIC_POS_VERBS.has(w)) return 'pos-verb';
+  if (STATIC_POS_ADJECTIVES.has(w)) return 'pos-adj';
+  if (STATIC_POS_ADVERBS.has(w) || (w.endsWith('ly') && w.length > 3)) return 'pos-adv';
+  if (w.endsWith('ful') || w.endsWith('less') || w.endsWith('ous') || w.endsWith('able') ||
+      w.endsWith('ible') || w.endsWith('ive') || w.endsWith('ic') || w.endsWith('al') ||
+      w.endsWith('ish') || w.endsWith('ent') || w.endsWith('ant')) return 'pos-adj';
+  if (w.endsWith('ing') || w.endsWith('ed') || w.endsWith('ize') || w.endsWith('ise') || w.endsWith('ate')) return 'pos-verb';
+  if (w.endsWith('tion') || w.endsWith('sion') || w.endsWith('ment') || w.endsWith('ness') ||
+      w.endsWith('ity') || w.endsWith('ship') || w.endsWith('er') || w.endsWith('or') || w.endsWith('ist')) return 'pos-noun';
+  return 'pos-noun';
+};
+
 export default function LanguageReactorPlayer({
   video,
   playlist = [],
@@ -337,6 +412,9 @@ export default function LanguageReactorPlayer({
 
   // Saved Sentences Drawer State (좋은 명문장 별도 저장함)
   const [savedSentences, setSavedSentences] = useState([]);
+  const savedSentenceSet = useMemo(() => {
+    return new Set(savedSentences.map(s => `${s.videoId || ''}::${(s.text || '').trim().toLowerCase()}`));
+  }, [savedSentences]);
   const [showSentencesDrawer, setShowSentencesDrawer] = useState(false);
   const [savingSentence, setSavingSentence] = useState(false);
 
@@ -642,7 +720,19 @@ export default function LanguageReactorPlayer({
       .then(data => {
         if (!isMounted) return;
         if (data.ok && Array.isArray(data.lines) && data.lines.length > 0) {
-          setTranscript(data.lines);
+          const preprocessed = data.lines.map((line, idx) => {
+            const rawWords = (line.text || '').split(/\s+/).filter(Boolean);
+            const words = rawWords.map(w => ({
+              raw: w,
+              pos: getWordPosClass(w)
+            }));
+            return {
+              ...line,
+              id: line.id || `sub_${idx}_${line.start}`,
+              words
+            };
+          });
+          setTranscript(preprocessed);
         } else {
           setTranscriptError(data.error || '이 영상은 자막 데이터를 지원하지 않습니다.');
         }
@@ -892,7 +982,8 @@ export default function LanguageReactorPlayer({
     return 0;
   };
 
-  // 4. Ultra high-speed continuous time polling loop (30ms) for instant zero-lag subtitle sync
+  // 4. Optimized high-speed continuous time polling loop (80ms) for smooth subtitle sync without CPU saturation
+  const currentTimeRef = useRef(0);
   useEffect(() => {
     if (timeUpdateInterval.current) clearInterval(timeUpdateInterval.current);
 
@@ -906,7 +997,7 @@ export default function LanguageReactorPlayer({
         }
 
         if (typeof t === 'number' && t >= 0) {
-          setCurrentTime(t);
+          currentTimeRef.current = t;
           const currentTranscript = transcriptRef.current;
           const currentActiveIdx = activeIndexRef.current;
           const currentLoopMode = loopModeRef.current;
@@ -1008,7 +1099,7 @@ export default function LanguageReactorPlayer({
           }
         }
       } catch (e) {}
-    }, 30);
+    }, 80);
 
     return () => {
       if (timeUpdateInterval.current) clearInterval(timeUpdateInterval.current);
@@ -1058,12 +1149,14 @@ export default function LanguageReactorPlayer({
 
         navigator.mediaSession.setActionHandler('seekbackward', (details) => {
           const skipTime = details.seekOffset || 10;
-          handleSeekTo(Math.max(0, currentTime - skipTime));
+          const curT = currentTimeRef.current || 0;
+          handleSeekTo(Math.max(0, curT - skipTime));
         });
 
         navigator.mediaSession.setActionHandler('seekforward', (details) => {
           const skipTime = details.seekOffset || 10;
-          handleSeekTo(Math.min(duration || 99999, currentTime + skipTime));
+          const curT = currentTimeRef.current || 0;
+          handleSeekTo(Math.min(duration || 99999, curT + skipTime));
         });
 
         navigator.mediaSession.setActionHandler('seekto', (details) => {
@@ -1073,7 +1166,7 @@ export default function LanguageReactorPlayer({
         });
       } catch (e) {}
     }
-  }, [video, bgAudioMode, player, activeIndex, transcript, currentTime, duration]);
+  }, [video, bgAudioMode, player, activeIndex, transcript, duration]);
 
   // 6. Toggle Background Audio Mode
   const handleToggleBgAudio = async () => {
@@ -1244,79 +1337,9 @@ export default function LanguageReactorPlayer({
   };
 
   // ── POS Classifier (Language Reactor Style) ──
-  const POS_PRONOUNS = useMemo(() => new Set([
-    'i', 'you', 'he', 'she', 'it', 'we', 'they', 'me', 'him', 'her', 'us', 'them',
-    'my', 'your', 'his', 'its', 'our', 'their', 'mine', 'yours', 'hers', 'ours', 'theirs',
-    'myself', 'yourself', 'himself', 'herself', 'itself', 'ourselves', 'themselves',
-    'this', 'that', 'these', 'those', 'who', 'whom', 'whose', 'which', 'what', 'whatever', 'whoever'
-  ]), []);
-
-  const POS_PREPOSITIONS = useMemo(() => new Set([
-    'in', 'on', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through',
-    'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'of', 'off',
-    'over', 'under', 'and', 'but', 'or', 'nor', 'so', 'yet', 'because', 'although', 'since',
-    'unless', 'while', 'where', 'when', 'if', 'than', 'as', 'out', 'into'
-  ]), []);
-
-  const POS_ADJECTIVES = useMemo(() => new Set([
-    'good', 'great', 'new', 'first', 'last', 'long', 'great', 'little', 'own', 'other',
-    'old', 'right', 'big', 'high', 'different', 'small', 'large', 'next', 'early', 'young',
-    'important', 'few', 'public', 'bad', 'same', 'able', 'best', 'better', 'hard', 'real',
-    'simple', 'true', 'strong', 'free', 'special', 'clear', 'full', 'easy', 'deep', 'sure',
-    'human', 'local', 'general', 'specific', 'major', 'economic', 'happy', 'ready', 'open'
-  ]), []);
-
-  const POS_VERBS = useMemo(() => new Set([
-    'be', 'is', 'are', 'was', 'were', 'been', 'being', 'have', 'has', 'had', 'having',
-    'do', 'does', 'did', 'done', 'doing', 'can', 'could', 'will', 'would', 'shall', 'should',
-    'may', 'might', 'must', 'make', 'makes', 'made', 'take', 'takes', 'took', 'taken',
-    'get', 'gets', 'got', 'gotten', 'go', 'goes', 'went', 'gone', 'come', 'comes', 'came',
-    'know', 'knows', 'knew', 'known', 'see', 'sees', 'saw', 'seen', 'think', 'thinks', 'thought',
-    'say', 'says', 'said', 'tell', 'tells', 'told', 'look', 'looks', 'looked', 'find', 'finds', 'found',
-    'give', 'gives', 'gave', 'given', 'work', 'works', 'worked', 'call', 'calls', 'called',
-    'try', 'tries', 'tried', 'ask', 'asks', 'asked', 'feel', 'feels', 'felt', 'become', 'becomes', 'became',
-    'leave', 'leaves', 'left', 'put', 'puts', 'mean', 'means', 'meant', 'keep', 'keeps', 'kept',
-    'let', 'lets', 'begin', 'begins', 'began', 'begun', 'seem', 'seems', 'seemed', 'help', 'helps', 'helped',
-    'talk', 'talks', 'talked', 'turn', 'turns', 'turned', 'start', 'starts', 'started', 'show', 'shows', 'showed', 'shown',
-    'hear', 'hears', 'heard', 'play', 'plays', 'played', 'run', 'runs', 'ran', 'move', 'moves', 'moved',
-    'like', 'likes', 'liked', 'live', 'lives', 'lived', 'believe', 'believes', 'believed', 'hold', 'holds', 'held',
-    'bring', 'brings', 'brought', 'happen', 'happens', 'happened', 'write', 'writes', 'wrote', 'written',
-    'provide', 'provides', 'provided', 'sit', 'sits', 'sat', 'stand', 'stands', 'stood', 'lose', 'loses', 'lost',
-    'pay', 'pays', 'paid', 'meet', 'meets', 'met', 'include', 'includes', 'included', 'continue', 'continues',
-    'set', 'sets', 'learn', 'learns', 'learned', 'change', 'changes', 'changed', 'lead', 'leads', 'led',
-    'understand', 'understands', 'understood', 'watch', 'watches', 'watched', 'follow', 'follows', 'followed',
-    'stop', 'stops', 'stopped', 'create', 'creates', 'created', 'speak', 'speaks', 'spoke', 'spoken',
-    'read', 'reads', 'allow', 'allows', 'allowed', 'add', 'adds', 'added', 'spend', 'spends', 'spent',
-    'grow', 'grows', 'grew', 'grown', 'open', 'opens', 'opened', 'walk', 'walks', 'walked', 'win', 'wins', 'won',
-    'offer', 'offers', 'offered', 'remember', 'remembers', 'remembered', 'love', 'loves', 'loved',
-    'consider', 'considers', 'considered', 'appear', 'appears', 'appeared', 'buy', 'buys', 'bought',
-    'wait', 'waits', 'waited', 'serve', 'serves', 'served', 'die', 'dies', 'died', 'send', 'sends', 'sent',
-    'expect', 'expects', 'expected', 'build', 'builds', 'built', 'stay', 'stays', 'stayed', 'fall', 'falls', 'fell',
-    'cut', 'cuts', 'reach', 'reaches', 'reached', 'kill', 'kills', 'killed', 'remain', 'remains', 'remained'
-  ]), []);
-
-  const POS_ADVERBS = useMemo(() => new Set([
-    'very', 'really', 'always', 'never', 'often', 'sometimes', 'usually', 'quite', 'too',
-    'also', 'just', 'even', 'already', 'still', 'again', 'actually', 'especially', 'well',
-    'almost', 'enough', 'now', 'then', 'here', 'there', 'today', 'tonight', 'tomorrow', 'yesterday'
-  ]), []);
-
   const getWordPosClass = (rawWord) => {
     if (!posHighlight) return '';
-    const w = (rawWord || '').toLowerCase().replace(/[^a-z]/g, '');
-    if (!w) return '';
-    if (POS_PRONOUNS.has(w)) return 'pos-pron';
-    if (POS_PREPOSITIONS.has(w)) return 'pos-prep';
-    if (POS_VERBS.has(w)) return 'pos-verb';
-    if (POS_ADJECTIVES.has(w)) return 'pos-adj';
-    if (POS_ADVERBS.has(w) || (w.endsWith('ly') && w.length > 3)) return 'pos-adv';
-    if (w.endsWith('ful') || w.endsWith('less') || w.endsWith('ous') || w.endsWith('able') ||
-        w.endsWith('ible') || w.endsWith('ive') || w.endsWith('ic') || w.endsWith('al') ||
-        w.endsWith('ish') || w.endsWith('ent') || w.endsWith('ant')) return 'pos-adj';
-    if (w.endsWith('ing') || w.endsWith('ed') || w.endsWith('ize') || w.endsWith('ise') || w.endsWith('ate')) return 'pos-verb';
-    if (w.endsWith('tion') || w.endsWith('sion') || w.endsWith('ment') || w.endsWith('ness') ||
-        w.endsWith('ity') || w.endsWith('ship') || w.endsWith('er') || w.endsWith('or') || w.endsWith('ist')) return 'pos-noun';
-    return 'pos-noun';
+    return classifyWordPos(rawWord);
   };
 
   // 11. Word click dictionary popup (Instant & Rich)
@@ -2541,9 +2564,9 @@ export default function LanguageReactorPlayer({
                       <div className="focus-card-text">
                         {(displayMode === 'dual' || displayMode === 'en_only') && (
                           <div className="focus-en-sub">
-                            {transcript[activeIndex - 1].text.split(/\s+/).map((word, wIdx) => {
-                              if (!word) return null;
-                              const posClass = getWordPosClass(word);
+                            {(transcript[activeIndex - 1].words || (transcript[activeIndex - 1].text || '').split(/\s+/).filter(Boolean).map(w => ({ raw: w, pos: getWordPosClass(w) }))).map((wObj, wIdx) => {
+                              const word = typeof wObj === 'string' ? wObj : wObj.raw;
+                              const posClass = posHighlight ? (wObj.pos || getWordPosClass(word)) : '';
                               return (
                                 <span
                                   key={wIdx}
@@ -2577,7 +2600,8 @@ export default function LanguageReactorPlayer({
                     const line = transcript[curIdx] || transcript[0];
                     if (!line) return null;
                     const isLooping = loopMode === 'single_loop' && loopingIndex === curIdx;
-                    const isSaved = savedSentences.some(s => s.text === line.text && s.videoId === currentVideo.videoId);
+                    const sentKey = `${currentVideo.videoId || ''}::${(line.text || '').trim().toLowerCase()}`;
+                    const isSaved = savedSentenceSet.has(sentKey);
 
                     return (
                       <div className={`focus-sub-card current-main-card ${isLooping ? 'looping' : ''}`}>
@@ -2654,9 +2678,9 @@ export default function LanguageReactorPlayer({
                         <div className="focus-main-content">
                           {(displayMode === 'dual' || displayMode === 'en_only') && (
                             <div className="focus-main-en">
-                              {line.text.split(/\s+/).map((word, wIdx) => {
-                                if (!word) return null;
-                                const posClass = getWordPosClass(word);
+                              {(line.words || (line.text || '').split(/\s+/).filter(Boolean).map(w => ({ raw: w, pos: getWordPosClass(w) }))).map((wObj, wIdx) => {
+                                const word = typeof wObj === 'string' ? wObj : wObj.raw;
+                                const posClass = posHighlight ? (wObj.pos || getWordPosClass(word)) : '';
                                 return (
                                   <span
                                     key={wIdx}
@@ -2696,9 +2720,9 @@ export default function LanguageReactorPlayer({
                       <div className="focus-card-text">
                         {(displayMode === 'dual' || displayMode === 'en_only') && (
                           <div className="focus-en-sub">
-                            {transcript[activeIndex + 1].text.split(/\s+/).map((word, wIdx) => {
-                              if (!word) return null;
-                              const posClass = getWordPosClass(word);
+                            {(transcript[activeIndex + 1].words || (transcript[activeIndex + 1].text || '').split(/\s+/).filter(Boolean).map(w => ({ raw: w, pos: getWordPosClass(w) }))).map((wObj, wIdx) => {
+                              const word = typeof wObj === 'string' ? wObj : wObj.raw;
+                              const posClass = posHighlight ? (wObj.pos || getWordPosClass(word)) : '';
                               return (
                                 <span
                                   key={wIdx}
@@ -2731,7 +2755,8 @@ export default function LanguageReactorPlayer({
                   {transcript.map((line, idx) => {
                     const isActive = activeIndex === idx;
                     const isLooping = loopMode === 'single_loop' && loopingIndex === idx;
-                    const isSaved = savedSentences.some(s => s.text === line.text && s.videoId === currentVideo.videoId);
+                    const sentKey = `${currentVideo.videoId || ''}::${(line.text || '').trim().toLowerCase()}`;
+                    const isSaved = savedSentenceSet.has(sentKey);
 
                     return (
                       <div
@@ -2794,9 +2819,9 @@ export default function LanguageReactorPlayer({
                           {/* ENGLISH TEXT WITH POS HIGHLIGHTING */}
                           {(displayMode === 'dual' || displayMode === 'en_only') && (
                             <div className="line-en">
-                              {line.text.split(/\s+/).map((word, wIdx) => {
-                                if (!word) return null;
-                                const posClass = getWordPosClass(word);
+                              {(line.words || (line.text || '').split(/\s+/).filter(Boolean).map(w => ({ raw: w, pos: getWordPosClass(w) }))).map((wObj, wIdx) => {
+                                const word = typeof wObj === 'string' ? wObj : wObj.raw;
+                                const posClass = posHighlight ? (wObj.pos || getWordPosClass(word)) : '';
                                 return (
                                   <span
                                     key={wIdx}
