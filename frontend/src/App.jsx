@@ -229,6 +229,9 @@ export default function App() {
     { id: 'en', code: 'en', name: '영어', flag: '🇺🇸', label: '🇺🇸 영어 (EN)' },
     { id: 'es', code: 'es', name: '스페인어', flag: '🇪🇸', label: '🇪🇸 스페인어 (ES)' },
     { id: 'zh', code: 'zh', name: '중국어', flag: '🇨🇳', label: '🇨🇳 중국어 (ZH)' },
+    { id: 'ja', code: 'ja', name: '일본어', flag: '🇯🇵', label: '🇯🇵 일본어 (JA)' },
+    { id: 'fr', code: 'fr', name: '프랑스어', flag: '🇫🇷', label: '🇫🇷 프랑스어 (FR)' },
+    { id: 'de', code: 'de', name: '독일어', flag: '🇩🇪', label: '🇩🇪 독일어 (DE)' },
     { id: 'vi', code: 'vi', name: '베트남어', flag: '🇻🇳', label: '🇻🇳 베트남어 (VI)' },
     { id: 'id', code: 'id', name: '인니어', flag: '🇮🇩', label: '🇮🇩 인니어 (ID)' },
     { id: 'hi', code: 'hi', name: '힌디어', flag: '🇮🇳', label: '🇮🇳 힌디어 (HI)' },
@@ -236,14 +239,14 @@ export default function App() {
 
   const SUB_CATEGORIES = [
     { id: 'all', label: '✨ 전체 주제' },
-    { id: 'travel_nature', label: '🌿 자연 & 솔로 여행 (100% 힐링)' },
-    { id: 'news_interview', label: '📰 뉴스 & 명사 초대석 (100% 여성)' },
-    { id: 'movie_drama', label: '🎬 드라마 & 영화 (1h+)' },
-    { id: 'pop_music', label: '🎵 감성 발라드 & 노래' },
-    { id: 'sleep_life', label: '🌙 수면 & 롱폼 딥토크 (1h+)' },
-    { id: 'ted_speech', label: '🎤 TED & 명품 강연' },
-    { id: 'essay_deep', label: '📚 에세이 & 마인드셋' },
+    { id: 'sleep_life', label: '🌙 수면 & 일상 브이로그' },
     { id: 'conversation', label: '🗣️ 실전 회화 & 팟캐스트' },
+    { id: 'ted_speech', label: '🎤 TED & 명품 강연' },
+    { id: 'essay_deep', label: '📚 북튜버 에세이 & 마인드셋' },
+    { id: 'travel_nature', label: '🌿 자연 & 솔로 여행' },
+    { id: 'news_interview', label: '📰 뉴스 & 명사 인터뷰' },
+    { id: 'movie_drama', label: '🎬 드라마 & 영화 명장면' },
+    { id: 'pop_music', label: '🎵 팝송 & 보컬 가사' },
     { id: 'top_trained', label: '🔥 최다 훈련순' },
   ];
 
@@ -272,19 +275,7 @@ export default function App() {
 
       // Tier 2: Sub-category Filter
       if (selectedCategory !== 'all' && selectedCategory !== 'top_trained') {
-        if (selectedCategory === 'travel_nature') {
-          if (item.category !== 'travel_nature' && !item.tags?.includes('자연여행') && !item.tags?.includes('대자연') && !item.tags?.includes('솔로트래블')) return false;
-        } else if (selectedCategory === 'news_interview') {
-          if (item.category !== 'news_interview' && !item.tags?.includes('뉴스초대석')) return false;
-        } else if (selectedCategory === 'movie_drama') {
-          if (item.category !== 'movie_drama' && !item.tags?.includes('영화쉐도잉') && !item.tags?.includes('풀버전영화')) return false;
-        } else if (selectedCategory === 'sleep_life') {
-          const parts = (item.duration || '').split(':').map(Number);
-          let secs = 0;
-          if (parts.length === 3) secs = parts[0] * 3600 + parts[1] * 60 + parts[2];
-          else if (parts.length === 2) secs = parts[0] * 60 + parts[1];
-          if (item.category !== 'sleep_life' && secs < 3600) return false;
-        } else if (selectedCategory === 'pop_music') {
+        if (selectedCategory === 'pop_music') {
           if (item.category !== 'pop_music' && item.source !== 'ytmusic_pop') return false;
           if (popArtistFilter !== 'all') {
             const artistLower = (item.artist || '').toLowerCase();
@@ -293,18 +284,19 @@ export default function App() {
             const match = (kw) => artistLower.includes(kw) || titleLower.includes(kw) || chanLower.includes(kw);
 
             if (popArtistFilter === 'Adele' && !match('adele')) return false;
+            if (popArtistFilter === 'Olivia Rodrigo' && !match('olivia')) return false;
+            if (popArtistFilter === 'Billie Eilish' && !match('billie')) return false;
+            if (popArtistFilter === 'Taylor Swift' && !match('taylor')) return false;
+            if (popArtistFilter === 'Coldplay' && !match('coldplay')) return false;
+            if (popArtistFilter === 'Ed Sheeran' && !match('ed sheeran')) return false;
+            if (popArtistFilter === 'K-Pop Ballads' && !match('아이유') && !match('태연') && !match('양요섭')) return false;
             if (popArtistFilter === 'Lana Del Rey' && !match('lana del rey') && !match('lana')) return false;
             if (popArtistFilter === 'Gracie Abrams' && !match('gracie')) return false;
-            if (popArtistFilter === 'Taylor Swift' && !match('taylor')) return false;
-            if (popArtistFilter === 'Billie Eilish' && !match('billie')) return false;
-            if (popArtistFilter === 'Olivia Rodrigo' && !match('olivia')) return false;
+            if (popArtistFilter === 'Sabrina Carpenter' && !match('sabrina')) return false;
+            if (popArtistFilter === 'Dua Lipa' && !match('dua lipa') && !match('dua')) return false;
             if (popArtistFilter === 'Spanish Ballads' && !match('aitana') && !match('shakira') && !match('mon laferte') && !match('rosal')) return false;
             if (popArtistFilter === 'G.E.M.' && !match('gem') && !match('g.e.m') && !match('鄧紫棋')) return false;
-            if (popArtistFilter === 'Dua Lipa' && !match('dua lipa') && !match('dua')) return false;
-            if (popArtistFilter === 'Sabrina Carpenter' && !match('sabrina')) return false;
           }
-        } else if (selectedCategory === 'conversation') {
-          if (item.category !== 'conversation' && !item.tags?.includes('회화') && !item.tags?.includes('팟캐스트')) return false;
         } else if (item.category !== selectedCategory) {
           return false;
         }
@@ -520,22 +512,8 @@ export default function App() {
 
                     if (cat.id === 'all' || cat.id === 'top_trained') {
                       count = langFiltered.length;
-                    } else if (cat.id === 'news_interview') {
-                      count = langFiltered.filter(i => i.category === 'news_interview' || i.tags?.includes('뉴스초대석')).length;
-                    } else if (cat.id === 'movie_drama') {
-                      count = langFiltered.filter(i => i.category === 'movie_drama' || i.tags?.includes('영화쉐도잉') || i.tags?.includes('풀버전영화')).length;
                     } else if (cat.id === 'pop_music') {
                       count = langFiltered.filter(i => i.category === 'pop_music' || i.source === 'ytmusic_pop').length;
-                    } else if (cat.id === 'sleep_life') {
-                      count = langFiltered.filter(i => {
-                        const parts = (i.duration || '').split(':').map(Number);
-                        let secs = 0;
-                        if (parts.length === 3) secs = parts[0] * 3600 + parts[1] * 60 + parts[2];
-                        else if (parts.length === 2) secs = parts[0] * 60 + parts[1];
-                        return i.category === 'sleep_life' || secs >= 3600;
-                      }).length;
-                    } else if (cat.id === 'conversation') {
-                      count = langFiltered.filter(i => i.category === 'conversation' || i.tags?.includes('회화') || i.tags?.includes('팟캐스트')).length;
                     } else {
                       count = langFiltered.filter(i => i.category === cat.id).length;
                     }
@@ -563,62 +541,72 @@ export default function App() {
                   >
                     🎵 전체 노래 ({items.filter(i => (i.category === 'pop_music' || i.source === 'ytmusic_pop') && (selectedLanguage === 'all' || (i.language || 'en') === selectedLanguage)).length}곡)
                   </button>
-                  {(selectedLanguage === 'all' || selectedLanguage === 'en') && (
-                    <>
-                      <button
-                        className={`pop-artist-pill adele ${popArtistFilter === 'Adele' ? 'active' : ''}`}
-                        onClick={() => setPopArtistFilter('Adele')}
-                      >
-                        💙 아델
-                      </button>
-                      <button
-                        className={`pop-artist-pill lana ${popArtistFilter === 'Lana Del Rey' ? 'active' : ''}`}
-                        onClick={() => setPopArtistFilter('Lana Del Rey')}
-                      >
-                        🖤 라나 델 레이
-                      </button>
-                      <button
-                        className={`pop-artist-pill gracie ${popArtistFilter === 'Gracie Abrams' ? 'active' : ''}`}
-                        onClick={() => setPopArtistFilter('Gracie Abrams')}
-                      >
-                        🤍 그레이시 에이브럼스
-                      </button>
-                      <button
-                        className={`pop-artist-pill taylor ${popArtistFilter === 'Taylor Swift' ? 'active' : ''}`}
-                        onClick={() => setPopArtistFilter('Taylor Swift')}
-                      >
-                        💖 테일러 스위프트
-                      </button>
-                      <button
-                        className={`pop-artist-pill billie ${popArtistFilter === 'Billie Eilish' ? 'active' : ''}`}
-                        onClick={() => setPopArtistFilter('Billie Eilish')}
-                      >
-                        💚 빌리 아일리시
-                      </button>
-                      <button
-                        className={`pop-artist-pill olivia ${popArtistFilter === 'Olivia Rodrigo' ? 'active' : ''}`}
-                        onClick={() => setPopArtistFilter('Olivia Rodrigo')}
-                      >
-                        💜 올리비아 로드리고
-                      </button>
-                    </>
-                  )}
-                  {(selectedLanguage === 'all' || selectedLanguage === 'es') && (
-                    <button
-                      className={`pop-artist-pill aitana ${popArtistFilter === 'Spanish Ballads' ? 'active' : ''}`}
-                      onClick={() => setPopArtistFilter('Spanish Ballads')}
-                    >
-                      🇪🇸 아이타나 & 라틴 발라드
-                    </button>
-                  )}
-                  {(selectedLanguage === 'all' || selectedLanguage === 'zh') && (
-                    <button
-                      className={`pop-artist-pill gem ${popArtistFilter === 'G.E.M.' ? 'active' : ''}`}
-                      onClick={() => setPopArtistFilter('G.E.M.')}
-                    >
-                      🇨🇳 덩쯔치 G.E.M.
-                    </button>
-                  )}
+                  <button
+                    className={`pop-artist-pill olivia ${popArtistFilter === 'Olivia Rodrigo' ? 'active' : ''}`}
+                    onClick={() => setPopArtistFilter('Olivia Rodrigo')}
+                  >
+                    💜 올리비아 로드리고
+                  </button>
+                  <button
+                    className={`pop-artist-pill adele ${popArtistFilter === 'Adele' ? 'active' : ''}`}
+                    onClick={() => setPopArtistFilter('Adele')}
+                  >
+                    💙 아델
+                  </button>
+                  <button
+                    className={`pop-artist-pill billie ${popArtistFilter === 'Billie Eilish' ? 'active' : ''}`}
+                    onClick={() => setPopArtistFilter('Billie Eilish')}
+                  >
+                    💚 빌리 아일리시
+                  </button>
+                  <button
+                    className={`pop-artist-pill taylor ${popArtistFilter === 'Taylor Swift' ? 'active' : ''}`}
+                    onClick={() => setPopArtistFilter('Taylor Swift')}
+                  >
+                    💖 테일러 스위프트
+                  </button>
+                  <button
+                    className={`pop-artist-pill coldplay ${popArtistFilter === 'Coldplay' ? 'active' : ''}`}
+                    onClick={() => setPopArtistFilter('Coldplay')}
+                  >
+                    ✨ 콜드플레이
+                  </button>
+                  <button
+                    className={`pop-artist-pill ed ${popArtistFilter === 'Ed Sheeran' ? 'active' : ''}`}
+                    onClick={() => setPopArtistFilter('Ed Sheeran')}
+                  >
+                    🧡 에드 시런
+                  </button>
+                  <button
+                    className={`pop-artist-pill kpop ${popArtistFilter === 'K-Pop Ballads' ? 'active' : ''}`}
+                    onClick={() => setPopArtistFilter('K-Pop Ballads')}
+                  >
+                    🌸 아이유 / 태연 / 양요섭
+                  </button>
+                  <button
+                    className={`pop-artist-pill lana ${popArtistFilter === 'Lana Del Rey' ? 'active' : ''}`}
+                    onClick={() => setPopArtistFilter('Lana Del Rey')}
+                  >
+                    🖤 라나 델 레이
+                  </button>
+                  <button
+                    className={`pop-artist-pill sabrina ${popArtistFilter === 'Sabrina Carpenter' ? 'active' : ''}`}
+                    onClick={() => setPopArtistFilter('Sabrina Carpenter')}
+                  >
+                    ☕ 사브리나 카펜터
+                  </button>
+                  <button
+                    className={`pop-artist-pill dua ${popArtistFilter === 'Dua Lipa' ? 'active' : ''}`}
+                    onClick={() => setPopArtistFilter('Dua Lipa')}
+                  >
+                    🌌 두아 리파
+                  </button>
+                  <button
+                    className={`pop-artist-pill gracie ${popArtistFilter === 'Gracie Abrams' ? 'active' : ''}`}
+                    onClick={() => setPopArtistFilter('Gracie Abrams')}
+                  >
+                    🤍 그레이시 에이브럼스
+                  </button>
                 </div>
               )}
             </>
