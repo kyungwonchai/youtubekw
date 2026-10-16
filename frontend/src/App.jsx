@@ -23,6 +23,15 @@ export default function App() {
   const [blocking, setBlocking] = useState(false);
   const [playerPlaylistState, setPlayerPlaylistState] = useState(null); // { playlist: Array, initialIndex: number }
   const [selectedVideoIds, setSelectedVideoIds] = useState([]); // List of selected IDs for batch repeat playback
+  const [theme, setTheme] = useState(() => localStorage.getItem('ytkw_ui_theme') || 'blueprint');
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    try {
+      localStorage.setItem('ytkw_ui_theme', theme);
+    } catch (e) {}
+  }, [theme]);
+
 
   // Sentence & Video Listening Counter Stats
   const [listenStats, setListenStats] = useState(() => {
@@ -446,6 +455,22 @@ export default function App() {
           >
             👥 롤모델 인재풀 ({speakers.length})
           </button>
+          <select
+            className="yt-theme-select"
+            value={theme}
+            onChange={(e) => setTheme(e.target.value)}
+            title="UI 테마 스킨 변경"
+          >
+            <option value="blueprint">🌌 사이버 바이올렛</option>
+            <option value="lime-studio">⚡ 네온 라임 스튜디오</option>
+            <option value="hyper-aurora">💠 하이퍼 오로라</option>
+            <option value="tokyo-night">🌸 도쿄 나이트</option>
+          </select>
+          <div className="yt-suite-links">
+            <a href="/engmaster2/" className="yt-suite-link" title="언어 마스터 (초중고·수능·대기업 비즈니스·단어장 통합)">🎓 언어마스터</a>
+            <a href="/engcoach/" className="yt-suite-link" title="AI 영어 코치 (1:1 통화·오픽 실전)">🎧 영어코치</a>
+            <a href="/vocab/" className="yt-suite-link" title="7개국어 단어 암기장">🃏 단어암기장</a>
+          </div>
         </div>
       </div>
 
@@ -782,9 +807,16 @@ export default function App() {
                               ? '🎤 TED 강연'
                               : item.category === 'sleep_life'
                               ? '🌙 수면&인생 (1h+)'
+                              : item.category === 'travel_nature'
+                              ? '🌿 자연·여행'
+                              : item.category === 'news_interview'
+                              ? '📰 뉴스·인터뷰'
+                              : item.category === 'movie_drama'
+                              ? '🎬 영화·드라마'
                               : '📚 에세이·마인드'}
                           </span>
                         </div>
+
                         <span className="index-tag">#{index + 1}</span>
                       </div>
                       <div className="card-body">

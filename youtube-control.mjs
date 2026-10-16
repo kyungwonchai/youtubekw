@@ -6070,13 +6070,31 @@ export async function runWednesdayMeeting({ force = false, isCatchup = false } =
   return { ok: true, session: newSession };
 }
 
+let _weeklyCatchupRunning = false;
+let _lastCatchupAttemptAt = 0;
+
 /**
  * Anacron-style Weekly Catchup Guard: Guarantees at least 1 meeting per week regardless of PC shutdown
  */
 export async function checkAndRunWeeklyCatchup() {
+  if (_weeklyCatchupRunning) {
+    return { ok: true, skipped: true, reason: 'Catchup already running' };
+  }
+  const now = Date.now();
+  // Cooldown of 30 minutes if an attempt recently failed due to offline network
+  if (now - _lastCatchupAttemptAt < 30 * 60 * 1000) {
+    return { ok: true, skipped: true, reason: 'Recent catchup attempt cooldown' };
+  }
   if (isWeeklyMeetingDue()) {
-    console.log(`[Weekly Meeting Guard] 🛡️ 금주 정기 회의 미실행 감지(PC 오프라인 등). 즉시 주 1회 보충 회의를 자동 실행합니다...`);
-    return await runWednesdayMeeting({ force: true, isCatchup: true });
+    _weeklyCatchupRunning = true;
+    _lastCatchupAttemptAt = now;
+    try {
+      console.log(`[Weekly Meeting Guard] 🛡️ 금주 정기 회의 미실행 감지(PC 오프라인 등). 즉시 주 1회 보충 회의를 자동 실행합니다...`);
+      return await runWednesdayMeeting({ force: true, isCatchup: true });
+    } finally {
+      _weeklyCatchupRunning = false;
+    }
   }
   return { ok: true, skipped: true, reason: 'Already executed for this week' };
 }
+
