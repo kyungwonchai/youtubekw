@@ -11,7 +11,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [runningWeekly, setRunningWeekly] = useState(false);
   const [activeTab, setActiveTab] = useState('feed'); // 'feed', 'bookmarked', 'weekly', 'speakers'
-  const [selectedLanguage, setSelectedLanguage] = useState('all'); // 'all', 'en', 'es', 'ja', 'zh', 'fr', 'de'
+  const [selectedLanguage, setSelectedLanguage] = useState(() => localStorage.getItem('ytkw_selected_language') || 'en'); // default 'en', 'all', 'es', 'ja', 'zh', etc.
   const [selectedCategory, setSelectedCategory] = useState('all'); // 'all', 'ted_speech', 'essay_deep', 'conversation', 'sleep_life', 'pop_music'
   const [selectedChannelFilter, setSelectedChannelFilter] = useState('all'); // 'all' or specific channelTitle
   const [popArtistFilter, setPopArtistFilter] = useState('all'); // 'all', 'Olivia Rodrigo', 'Billie Eilish'
@@ -31,6 +31,12 @@ export default function App() {
       localStorage.setItem('ytkw_ui_theme', theme);
     } catch (e) {}
   }, [theme]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('ytkw_selected_language', selectedLanguage);
+    } catch (e) {}
+  }, [selectedLanguage]);
 
 
   // Sentence & Video Listening Counter Stats
@@ -456,6 +462,27 @@ export default function App() {
             👥 롤모델 인재풀 ({speakers.length})
           </button>
           <select
+            className="yt-lang-select-top"
+            value={selectedLanguage}
+            onChange={(e) => {
+              setSelectedLanguage(e.target.value);
+              setSelectedChannelFilter('all');
+              setPopArtistFilter('all');
+            }}
+            title="학습 언어 선택 (기본: 영어)"
+          >
+            {LANGUAGES.map(lang => {
+              const count = lang.id === 'all'
+                ? items.length
+                : items.filter(i => (i.language || (i.category === 'spanish' ? 'es' : 'en')) === lang.id).length;
+              return (
+                <option key={lang.id} value={lang.id}>
+                  {lang.flag} {lang.name} ({count}개)
+                </option>
+              );
+            })}
+          </select>
+          <select
             className="yt-theme-select"
             value={theme}
             onChange={(e) => setTheme(e.target.value)}
@@ -568,32 +595,45 @@ export default function App() {
               </div>
             ) : (
               <>
-                {/* 1. 언어별 분류 */}
+                {/* 1. 언어별 선택 (컴보박스 드롭다운) */}
                 <div className="sidebar-section">
                   <div className="sidebar-section-title">
-                    <span>🌐 언어별</span>
+                    <span>🌐 학습 언어 선택</span>
+                    {selectedLanguage !== 'en' && (
+                      <button
+                        className="sidebar-mini-clear"
+                        onClick={() => {
+                          setSelectedLanguage('en');
+                          setSelectedChannelFilter('all');
+                          setPopArtistFilter('all');
+                        }}
+                        title="기본값인 영어로 리셋"
+                      >
+                        EN 리셋
+                      </button>
+                    )}
                   </div>
-                  <div className="sidebar-nav-list">
-                    {LANGUAGES.map(lang => {
-                      const count = lang.id === 'all'
-                        ? items.length
-                        : items.filter(i => (i.language || (i.category === 'spanish' ? 'es' : 'en')) === lang.id).length;
-                      return (
-                        <button
-                          key={lang.id}
-                          className={`sidebar-nav-item ${selectedLanguage === lang.id ? 'active' : ''}`}
-                          onClick={() => {
-                            setSelectedLanguage(lang.id);
-                            setSelectedChannelFilter('all');
-                            setPopArtistFilter('all');
-                          }}
-                        >
-                          <span className="item-icon">{lang.flag}</span>
-                          <span className="item-label">{lang.name}</span>
-                          <span className="item-count">{count}</span>
-                        </button>
-                      );
-                    })}
+                  <div className="sidebar-lang-combo-wrap">
+                    <select
+                      className="sidebar-lang-select"
+                      value={selectedLanguage}
+                      onChange={(e) => {
+                        setSelectedLanguage(e.target.value);
+                        setSelectedChannelFilter('all');
+                        setPopArtistFilter('all');
+                      }}
+                    >
+                      {LANGUAGES.map(lang => {
+                        const count = lang.id === 'all'
+                          ? items.length
+                          : items.filter(i => (i.language || (i.category === 'spanish' ? 'es' : 'en')) === lang.id).length;
+                        return (
+                          <option key={lang.id} value={lang.id}>
+                            {lang.flag} {lang.name} ({count}개)
+                          </option>
+                        );
+                      })}
+                    </select>
                   </div>
                 </div>
 
